@@ -1,0 +1,6 @@
+{
+  "name": "QubitLab - Quantum Computing Platform",
+  "description": "SIH Flagship AI-powered interactive quantum computing learning platform featuring real state-vector simulation, IBM Quantum Composer-style circuit builder, 3D Bloch sphere, multi-framework code sandbox, and intelligent tutor.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
