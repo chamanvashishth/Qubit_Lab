@@ -1,20 +1,33 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# QubitLab
 
-# Run and deploy your AI Studio app
+Interactive quantum computing learning platform with circuit composition, Bloch-sphere visualization, code exploration, curriculum content, quizzes, dashboards, and an AI tutor.
 
-This contains everything you need to run your app locally.
+## Structure
 
-View your app in AI Studio: https://ai.studio/apps/fa1b4e55-8949-41a0-b9f9-c5bcebc27dba
+```text
+src/                 React application
+├── components/      UI grouped by product domain
+│   └── curriculum/  Curriculum explorer and learning modules
+├── data/            Static learning data
+├── types/           Shared TypeScript types
+└── utils/           Quantum simulation utilities
 
-## Run Locally
+server/              Express API and Vite integration
+public/              Static assets
+```
 
-**Prerequisites:**  Node.js
+## Development
 
+```bash
+npm install
+npm run dev
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Configure `GEMINI_API_KEY` locally to enable the AI tutor.
+
+## Checks
+
+```bash
+npm run lint
+npm run build
+```
