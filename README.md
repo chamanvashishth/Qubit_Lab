@@ -384,10 +384,10 @@ QubitLab is maintained with collaboration from the following repository members:
 | Collaborator | GitHub Username |
 |---|---|
 | **Chaman Vashishth** | [@chamanvashishth](https://github.com/chamanvashishth) |
-| **asharma975565-ship-it** | [@asharma975565-ship-it](https://github.com/asharma975565-ship-it) |
+| **Akshita Sharma** | [@asharma975565-ship-it](https://github.com/asharma975565-ship-it) |
 | **Vineet Sharma** | [@hellovneet](https://github.com/hellovneet) |
-| **mehfa1** | [@mehfa1](https://github.com/mehfa1) |
-| **Narayan Kr** | [@narayankr03-gif](https://github.com/narayankr03-gif) |
+| **Mehak Ansari** | [@mehfa1](https://github.com/mehfa1) |
+| **Narayan Mandal** | [@narayankr03-gif](https://github.com/narayankr03-gif) |
 
 ---
 
