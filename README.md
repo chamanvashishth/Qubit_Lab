@@ -13,7 +13,7 @@
 [![Express](https://img.shields.io/badge/Express-Backend-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![Google GenAI](https://img.shields.io/badge/AI-Google%20GenAI-4285F4?logo=google&logoColor=white)](https://ai.google.dev/)
 
-**[Explore the architecture](#-architecture)** · **[Get started](#-quick-start)** · **[Features](#-features)** · **[Contribute](#-contributing)**
+**[Explore the architecture](#architecture)** · **[Get started](#quick-start)** · **[Features](#features)** · **[Contribute](#contributing)**
 
 </div>
 
@@ -39,38 +39,38 @@ Instead of treating quantum computing as only mathematics or only programming, Q
 
 ## Contents
 
-- [Features](#-features)
-- [How QubitLab works](#-how-qubitlab-works)
-- [Architecture](#-architecture)
-- [Project structure](#-project-structure)
-- [Technology stack](#-technology-stack)
-- [Quick start](#-quick-start)
-- [Environment configuration](#-environment-configuration)
-- [Available commands](#-available-commands)
-- [Development workflow](#-development-workflow)
-- [Collaborators](#-collaborators)
-- [Security](#-security)
-- [Roadmap](#-roadmap)
-- [Contributing](#-contributing)
+- [Features](#features)
+- [How QubitLab works](#how-qubitlab-works)
+- [Architecture](#architecture)
+- [Project structure](#project-structure)
+- [Technology stack](#technology-stack)
+- [Quick start](#quick-start)
+- [Environment configuration](#environment-configuration)
+- [Available commands](#available-commands)
+- [Development workflow](#development-workflow)
+- [Collaborators](#collaborators)
+- [Security](#security)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
 
 ---
 
-# ✨ Features
+# Features
 
 | Area | What it provides |
 |---|---|
-| 📚 **Curriculum** | Structured learning content covering foundations, concepts, mathematics, and algorithms. |
-| ⚛️ **Circuit Composer** | An interactive workspace for building and exploring quantum circuits. |
-| 🌐 **3D Bloch Sphere** | Visual exploration of qubit states and their geometric representation. |
-| 📊 **State Visualization** | Tools for inspecting and understanding quantum state representations. |
-| 🧪 **Quantum Sandbox** | A dedicated environment for experimenting with quantum code and ideas. |
-| 🧠 **AI Tutor** | Context-aware assistance for concepts, circuits, code explanations, debugging, and quiz help. |
-| 📝 **Quantum Quiz** | Knowledge checks to reinforce concepts through assessment. |
-| 📈 **Learner Dashboard** | A central interface for navigating the learning experience. |
+| **Curriculum** | Structured learning content covering foundations, concepts, mathematics, and algorithms. |
+| **Circuit Composer** | An interactive workspace for building and exploring quantum circuits. |
+| **3D Bloch Sphere** | Visual exploration of qubit states and their geometric representation. |
+| **State Visualization** | Tools for inspecting and understanding quantum state representations. |
+| **Quantum Sandbox** | A dedicated environment for experimenting with quantum code and ideas. |
+| **AI Tutor** | Context-aware assistance for concepts, circuits, code explanations, debugging, and quiz help. |
+| **Quantum Quiz** | Knowledge checks to reinforce concepts through assessment. |
+| **Learner Dashboard** | A central interface for navigating the learning experience. |
 
 ---
 
-# 🧭 How QubitLab Works
+# How QubitLab Works
 
 ## 1. Start with a concept
 
@@ -118,7 +118,7 @@ Concept → Experiment → Visualization → Assessment
 
 ---
 
-# 🏗 Architecture
+# Architecture
 
 QubitLab uses a feature-oriented frontend architecture with shared data, types, and quantum utilities separated from presentation components.
 
@@ -172,7 +172,7 @@ src/App.tsx
 
 ---
 
-# 📁 Project Structure
+# Project Structure
 
 ```text
 Qubit_Lab/
@@ -222,7 +222,7 @@ Qubit_Lab/
 
 ---
 
-# 🧰 Technology Stack
+# Technology Stack
 
 ### Frontend
 
@@ -237,7 +237,7 @@ Qubit_Lab/
 - **Three.js** — 3D rendering and Bloch-sphere visualization
 - **WebGL** — Browser-side graphics through the visualization stack
 
-### Backend & Tooling
+### Backend and Tooling
 
 - **Express** — Server-side/API functionality
 - **tsx** — TypeScript runtime tooling
@@ -249,7 +249,7 @@ Qubit_Lab/
 
 ---
 
-# 🚀 Quick Start
+# Quick Start
 
 ## Prerequisites
 
@@ -312,7 +312,7 @@ npm run build
 
 ---
 
-# ⚙️ Environment Configuration
+# Environment Configuration
 
 | Variable | Purpose | Required for |
 |---|---|---|
@@ -332,7 +332,7 @@ Do **not** publish:
 
 ---
 
-# 🧪 Available Commands
+# Available Commands
 
 | Command | Purpose |
 |---|---|
@@ -344,7 +344,7 @@ Do **not** publish:
 
 ---
 
-# 🔄 Development Workflow
+# Development Workflow
 
 A focused workflow for contributors:
 
@@ -377,40 +377,23 @@ The goal is not the fewest lines of code. The goal is **the simplest structure t
 
 ---
 
-# 👥 Collaborators
+# Collaborators
 
-QubitLab is maintained with collaboration from the repository members shown in the project collaboration context.
+QubitLab is maintained with collaboration from the following repository members:
 
-<table>
-<tr>
-<td align="center">
-<a href="https://github.com/chamanvashishth"><img src="https://github.com/chamanvashishth.png?size=100" width="80" alt="Chaman Vashishth"/><br/><sub><b>Chaman Vashishth</b></sub></a><br/>
-<sub>Owner & Maintainer</sub>
-</td>
-<td align="center">
-<a href="https://github.com/asharma975565-ship-it"><img src="https://github.com/asharma975565-ship-it.png?size=100" width="80" alt="asharma975565-ship-it"/><br/><sub><b>asharma975565-ship-it</b></sub></a><br/>
-<sub>Collaborator</sub>
-</td>
-<td align="center">
-<a href="https://github.com/hellovneet"><img src="https://github.com/hellovneet.png?size=100" width="80" alt="Vineet Sharma"/><br/><sub><b>Vineet Sharma</b></sub></a><br/>
-<sub>Collaborator</sub>
-</td>
-<td align="center">
-<a href="https://github.com/mehfa1"><img src="https://github.com/mehfa1.png?size=100" width="80" alt="mehfa1"/><br/><sub><b>mehfa1</b></sub></a><br/>
-<sub>Collaborator</sub>
-</td>
-<td align="center">
-<a href="https://github.com/narayankr03-gif"><img src="https://github.com/narayankr03-gif.png?size=100" width="80" alt="Narayan Kr"/><br/><sub><b>Narayan Kr</b></sub></a><br/>
-<sub>Collaborator</sub>
-</td>
-</tr>
-</table>
+| Collaborator | GitHub Username | Role |
+|---|---|---|
+| **Chaman Vashishth** | [@chamanvashishth](https://github.com/chamanvashishth) | Project Owner and Maintainer |
+| **asharma975565-ship-it** | [@asharma975565-ship-it](https://github.com/asharma975565-ship-it) | Collaborator |
+| **Vineet Sharma** | [@hellovneet](https://github.com/hellovneet) | Collaborator |
+| **mehfa1** | [@mehfa1](https://github.com/mehfa1) | Collaborator |
+| **Narayan Kr** | [@narayankr03-gif](https://github.com/narayankr03-gif) | Collaborator |
 
 > GitHub collaborator access and commit attribution are different. This section identifies the collaborators provided in the repository collaboration context.
 
 ---
 
-# 🔐 Security
+# Security
 
 Before pushing changes:
 
@@ -422,7 +405,7 @@ Before pushing changes:
 
 ---
 
-# 🗺 Roadmap
+# Roadmap
 
 Potential directions for future development:
 
@@ -437,7 +420,7 @@ Potential directions for future development:
 
 ---
 
-# 🤝 Contributing
+# Contributing
 
 Contributions are welcome.
 
@@ -475,7 +458,7 @@ A good pull request should explain:
 
 ---
 
-# 📄 License
+# License
 
 A license file is not currently defined in the repository.
 
@@ -489,6 +472,6 @@ Before formally distributing QubitLab as an open-source project, add an explicit
 
 **Learn · Build · Visualize · Experiment**
 
-[⬆ Back to top](#qubitlab)
+[Back to top](#qubitlab)
 
 </div>
