@@ -381,15 +381,13 @@ The goal is not the fewest lines of code. The goal is **the simplest structure t
 
 QubitLab is maintained with collaboration from the following repository members:
 
-| Collaborator | GitHub Username | Role |
-|---|---|---|
-| **Chaman Vashishth** | [@chamanvashishth](https://github.com/chamanvashishth) | Project Owner and Maintainer |
-| **asharma975565-ship-it** | [@asharma975565-ship-it](https://github.com/asharma975565-ship-it) | Collaborator |
-| **Vineet Sharma** | [@hellovneet](https://github.com/hellovneet) | Collaborator |
-| **mehfa1** | [@mehfa1](https://github.com/mehfa1) | Collaborator |
-| **Narayan Kr** | [@narayankr03-gif](https://github.com/narayankr03-gif) | Collaborator |
-
-> GitHub collaborator access and commit attribution are different. This section identifies the collaborators provided in the repository collaboration context.
+| Collaborator | GitHub Username |
+|---|---|
+| **Chaman Vashishth** | [@chamanvashishth](https://github.com/chamanvashishth) |
+| **asharma975565-ship-it** | [@asharma975565-ship-it](https://github.com/asharma975565-ship-it) |
+| **Vineet Sharma** | [@hellovneet](https://github.com/hellovneet) |
+| **mehfa1** | [@mehfa1](https://github.com/mehfa1) |
+| **Narayan Kr** | [@narayankr03-gif](https://github.com/narayankr03-gif) |
 
 ---
 
