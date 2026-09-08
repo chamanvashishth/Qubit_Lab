@@ -15,7 +15,7 @@ interface CircuitComposerProps {
 }
 
 const GATE_PALETTE: { type: GateType; label: string; desc: string; color: string; isMulti?: boolean }[] = [
-  { type: 'H', label: 'H', desc: 'Hadamard: Creates equal superposition', color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500 hover:bg-cyan-500/30' },
+  { type: 'H', label: 'H', desc: 'Hadamard: Creates equal superposition', color: 'bg-[#dfff3f]/20 text-[#dfff3f] border-[#dfff3f] hover:bg-[#dfff3f]/30' },
   { type: 'X', label: 'X', desc: 'Pauli-X: Bit flip (NOT gate)', color: 'bg-purple-500/20 text-purple-400 border-purple-500 hover:bg-purple-500/30' },
   { type: 'Y', label: 'Y', desc: 'Pauli-Y: Bit + Phase flip', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500 hover:bg-emerald-500/30' },
   { type: 'Z', label: 'Z', desc: 'Pauli-Z: Phase flip (|1⟩ -> -|1⟩)', color: 'bg-purple-500/20 text-purple-400 border-purple-500 hover:bg-purple-500/30' },
@@ -28,7 +28,7 @@ const GATE_PALETTE: { type: GateType; label: string; desc: string; color: string
   { type: 'CZ', label: 'CZ', desc: 'Controlled-Z: Entangled phase flip', color: 'bg-orange-500/20 text-orange-400 border-orange-500 hover:bg-orange-500/30', isMulti: true },
   { type: 'SWAP', label: 'SWAP', desc: 'Swaps state between two qubits', color: 'bg-rose-500/20 text-rose-400 border-rose-500 hover:bg-rose-500/30', isMulti: true },
   { type: 'CCNOT', label: 'CCX', desc: 'Toffoli: 3-qubit controlled-NOT', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500 hover:bg-yellow-500/30', isMulti: true },
-  { type: 'MEASURE', label: 'M', desc: 'Measurement marker for exported circuits', color: 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' },
+  { type: 'MEASURE', label: 'M', desc: 'Measurement marker for exported circuits', color: 'bg-white/[.08] border-white/15 text-zinc-300 hover:bg-white/[.12]' },
 ];
 
 export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain }) => {
@@ -208,19 +208,19 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
   return (
     <div className="space-y-6">
       {/* Top Action Bar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#0d1117]/60 border border-slate-800 rounded-xl p-4 backdrop-blur-sm shadow-xl">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white/[.05] border border-white/10 rounded-xl p-4 backdrop-blur-sm shadow-xl">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_10px_rgba(34,211,238,0.25)]">
+          <div className="p-2 rounded-lg bg-[#dfff3f]/10 text-[#dfff3f] border border-[#dfff3f]/20 shadow-[0_0_10px_rgba(34,211,238,0.25)]">
             <Sliders className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-slate-100 flex items-center gap-2 font-mono">
+            <h3 className="text-base font-bold text-zinc-100 flex items-center gap-2 font-mono">
               CIRCUIT COMPOSER
-              <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-cyan-500/15 border border-cyan-500/30 text-cyan-300">
+              <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-[#dfff3f]/15 border border-[#dfff3f]/30 text-[#e9ff8a]">
                 Live Statevector
               </span>
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-zinc-400">
               Place gates, inspect the live pre-measurement statevector, and compare Bloch-sphere evolution
             </p>
           </div>
@@ -232,7 +232,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
             value={selectedPreset}
             onChange={(e) => loadPreset(e.target.value)}
             aria-label="Select quantum circuit preset"
-            className="px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+            className="px-3 py-1.5 rounded-lg bg-white/[.05] border border-white/15 text-xs text-zinc-200 focus:outline-none focus:border-[#dfff3f] font-mono"
           >
             <option value="bell">Preset: Bell State (|Φ⁺⟩)</option>
             <option value="ghz">Preset: GHZ 3-Qubit Entanglement</option>
@@ -243,20 +243,20 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
           </select>
 
           {/* Qubit Count adjustment */}
-          <div className="flex items-center bg-slate-900/80 border border-slate-800 rounded-lg px-2 py-1 gap-2 text-xs">
-            <span className="text-slate-400 font-mono">Qubits:</span>
+          <div className="flex items-center bg-white/[.05] border border-white/10 rounded-lg px-2 py-1 gap-2 text-xs">
+            <span className="text-zinc-400 font-mono">Qubits:</span>
             <button
               onClick={() => changeQubitCount(numQubits - 1)}
               disabled={numQubits <= 1}
-              className="w-5 h-5 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 font-bold"
+              className="w-5 h-5 flex items-center justify-center rounded bg-white/[.08] hover:bg-white/[.12] disabled:opacity-30 text-zinc-300 font-bold"
             >
               -
             </button>
-            <span className="font-mono text-cyan-300 font-bold">{numQubits}</span>
+            <span className="font-mono text-[#e9ff8a] font-bold">{numQubits}</span>
             <button
               onClick={() => changeQubitCount(numQubits + 1)}
               disabled={numQubits >= 5}
-              className="w-5 h-5 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 font-bold"
+              className="w-5 h-5 flex items-center justify-center rounded bg-white/[.08] hover:bg-white/[.12] disabled:opacity-30 text-zinc-300 font-bold"
             >
               +
             </button>
@@ -264,7 +264,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
 
           <button
             onClick={() => { setGates([]); setCurrentScrubStep(null); }}
-            className="px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-rose-500/20 hover:text-rose-300 text-slate-300 text-xs font-medium border border-slate-700 transition-colors flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg bg-white/[.08]/80 hover:bg-rose-500/20 hover:text-rose-300 text-zinc-300 text-xs font-medium border border-white/15 transition-colors flex items-center gap-1.5"
           >
             <Trash2 className="w-3.5 h-3.5" />
             Clear
@@ -283,13 +283,13 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
       </div>
 
       {/* Gate Palette Toolbar */}
-      <div className="bg-[#0d1117]/60 border border-slate-800 rounded-xl p-3.5 backdrop-blur-sm shadow-lg">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800">
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 flex items-center gap-1.5">
+      <div className="bg-white/[.05] border border-white/10 rounded-xl p-3.5 backdrop-blur-sm shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2 pb-2 border-b border-white/10">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.8)]"></span>
             Active Quantum Gates
           </span>
-          <span className="text-xs text-slate-400 italic font-mono">
+          <span className="text-xs text-zinc-400 italic font-mono">
             Select a gate, then place on any circuit wire
           </span>
         </div>
@@ -305,7 +305,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
                 className={`min-w-[46px] h-10 px-2.5 rounded font-mono font-bold text-xs flex items-center justify-center transition-all border shrink-0 ${
                   isSelected
                     ? `${item.color} ring-1 ring-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.4)] scale-105`
-                    : 'bg-slate-900/60 text-slate-300 border-slate-800 hover:border-slate-700 hover:bg-slate-800/60'
+                    : 'bg-white/[.05] text-zinc-300 border-white/10 hover:border-white/15 hover:bg-white/[.08]/60'
                 }`}
               >
                 {item.label}
@@ -316,8 +316,8 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
 
         {/* Conditional Control Qubit for 2-qubit gates */}
         {(selectedGateType === 'CNOT' || selectedGateType === 'CZ') && (
-          <div className="mt-2.5 pt-2 border-t border-slate-800 flex items-center gap-3 text-xs text-slate-300">
-            <span className="text-slate-400 font-mono text-[11px]">Control Qubit for {selectedGateType}:</span>
+          <div className="mt-2.5 pt-2 border-t border-white/10 flex items-center gap-3 text-xs text-zinc-300">
+            <span className="text-zinc-400 font-mono text-[11px]">Control Qubit for {selectedGateType}:</span>
             <div className="flex gap-1.5">
               {Array.from({ length: numQubits }).map((_, i) => (
                 <button
@@ -326,7 +326,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
                   className={`px-2 py-0.5 rounded font-mono text-xs ${
                     selectedControlQubit === i
                       ? 'bg-pink-500 text-white font-bold shadow-[0_0_8px_rgba(236,72,153,0.5)]'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      : 'bg-white/[.08] text-zinc-300 hover:bg-white/[.12]'
                   }`}
                 >
                   q[{i}]
@@ -338,7 +338,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
       </div>
 
       {/* Interactive circuit grid */}
-      <div className="bg-[#0d1117]/60 border border-slate-800 rounded-xl p-5 shadow-2xl backdrop-blur-sm overflow-x-auto relative">
+      <div className="bg-white/[.05] border border-white/10 rounded-xl p-5 shadow-2xl backdrop-blur-sm overflow-x-auto relative">
         <div
           className="absolute inset-0 opacity-10 pointer-events-none rounded-xl"
           style={{
@@ -349,7 +349,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
         <div className="min-w-[650px] relative z-10">
           {/* Step Timeline Header */}
           <div className="flex items-center mb-3">
-            <div className="w-20 shrink-0 text-xs font-mono font-bold text-slate-400">
+            <div className="w-20 shrink-0 text-xs font-mono font-bold text-zinc-400">
               Qubit
             </div>
             <div className="flex-1 grid grid-cols-8 gap-2">
@@ -359,8 +359,8 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
                   onClick={() => setCurrentScrubStep(currentScrubStep === stepIdx ? null : stepIdx)}
                   className={`text-center py-1 text-xs font-mono rounded cursor-pointer transition-colors ${
                     currentScrubStep === stepIdx
-                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold shadow-[0_0_8px_rgba(34,211,238,0.25)]'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-[#dfff3f]/20 text-[#e9ff8a] border border-[#dfff3f]/40 font-bold shadow-[0_0_8px_rgba(34,211,238,0.25)]'
+                      : 'text-zinc-400 hover:text-zinc-200'
                   }`}
                 >
                   Step {stepIdx}
@@ -375,16 +375,16 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
               <div key={qIdx} className="flex items-center relative group">
                 {/* Wire Label & Reset state indicator */}
                 <div className="w-20 shrink-0 flex items-center gap-2">
-                  <span className="font-mono font-bold text-xs text-cyan-300 bg-slate-900/90 px-2 py-1 rounded border border-slate-800">
+                  <span className="font-mono font-bold text-xs text-[#e9ff8a] bg-black/45 px-2 py-1 rounded border border-white/10">
                     q[{qIdx}]
                   </span>
-                  <span className="text-[11px] font-mono text-slate-400">|0⟩</span>
+                  <span className="text-[11px] font-mono text-zinc-400">|0⟩</span>
                 </div>
 
                 {/* Wire Slot Columns */}
                 <div className="flex-1 grid grid-cols-8 gap-2 relative">
                   {/* Background horizontal wire line */}
-                  <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] bg-slate-800 group-hover:bg-slate-700 transition-colors z-0" />
+                  <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] bg-white/[.08] group-hover:bg-white/[.12] transition-colors z-0" />
 
                   {Array.from({ length: numSteps }).map((_, sIdx) => {
                     // Find gate positioned here
@@ -394,10 +394,10 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
 
                     // Style placed gate according to Immersive UI
                     const getPlacedGateStyle = (gType: GateType) => {
-                      if (gType === 'H') return 'bg-cyan-500 border-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.5)] text-white';
+                      if (gType === 'H') return 'bg-[#dfff3f] border-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.5)] text-white';
                       if (gType === 'X' || gType === 'Y' || gType === 'Z') return 'bg-purple-500 border-purple-300 shadow-[0_0_10px_rgba(168,85,247,0.5)] text-white';
                       if (gType === 'CNOT' || gType === 'CZ') return 'bg-pink-500 border-pink-300 shadow-[0_0_10px_rgba(236,72,153,0.5)] text-white';
-                      if (gType === 'MEASURE') return 'bg-slate-800 border-slate-600 text-slate-200';
+                      if (gType === 'MEASURE') return 'bg-white/[.08] border-slate-600 text-zinc-200';
                       return 'bg-indigo-600 border-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.4)] text-white';
                     };
 
@@ -409,10 +409,10 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
                           gate
                             ? `${getPlacedGateStyle(gate.gate)} border hover:scale-105`
                             : isControl
-                            ? 'bg-slate-900/80 border-cyan-500/40'
+                            ? 'bg-white/[.05] border-[#dfff3f]/40'
                             : isSecondTarget
                             ? 'bg-pink-500/20 border-pink-400/80'
-                            : 'border-dashed border-slate-800/80 hover:border-cyan-500/40 hover:bg-cyan-500/5'
+                            : 'border-dashed border-white/10 hover:border-[#dfff3f]/40 hover:bg-[#dfff3f]/5'
                         }`}
                       >
                         {gate && (
@@ -443,13 +443,13 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
 
           {/* Time scrubber reset info */}
           {currentScrubStep !== null && (
-            <div className="mt-4 px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-between text-xs">
-              <span className="text-cyan-300 font-mono">
+            <div className="mt-4 px-3 py-1.5 rounded-lg bg-[#dfff3f]/10 border border-[#dfff3f]/30 flex items-center justify-between text-xs">
+              <span className="text-[#e9ff8a] font-mono">
                 Showing simulated state vector after Step {currentScrubStep}
               </span>
               <button
                 onClick={() => setCurrentScrubStep(null)}
-                className="text-slate-400 hover:text-slate-200 underline text-xs"
+                className="text-zinc-400 hover:text-zinc-200 underline text-xs"
               >
                 Reset to final circuit state
               </button>
@@ -459,13 +459,13 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
       </div>
 
       {/* Tab Switcher: Quantum State Visuals vs 3D Bloch Spheres vs Code Export */}
-      <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+      <div className="flex items-center gap-2 border-b border-white/10 pb-3">
         <button
           onClick={() => setActiveTab('visuals')}
           className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all ${
             activeTab === 'visuals'
-              ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+              ? 'bg-[#dfff3f]/15 text-[#e9ff8a] border border-[#dfff3f]/40 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
+              : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[.08]/40'
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
@@ -476,8 +476,8 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
           onClick={() => setActiveTab('bloch')}
           className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all ${
             activeTab === 'bloch'
-              ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+              ? 'bg-[#dfff3f]/15 text-[#e9ff8a] border border-[#dfff3f]/40 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
+              : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[.08]/40'
           }`}
         >
           <Sliders className="w-3.5 h-3.5" />
@@ -488,8 +488,8 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
           onClick={() => setActiveTab('export')}
           className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all ${
             activeTab === 'export'
-              ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+              ? 'bg-[#dfff3f]/15 text-[#e9ff8a] border border-[#dfff3f]/40 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
+              : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[.08]/40'
           }`}
         >
           <Code className="w-3.5 h-3.5" />
@@ -510,10 +510,10 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
       {activeTab === 'bloch' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold text-slate-200">
+            <h4 className="text-sm font-semibold text-zinc-200">
               Single-Qubit Bloch Spheres (Reduced Density Matrix Traces)
             </h4>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-zinc-400">
               Interactive 3D view • Drag to rotate
             </span>
           </div>
@@ -537,27 +537,27 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
       {activeTab === 'export' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* Qiskit */}
-          <div className="bg-[#0d1117]/60 border border-slate-800 rounded-xl p-4 flex flex-col backdrop-blur-sm">
+          <div className="bg-white/[.05] border border-white/10 rounded-xl p-4 flex flex-col backdrop-blur-sm">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.6)]" />
-                <span className="text-xs font-bold font-mono text-cyan-300">Qiskit (Python)</span>
+                <span className="text-xs font-bold font-mono text-[#e9ff8a]">Qiskit (Python)</span>
               </div>
               <button
                 onClick={() => copyCode(exportToQiskit(circuitState), 'qiskit')}
-                className="text-xs text-slate-400 hover:text-cyan-300 flex items-center gap-1 font-mono"
+                className="text-xs text-zinc-400 hover:text-[#e9ff8a] flex items-center gap-1 font-mono"
               >
                 {copiedFramework === 'qiskit' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 {copiedFramework === 'qiskit' ? 'Copied' : 'Copy'}
               </button>
             </div>
-            <pre className="flex-1 p-3 rounded-lg bg-[#05070a] border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto max-h-72">
+            <pre className="flex-1 p-3 rounded-lg bg-black/70 border border-white/10 text-xs font-mono text-zinc-300 overflow-x-auto max-h-72">
               <code>{exportToQiskit(circuitState)}</code>
             </pre>
           </div>
 
           {/* PennyLane */}
-          <div className="bg-[#0d1117]/60 border border-slate-800 rounded-xl p-4 flex flex-col backdrop-blur-sm">
+          <div className="bg-white/[.05] border border-white/10 rounded-xl p-4 flex flex-col backdrop-blur-sm">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(129,140,248,0.6)]" />
@@ -565,19 +565,19 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
               </div>
               <button
                 onClick={() => copyCode(exportToPennyLane(circuitState), 'pennylane')}
-                className="text-xs text-slate-400 hover:text-indigo-300 flex items-center gap-1 font-mono"
+                className="text-xs text-zinc-400 hover:text-indigo-300 flex items-center gap-1 font-mono"
               >
                 {copiedFramework === 'pennylane' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 {copiedFramework === 'pennylane' ? 'Copied' : 'Copy'}
               </button>
             </div>
-            <pre className="flex-1 p-3 rounded-lg bg-[#05070a] border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto max-h-72">
+            <pre className="flex-1 p-3 rounded-lg bg-black/70 border border-white/10 text-xs font-mono text-zinc-300 overflow-x-auto max-h-72">
               <code>{exportToPennyLane(circuitState)}</code>
             </pre>
           </div>
 
           {/* Cirq */}
-          <div className="bg-[#0d1117]/60 border border-slate-800 rounded-xl p-4 flex flex-col backdrop-blur-sm">
+          <div className="bg-white/[.05] border border-white/10 rounded-xl p-4 flex flex-col backdrop-blur-sm">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.6)]" />
@@ -585,19 +585,19 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
               </div>
               <button
                 onClick={() => copyCode(exportToCirq(circuitState), 'cirq')}
-                className="text-xs text-slate-400 hover:text-purple-300 flex items-center gap-1 font-mono"
+                className="text-xs text-zinc-400 hover:text-purple-300 flex items-center gap-1 font-mono"
               >
                 {copiedFramework === 'cirq' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 {copiedFramework === 'cirq' ? 'Copied' : 'Copy'}
               </button>
             </div>
-            <pre className="flex-1 p-3 rounded-lg bg-[#05070a] border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto max-h-72">
+            <pre className="flex-1 p-3 rounded-lg bg-black/70 border border-white/10 text-xs font-mono text-zinc-300 overflow-x-auto max-h-72">
               <code>{exportToCirq(circuitState)}</code>
             </pre>
           </div>
 
           {/* OpenQASM 2.0 */}
-          <div className="bg-[#0d1117]/60 border border-slate-800 rounded-xl p-4 flex flex-col backdrop-blur-sm">
+          <div className="bg-white/[.05] border border-white/10 rounded-xl p-4 flex flex-col backdrop-blur-sm">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
@@ -605,13 +605,13 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
               </div>
               <button
                 onClick={() => copyCode(exportToOpenQASM(circuitState), 'qasm')}
-                className="text-xs text-slate-400 hover:text-emerald-300 flex items-center gap-1 font-mono"
+                className="text-xs text-zinc-400 hover:text-emerald-300 flex items-center gap-1 font-mono"
               >
                 {copiedFramework === 'qasm' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 {copiedFramework === 'qasm' ? 'Copied' : 'Copy'}
               </button>
             </div>
-            <pre className="flex-1 p-3 rounded-lg bg-[#05070a] border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto max-h-72">
+            <pre className="flex-1 p-3 rounded-lg bg-black/70 border border-white/10 text-xs font-mono text-zinc-300 overflow-x-auto max-h-72">
               <code>{exportToOpenQASM(circuitState)}</code>
             </pre>
           </div>
