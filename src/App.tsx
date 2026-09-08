@@ -8,7 +8,7 @@ import { QuantumCodeSandbox } from './components/sandbox/QuantumCodeSandbox';
 import { QuantumQuiz } from './components/quiz/QuantumQuiz';
 import { LearnerDashboard } from './components/dashboard/LearnerDashboard';
 import { AITutorChat } from './components/chat/AITutorChat';
-import { Atom, ExternalLink, Sparkles, Terminal, BookOpen, Sliders, Layers } from 'lucide-react';
+import { Atom, Sparkles, Terminal, BookOpen, Sliders, Layers } from 'lucide-react';
 import { CircuitState, QuizQuestion } from './types/quantum';
 
 export default function App() {
@@ -140,7 +140,6 @@ export default function App() {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>
             <span className="text-slate-200 font-bold">QUANTUM.LAB</span>
-            <span>• Smart India Hackathon Flagship</span>
           </div>
 
           <div className="flex items-center gap-6">
@@ -168,19 +167,6 @@ export default function App() {
             >
               Curriculum
             </button>
-            <a
-              href="https://quantum.ibm.com"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-cyan-300 transition-colors flex items-center gap-1"
-            >
-              <span>IBM Quantum</span>
-              <ExternalLink className="w-3 h-3" />
-            </a>
-          </div>
-
-          <div className="text-[11px] text-slate-400">
-            Powered by Google Gemini 3.8 Flash & WebGL Three.js
           </div>
         </div>
       </footer>
