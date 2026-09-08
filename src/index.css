@@ -1,64 +1,94 @@
 @import "tailwindcss";
 
+:root {
+  --ink: #050505;
+  --surface: rgba(18, 18, 18, 0.62);
+  --surface-strong: rgba(24, 24, 24, 0.86);
+  --line: rgba(255, 255, 255, 0.14);
+  --muted: #9a9a9a;
+  --text: #f5f5f3;
+  --lime: #dfff3f;
+  --orange: #ff6a1a;
+  --blue: #4b55ff;
+}
+
 @layer base {
+  * { border-color: var(--line); }
+  html { background: var(--ink); }
   body {
+    margin: 0;
+    min-width: 320px;
+    background:
+      radial-gradient(circle at 18% 24%, rgba(75, 85, 255, 0.14), transparent 22rem),
+      radial-gradient(circle at 78% 78%, rgba(255, 71, 12, 0.14), transparent 24rem),
+      #050505;
+    color: var(--text);
     font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
-  code, pre, .font-mono {
-    font-family: 'IBM Plex Mono', monospace;
-  }
+  code, pre, .font-mono { font-family: 'IBM Plex Mono', monospace; }
+  button, a { -webkit-tap-highlight-color: transparent; }
 }
 
-/* Custom scrollbars - Immersive Dark theme */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+::selection { background: rgba(223, 255, 63, 0.26); color: white; }
+
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { background: #080808; }
+::-webkit-scrollbar-thumb { background: #2b2b2b; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+.template-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
-::-webkit-scrollbar-track {
-  background: #05070a;
+
+.glass-panel {
+  background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.025));
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: 0 24px 80px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
 }
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
+
+.glass-card {
+  background: rgba(17,17,17,.64);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 18px 50px rgba(0,0,0,.24);
+  backdrop-filter: blur(16px);
+}
+
+.orb {
+  position: absolute;
   border-radius: 9999px;
+  filter: blur(.2px);
+  pointer-events: none;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+.orb-blue {
+  background: radial-gradient(circle at 34% 30%, #8f8bff 0%, #4b55ff 38%, #101a92 72%, transparent 73%);
+  box-shadow: 0 0 90px rgba(75,85,255,.35);
 }
-
-/* Immersive UI Dot Grid Background */
-.immersive-dot-grid {
-  background-image: radial-gradient(#1e293b 1px, transparent 1px);
-  background-size: 24px 24px;
+.orb-orange {
+  background: radial-gradient(circle at 38% 28%, #ffb07a 0%, #ff6a1a 30%, #ff2600 64%, #7d1100 78%, transparent 79%);
+  box-shadow: 0 0 110px rgba(255,72,0,.26);
 }
-
-/* Quantum Circuit and Grid styling */
-.quantum-grid-bg {
-  background-size: 40px 40px;
-  background-image: 
-    linear-gradient(to right, rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
+.orb-pink {
+  background: linear-gradient(145deg, #ff7f91, #ff4f66);
+  box-shadow: 0 0 50px rgba(255,79,102,.25);
 }
-
-.quantum-glow {
-  box-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+.gold-ring {
+  border: 5px solid #f4a81d;
+  border-radius: 9999px;
+  box-shadow: inset 0 0 0 2px #ffe082, 0 0 22px rgba(244,168,29,.4);
 }
 
-.quantum-glow-purple {
-  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+.template-accent {
+  color: var(--lime);
+  text-shadow: 0 0 28px rgba(223,255,63,.12);
 }
-
-.quantum-glow-green {
-  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+.template-button {
+  background: var(--lime);
+  color: #0a0a0a;
+  box-shadow: 0 10px 30px rgba(223,255,63,.12);
 }
-
-.glow-cyan-card {
-  box-shadow: 0 0 20px -5px rgba(6, 182, 212, 0.25);
-}
-
-.inset-glow-cyan {
-  box-shadow: inset 0 0 15px rgba(6, 182, 212, 0.3);
-}
-
-.inset-glow-purple {
-  box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.3);
-}
+.template-button:hover { background: #edff84; transform: translateY(-1px); }
