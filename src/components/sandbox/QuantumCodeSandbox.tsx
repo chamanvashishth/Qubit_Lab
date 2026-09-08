@@ -208,9 +208,9 @@ export const QuantumCodeSandbox: React.FC<QuantumCodeSandboxProps> = ({
         simulatedOutput = `Example output
 
 Circuit Diagram:
-q_0: ──■──H────
-       │     
-q_1: ──X───────
+q_0: ──H──■──M──
+          │  │
+q_1: ─────X──M──
 c: 2/══════════
 
 Measurement Histogram:
