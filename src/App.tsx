@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navbar, NavTab } from './components/layout/Navbar';
 import { LandingHero } from './components/landing/LandingHero';
 import { CurriculumExplorer } from './components/curriculum/CurriculumExplorer';
@@ -13,12 +13,35 @@ import { CircuitState, QuizQuestion, UserProgress } from './types/quantum';
 import { loadProgress, recordQuizScore, toggleTopic } from './utils/progress';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const [activeTab, setActiveTab] = useState<NavTab>(() => {
+    if (typeof window === 'undefined') return 'home';
+    const saved = window.sessionStorage.getItem('qubitlab-active-tab') as NavTab | null;
+    return saved || 'home';
+  });
   const [isAIChatOpen, setIsAIChatOpen] = useState<boolean>(false);
   const [aiChatContext, setAiChatContext] = useState<string>('');
   const [externalPrompt, setExternalPrompt] = useState<string>('');
   const [progress, setProgress] = useState<UserProgress>(() => loadProgress());
-  const [curriculumTopicId, setCurriculumTopicId] = useState<string | undefined>();
+  const [curriculumTopicId, setCurriculumTopicId] = useState<string | undefined>(() =>
+    typeof window === 'undefined' ? undefined : window.sessionStorage.getItem('qubitlab-curriculum-topic') || undefined
+  );
+  const [selectedQuizId, setSelectedQuizId] = useState<string | undefined>(() =>
+    typeof window === 'undefined' ? undefined : window.sessionStorage.getItem('qubitlab-selected-quiz') || undefined
+  );
+
+  useEffect(() => {
+    window.sessionStorage.setItem('qubitlab-active-tab', activeTab);
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (curriculumTopicId) window.sessionStorage.setItem('qubitlab-curriculum-topic', curriculumTopicId);
+    else window.sessionStorage.removeItem('qubitlab-curriculum-topic');
+  }, [curriculumTopicId]);
+
+  useEffect(() => {
+    if (selectedQuizId) window.sessionStorage.setItem('qubitlab-selected-quiz', selectedQuizId);
+    else window.sessionStorage.removeItem('qubitlab-selected-quiz');
+  }, [selectedQuizId]);
 
   const openAIChatWithPrompt = (prompt: string, contextDescription: string) => {
     setAiChatContext(contextDescription);
@@ -97,7 +120,10 @@ export default function App() {
                 `Curriculum Topic: ${topic}`
               );
             }}
-            onOpenQuiz={() => setActiveTab('quiz')}
+            onOpenQuiz={(quizId) => {
+              setSelectedQuizId(quizId);
+              setActiveTab('quiz');
+            }}
           />
         )}
 
@@ -120,10 +146,13 @@ export default function App() {
 
         {activeTab === 'quiz' && (
           <QuantumQuiz
+            quizId={selectedQuizId}
+            onSelectQuiz={setSelectedQuizId}
+            onBackToMocks={() => setSelectedQuizId(undefined)}
             onAskAIForHelp={handleQuizAIHelp}
-            onCompleteQuiz={(score, total) => {
+            onCompleteQuiz={(score, total, quizId) => {
               const percentage = total > 0 ? (score / total) * 100 : 0;
-              setProgress((current) => recordQuizScore(current, 'overall', percentage));
+              setProgress((current) => recordQuizScore(current, quizId, percentage));
             }}
           />
         )}
