@@ -306,6 +306,7 @@ export function formatDiracNotation(state: Complex[], numQubits: number): string
 // Complete Simulation Runner for a Circuit
 export function simulateCircuit(circuit: CircuitState, shots = 1024): SimulationResult {
   const numQubits = Math.max(1, Math.min(5, circuit.numQubits));
+  const safeShots = Number.isFinite(shots) ? Math.max(0, Math.floor(shots)) : 1024;
   const totalDim = 1 << numQubits;
 
   // Initial state |0...0> = [1, 0, 0, ...]
@@ -378,7 +379,7 @@ export function simulateCircuit(circuit: CircuitState, shots = 1024): Simulation
     shotsHistogram[basis] = 0;
   }
 
-  if (shots > 0) {
+  if (safeShots > 0) {
     const cdf: { basis: string; limit: number }[] = [];
     let cum = 0;
     for (const sv of stateVector) {
@@ -386,7 +387,11 @@ export function simulateCircuit(circuit: CircuitState, shots = 1024): Simulation
       cdf.push({ basis: sv.basis, limit: cum });
     }
 
-    for (let s = 0; s < shots; s++) {
+    // Floating-point arithmetic can leave the final cumulative probability
+    // microscopically below 1. Force the last bucket to absorb the remainder.
+    if (cdf.length > 0) cdf[cdf.length - 1].limit = 1;
+
+    for (let s = 0; s < safeShots; s++) {
       const rand = Math.random();
       for (const item of cdf) {
         if (rand <= item.limit) {
@@ -403,7 +408,7 @@ export function simulateCircuit(circuit: CircuitState, shots = 1024): Simulation
     stateVector,
     blochVectors,
     shotsHistogram,
-    totalShots: shots,
+    totalShots: safeShots,
     probabilities,
     diracNotation,
     isEntangled,
