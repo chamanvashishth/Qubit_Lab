@@ -1,5 +1,4 @@
 name: Deploy QubitLab to GitHub Pages
-run-name: Deploy QubitLab to GitHub Pages # trigger pages deployment
 
 on:
   push:
@@ -26,19 +25,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - name: Configure GitHub Pages
-        id: pages
-        uses: actions/configure-pages@v5
+          cache: npm
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Verify TypeScript
+      - name: Type-check application
         run: npm run lint
 
       - name: Build static site
         run: npm run build:pages
+
+      - name: Prepare Pages artifact
+        run: |
+          test -f dist/index.html
+          touch dist/.nojekyll
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
