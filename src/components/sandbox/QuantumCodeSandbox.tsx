@@ -250,17 +250,17 @@ This example illustrates how Grover's algorithm increases the probability of the
   return (
     <div className="space-y-6">
       {/* Top Header & Framework Switcher */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#091124] border border-cyan-500/25 rounded-2xl p-4 shadow-xl shadow-black/40">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#091124] border border-[#dfff3f]/25 rounded-2xl p-4 shadow-xl shadow-black/40">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+          <div className="p-2 rounded-xl bg-[#dfff3f]/10 text-[#dfff3f] border border-[#dfff3f]/20">
             <Terminal className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
+            <h3 className="text-base font-bold text-zinc-100 flex items-center gap-2">
               Quantum Code Examples
               
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-zinc-400">
               Choose a framework and explore example circuits. Edit the code to experiment with the ideas.
             </p>
           </div>
@@ -268,15 +268,15 @@ This example illustrates how Grover's algorithm increases the probability of the
 
         {/* Framework Switcher */}
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex bg-slate-900 border border-slate-800 rounded-lg p-1 text-xs font-mono">
+          <div className="flex bg-white/[.05] border border-white/10 rounded-lg p-1 text-xs font-mono">
             {(['qiskit', 'pennylane', 'cirq'] as const).map((fw) => (
               <button
                 key={fw}
                 onClick={() => handleFrameworkChange(fw)}
                 className={`px-3 py-1 rounded capitalize transition-colors ${
                   framework === fw
-                    ? 'bg-cyan-500 text-slate-950 font-bold'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-[#dfff3f] text-slate-950 font-bold'
+                    : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
                 {fw}
@@ -289,7 +289,7 @@ This example illustrates how Grover's algorithm increases the probability of the
             value={selectedTemplate}
             onChange={(e) => handleTemplateChange(e.target.value as any)}
             aria-label="Select quantum algorithm template"
-            className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 font-mono focus:outline-none focus:border-cyan-500"
+            className="px-3 py-1.5 rounded-lg bg-white/[.05] border border-white/15 text-xs text-zinc-200 font-mono focus:outline-none focus:border-[#dfff3f]"
           >
             <option value="bell">Template: Bell State |Φ⁺⟩</option>
             <option value="ghz">Template: GHZ 3-Qubit State</option>
@@ -301,13 +301,13 @@ This example illustrates how Grover's algorithm increases the probability of the
       {/* Editor & Output Split Screen */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Code Editor Panel */}
-        <div className="bg-[#080e22] border border-cyan-500/20 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/50">
-          <div className="px-4 py-2.5 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+        <div className="bg-[#080e22] border border-[#dfff3f]/20 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/50">
+          <div className="px-4 py-2.5 bg-black/55 border-b border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-red-500/80" />
               <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
               <span className="w-3 h-3 rounded-full bg-green-500/80" />
-              <span className="text-xs font-mono text-slate-400 ml-2">
+              <span className="text-xs font-mono text-zinc-400 ml-2">
                 main.py ({framework})
               </span>
             </div>
@@ -315,7 +315,7 @@ This example illustrates how Grover's algorithm increases the probability of the
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCopy}
-                className="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1 font-mono"
+                className="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1 font-mono"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 {copied ? 'Copied' : 'Copy'}
@@ -327,16 +327,16 @@ This example illustrates how Grover's algorithm increases the probability of the
             value={code}
             onChange={(e) => setCode(e.target.value)}
             spellCheck={false}
-            className="w-full flex-1 min-h-[380px] p-4 bg-slate-950 text-slate-200 font-mono text-xs leading-relaxed focus:outline-none resize-none selection:bg-cyan-500/30"
+            className="w-full flex-1 min-h-[380px] p-4 bg-black/55 text-zinc-200 font-mono text-xs leading-relaxed focus:outline-none resize-none selection:bg-[#dfff3f]/30"
           />
 
           {/* Editor Action Buttons */}
-          <div className="p-3 bg-slate-900/90 border-t border-slate-800 flex items-center justify-between flex-wrap gap-2">
+          <div className="p-3 bg-black/45 border-t border-white/10 flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2">
               {onAskAIExplain && (
                 <button
                   onClick={() => onAskAIExplain(code, framework)}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium flex items-center gap-1.5 transition-colors border border-slate-700"
+                  className="px-3 py-1.5 rounded-lg bg-white/[.08] hover:bg-white/[.12] text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition-colors border border-white/15"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-purple-400" />
                   Explain Code
@@ -346,7 +346,7 @@ This example illustrates how Grover's algorithm increases the probability of the
               {onAskAIDebug && (
                 <button
                   onClick={() => onAskAIDebug(code, framework)}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium flex items-center gap-1.5 transition-colors border border-slate-700"
+                  className="px-3 py-1.5 rounded-lg bg-white/[.08] hover:bg-white/[.12] text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition-colors border border-white/15"
                 >
                   <Bug className="w-3.5 h-3.5 text-amber-400" />
                   Check Code
@@ -357,7 +357,7 @@ This example illustrates how Grover's algorithm increases the probability of the
             <button
               onClick={handleRunCode}
               disabled={isRunning}
-              className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-cyan-500/25 active:scale-95 disabled:opacity-50 transition-all"
+              className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] hover:from-[#efff96] hover:to-[#ffb347] text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-cyan-500/25 active:scale-95 disabled:opacity-50 transition-all"
             >
               <Play className={`w-3.5 h-3.5 ${isRunning ? 'animate-spin' : ''}`} />
               {isRunning ? 'Preparing Preview...' : 'Preview Output'}
@@ -366,11 +366,11 @@ This example illustrates how Grover's algorithm increases the probability of the
         </div>
 
         {/* Console / Output Terminal Panel */}
-        <div className="bg-[#050914] border border-cyan-500/20 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/50">
-          <div className="px-4 py-2.5 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+        <div className="bg-[#050914] border border-[#dfff3f]/20 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/50">
+          <div className="px-4 py-2.5 bg-black/55 border-b border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Terminal className="w-4 h-4 text-cyan-400" />
-              <span className="text-xs font-mono font-bold text-slate-300">
+              <Terminal className="w-4 h-4 text-[#dfff3f]" />
+              <span className="text-xs font-mono font-bold text-zinc-300">
                 Example Output
               </span>
             </div>
@@ -378,19 +378,19 @@ This example illustrates how Grover's algorithm increases the probability of the
             {output && (
               <button
                 onClick={() => setOutput(null)}
-                className="text-xs text-slate-400 hover:text-slate-200 font-mono"
+                className="text-xs text-zinc-400 hover:text-zinc-200 font-mono"
               >
                 Clear
               </button>
             )}
           </div>
 
-          <div className="flex-1 p-4 font-mono text-xs text-slate-300 overflow-y-auto max-h-[440px] whitespace-pre-wrap leading-relaxed">
+          <div className="flex-1 p-4 font-mono text-xs text-zinc-300 overflow-y-auto max-h-[440px] whitespace-pre-wrap leading-relaxed">
             {output ? (
-              <span className="text-cyan-300">{output}</span>
+              <span className="text-[#e9ff8a]">{output}</span>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-slate-400 py-16">
-                <Terminal className="w-8 h-8 mb-2 opacity-40 text-cyan-400" />
+              <div className="h-full flex flex-col items-center justify-center text-zinc-400 py-16">
+                <Terminal className="w-8 h-8 mb-2 opacity-40 text-[#dfff3f]" />
                 <p>Choose "Preview Output" to see an example result for the selected circuit.</p>
               </div>
             )}
