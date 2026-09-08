@@ -86,14 +86,14 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
           <div className="w-[1px] h-12 bg-slate-800" />
           <div>
             <div className="text-3xl font-extrabold text-purple-400 font-mono">{percentage}%</div>
-            <div className="text-xs text-slate-400 font-mono mt-1">Proficiency Grade</div>
+            <div className="text-xs text-slate-400 font-mono mt-1">Score</div>
           </div>
         </div>
 
         <p className="text-xs text-slate-300 leading-relaxed">
           {percentage >= 80
             ? "Great work. You answered many questions correctly and are building a stronger understanding of quantum concepts."
-            : "Good effort! Review the interactive Bloch spheres and algorithm simulations to solidify your quantum foundation."}
+            : "Good effort. Review the questions you missed and try the quiz again when you are ready."}
         </p>
 
         <button
@@ -101,7 +101,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
           className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 mx-auto shadow-[0_0_12px_rgba(34,211,238,0.3)] transition-all"
         >
           <RotateCcw className="w-4 h-4" />
-          Retake Assessment
+          Try Again
         </button>
       </div>
     );
