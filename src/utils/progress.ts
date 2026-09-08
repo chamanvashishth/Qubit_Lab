@@ -11,11 +11,11 @@ export const DEFAULT_PROGRESS: UserProgress = {
 
 const STORAGE_KEY = 'qubitlab-progress';
 
-export function loadProgress(): UserProgress {
-  if (typeof window === 'undefined') return { ...DEFAULT_PROGRESS };
+const storage = () => typeof window === 'undefined' ? null : window.sessionStorage;
 
+export function loadProgress(): UserProgress {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = storage()?.getItem(STORAGE_KEY);
     if (!raw) return { ...DEFAULT_PROGRESS };
     const parsed = JSON.parse(raw);
     return {
@@ -30,11 +30,12 @@ export function loadProgress(): UserProgress {
 }
 
 export function saveProgress(progress: UserProgress): UserProgress {
-  if (typeof window !== 'undefined') {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-  }
+  storage()?.setItem(STORAGE_KEY, JSON.stringify(progress));
   return progress;
 }
+
+const calculateXp = (completedTopics: string[], quizScores: Record<string, number>) =>
+  completedTopics.length * 10 + Object.values(quizScores).reduce((sum, score) => sum + score, 0);
 
 export function toggleTopic(progress: UserProgress, topicId: string): UserProgress {
   const completedTopics = progress.completedTopics.includes(topicId)
@@ -44,7 +45,7 @@ export function toggleTopic(progress: UserProgress, topicId: string): UserProgre
   return saveProgress({
     ...progress,
     completedTopics,
-    xp: completedTopics.length * 10 + Object.values(progress.quizScores).reduce((sum, score) => sum + score, 0),
+    xp: calculateXp(completedTopics, progress.quizScores),
   });
 }
 
@@ -52,12 +53,11 @@ export function recordQuizScore(progress: UserProgress, quizId: string, percenta
   const previous = progress.quizScores[quizId] ?? 0;
   const bestScore = Math.max(previous, Math.max(0, Math.min(100, Math.round(percentage))));
   const quizScores = { ...progress.quizScores, [quizId]: bestScore };
-  const xp = progress.completedTopics.length * 10 + Object.values(quizScores).reduce((sum, score) => sum + score, 0);
 
   return saveProgress({
     ...progress,
     quizScores,
-    xp,
+    xp: calculateXp(progress.completedTopics, quizScores),
     currentLevel: bestScore >= 80 ? 'Core Concepts' : progress.currentLevel,
   });
 }
