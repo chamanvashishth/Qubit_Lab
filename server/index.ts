@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 
 // Lazy-initialized Gemini client
 let aiClient: GoogleGenAI | null = null;
@@ -44,19 +44,18 @@ app.post('/api/chat', async (req: Request, res: Response) => {
     }
 
     const latestMessage = messages[messages.length - 1];
-    const userPrompt = latestMessage.content;
+    const userPrompt = typeof latestMessage?.content === 'string' ? latestMessage.content.trim() : '';
+
+    if (!userPrompt) {
+      res.status(400).json({ error: 'The latest message must contain text.' });
+      return;
+    }
 
     // Check if GEMINI_API_KEY is available
     if (!process.env.GEMINI_API_KEY) {
-      // Fallback domain-expert response if API key is not yet configured
-      res.json({
-        reply: `### Quantum Analysis (Offline Mode)\n\nRegarding **"${userPrompt.slice(0, 45)}..."**:\n\n` +
-          `In quantum mechanics, this concept operates directly on the two-level Hilbert space $\\mathcal{H} = \\mathbb{C}^2$. ` +
-          `Key properties:\n` +
-          `- **State Representation**: $|\\psi\\rangle = \\alpha|0\\rangle + \\beta|1\\rangle$\n` +
-          `- **Unitary Conservation**: Total probability is conserved: $|\\alpha|^2 + |\\beta|^2 = 1$\n` +
-          `- **Measurement**: According to the Born rule, projective measurement collapses $|\\psi\\rangle$ with probability $P(0) = |\\alpha|^2$ and $P(1) = |\\beta|^2$.\n\n` +
-          `*Note: Connect your GEMINI_API_KEY in the platform settings for interactive real-time Gemini reasoning.*`,
+      res.status(503).json({
+        error: 'The AI tutor is not configured on this deployment.',
+        details: 'Set GEMINI_API_KEY in the server environment and redeploy.',
       });
       return;
     }
@@ -98,8 +97,7 @@ Your pedagogical style is rigorous yet intuitive:
   } catch (error: any) {
     console.error('Gemini API Error:', error);
     res.status(500).json({
-      error: 'Failed to process AI Tutor query.',
-      details: error.message || 'Unknown error',
+      error: 'Failed to process the AI Tutor query.',
     });
   }
 });
