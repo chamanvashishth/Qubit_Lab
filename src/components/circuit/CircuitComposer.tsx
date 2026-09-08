@@ -81,7 +81,15 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
   // Handle cell click in composer wire grid
   const handleSlotClick = (qubit: number, step: number) => {
     // Check if gate already exists at this slot
-    const existing = gates.find((g) => g.step === step && (g.targetQubit === qubit || g.controlQubit === qubit || g.secondTarget === qubit));
+    const existing = gates.find((g) =>
+      g.step === step &&
+      (
+        g.targetQubit === qubit ||
+        g.controlQubit === qubit ||
+        g.controlQubit2 === qubit ||
+        g.secondTarget === qubit
+      )
+    );
     if (existing) {
       // Remove it
       setGates((prev) => prev.filter((g) => g.id !== existing.id));
@@ -352,7 +360,8 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
             <div className="w-20 shrink-0 text-xs font-mono font-bold text-zinc-400">
               Qubit
             </div>
-            <div className="flex-1 grid grid-cols-8 gap-2">
+            <div className="flex-1 grid gap-2"
+            style={{ gridTemplateColumns: `repeat(${numSteps}, minmax(0, 1fr))` }}>
               {Array.from({ length: numSteps }).map((_, stepIdx) => (
                 <div
                   key={stepIdx}
