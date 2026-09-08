@@ -1,229 +1,243 @@
-import React, { useState } from 'react';
-import { 
-  HelpCircle, CheckCircle2, XCircle, ArrowRight, RotateCcw, 
-  Award, Sparkles, BookOpen, ChevronRight 
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  HelpCircle, CheckCircle2, XCircle, RotateCcw,
+  Award, Sparkles, BookOpen, ChevronRight, ArrowLeft
 } from 'lucide-react';
 import { QuizQuestion } from '../../types/quantum';
-import { INITIAL_CURRICULUM } from '../../data/curriculum';
+import { QUIZ_MOCKS, getQuizMock } from '../../data/mockQuizzes';
+
+interface QuizAttempt {
+  currentIndex: number;
+  selectedOption: number | null;
+  isAnswered: boolean;
+  score: number;
+  isFinished: boolean;
+}
 
 interface QuantumQuizProps {
-  onCompleteQuiz?: (score: number, total: number) => void;
+  quizId?: string;
+  onSelectQuiz?: (quizId: string) => void;
+  onBackToMocks?: () => void;
+  onCompleteQuiz?: (score: number, total: number, quizId: string) => void;
   onAskAIForHelp?: (question: QuizQuestion) => void;
 }
 
+const emptyAttempt: QuizAttempt = {
+  currentIndex: 0,
+  selectedOption: null,
+  isAnswered: false,
+  score: 0,
+  isFinished: false,
+};
+
+const storageKey = (id: string) => `qubitlab-quiz-attempt:${id}`;
+
+const loadAttempt = (id: string): QuizAttempt => {
+  try {
+    const raw = window.sessionStorage.getItem(storageKey(id));
+    if (!raw) return { ...emptyAttempt };
+    return { ...emptyAttempt, ...JSON.parse(raw) };
+  } catch {
+    return { ...emptyAttempt };
+  }
+};
+
 export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
+  quizId,
+  onSelectQuiz,
+  onBackToMocks,
   onCompleteQuiz,
   onAskAIForHelp,
 }) => {
-  // Collect all questions across curriculum
-  const allQuestions: QuizQuestion[] = INITIAL_CURRICULUM.flatMap((m) =>
-    m.submodules.flatMap((s) => s.quiz || [])
+  const mock = useMemo(() => getQuizMock(quizId), [quizId]);
+
+  const [attempt, setAttempt] = useState<QuizAttempt>(() =>
+    quizId ? loadAttempt(quizId) : { ...emptyAttempt }
   );
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [isAnswered, setIsAnswered] = useState(false);
-  const [score, setScore] = useState(0);
-  const [isFinished, setIsFinished] = useState(false);
+  useEffect(() => {
+    setAttempt(quizId ? loadAttempt(quizId) : { ...emptyAttempt });
+  }, [quizId]);
 
-  if (allQuestions.length === 0) {
+  useEffect(() => {
+    if (!quizId || typeof window === 'undefined') return;
+    window.sessionStorage.setItem(storageKey(quizId), JSON.stringify(attempt));
+  }, [quizId, attempt]);
+
+  if (!mock) {
     return (
-      <div className="max-w-xl mx-auto bg-[#0d1117]/60 border border-slate-800 rounded-xl p-8 text-center">
-        <BookOpen className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
-        <h3 className="text-base font-bold text-slate-100">No quiz questions are available yet.</h3>
-        <p className="text-xs text-slate-400 mt-2">Add questions to the curriculum data and they will appear here automatically.</p>
+      <div className="max-w-5xl mx-auto space-y-6">
+        <div className="text-center space-y-2">
+          <div className="inline-flex p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
+            <BookOpen className="w-6 h-6" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-100">Choose a Practice Mock</h2>
+          <p className="text-sm text-slate-400">Each mock contains exactly 10 multiple-choice questions.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {QUIZ_MOCKS.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => onSelectQuiz?.(item.id)}
+              className="text-left p-5 rounded-2xl bg-[#0d1117]/80 border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900 transition-all group"
+            >
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <Award className="w-5 h-5 text-amber-400" />
+                <span className="text-[10px] font-mono text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 px-2 py-1 rounded">10 MCQs</span>
+              </div>
+              <h3 className="text-sm font-bold text-slate-100">{item.title}</h3>
+              <p className="text-xs text-slate-400 mt-2 leading-relaxed">{item.description}</p>
+              <div className="mt-4 text-xs text-cyan-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Start mock <ChevronRight className="w-4 h-4" />
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
     );
   }
 
-  const currentQ = allQuestions[currentIndex];
+  const questions = mock.questions;
+  const currentQ = questions[attempt.currentIndex];
   const correctIndex = currentQ.correctAnswer ?? currentQ.correctIndex ?? 0;
 
-  const handleSelectOption = (idx: number) => {
-    if (isAnswered) return;
-    setSelectedOption(idx);
-  };
+  const updateAttempt = (patch: Partial<QuizAttempt>) =>
+    setAttempt((current) => ({ ...current, ...patch }));
 
   const handleConfirmAnswer = () => {
-    if (selectedOption === null) return;
-    setIsAnswered(true);
-
-    if (selectedOption === correctIndex) {
-      setScore((s) => s + 1);
-    }
+    if (attempt.selectedOption === null || attempt.isAnswered) return;
+    updateAttempt({
+      isAnswered: true,
+      score: attempt.score + (attempt.selectedOption === correctIndex ? 1 : 0),
+    });
   };
 
   const handleNext = () => {
-    if (currentIndex + 1 < allQuestions.length) {
-      setCurrentIndex((i) => i + 1);
-      setSelectedOption(null);
-      setIsAnswered(false);
-    } else {
-      setIsFinished(true);
-      if (onCompleteQuiz) {
-        onCompleteQuiz(score + (selectedOption === correctIndex ? 1 : 0), allQuestions.length);
-      }
+    if (attempt.currentIndex + 1 < questions.length) {
+      updateAttempt({
+        currentIndex: attempt.currentIndex + 1,
+        selectedOption: null,
+        isAnswered: false,
+      });
+      return;
     }
+
+    updateAttempt({ isFinished: true });
+    onCompleteQuiz?.(attempt.score, questions.length, mock.id);
   };
 
   const handleRestart = () => {
-    setCurrentIndex(0);
-    setSelectedOption(null);
-    setIsAnswered(false);
-    setScore(0);
-    setIsFinished(false);
+    if (typeof window !== 'undefined') window.sessionStorage.removeItem(storageKey(mock.id));
+    setAttempt({ ...emptyAttempt });
   };
 
-  if (isFinished) {
-    const percentage = Math.round((score / allQuestions.length) * 100);
+  if (attempt.isFinished) {
+    const percentage = Math.round((attempt.score / questions.length) * 100);
     return (
-      <div className="bg-[#0d1117]/80 border border-slate-800 rounded-xl p-8 text-center max-w-xl mx-auto shadow-2xl backdrop-blur-sm space-y-5">
-        <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 mx-auto flex items-center justify-center shadow-[0_0_15px_rgba(34,211,238,0.25)]">
-          <Award className="w-8 h-8" />
-        </div>
-
+      <div className="bg-[#0d1117]/80 border border-slate-800 rounded-2xl p-8 text-center max-w-xl mx-auto shadow-2xl space-y-5">
+        <Award className="w-10 h-10 text-amber-400 mx-auto" />
         <div>
-          <h3 className="text-xl font-bold text-slate-100 font-mono">QUIZ RESULTS</h3>
-          <p className="text-xs text-slate-400 mt-1">See how you did and review the concepts you practiced.</p>
+          <h3 className="text-xl font-bold text-slate-100">{mock.title} Results</h3>
+          <p className="text-xs text-slate-400 mt-1">Your result is available for this browser session.</p>
         </div>
-
-        <div className="p-6 rounded-xl bg-[#05070a] border border-slate-800 flex items-center justify-around">
-          <div>
-            <div className="text-3xl font-extrabold text-cyan-400 font-mono">{score} / {allQuestions.length}</div>
-            <div className="text-xs text-slate-400 font-mono mt-1">Correct Answers</div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
+            <div className="text-2xl font-bold text-cyan-400">{attempt.score}/{questions.length}</div>
+            <div className="text-[11px] text-slate-400">Correct</div>
           </div>
-          <div className="w-[1px] h-12 bg-slate-800" />
-          <div>
-            <div className="text-3xl font-extrabold text-purple-400 font-mono">{percentage}%</div>
-            <div className="text-xs text-slate-400 font-mono mt-1">Score</div>
+          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
+            <div className="text-2xl font-bold text-purple-400">{percentage}%</div>
+            <div className="text-[11px] text-slate-400">Score</div>
           </div>
         </div>
-
-        <p className="text-xs text-slate-300 leading-relaxed">
-          {percentage >= 80
-            ? "Great work. You answered many questions correctly and are building a stronger understanding of quantum concepts."
-            : "Good effort. Review the questions you missed and try the quiz again when you are ready."}
+        <p className="text-xs text-slate-300">
+          {percentage >= 80 ? 'Strong result. Continue to the next mock or revisit concepts you want to strengthen.' : 'Review the explanations, then retry when you are ready.'}
         </p>
-
-        <button
-          onClick={handleRestart}
-          className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 mx-auto shadow-[0_0_12px_rgba(34,211,238,0.3)] transition-all"
-        >
-          <RotateCcw className="w-4 h-4" />
-          Try Again
-        </button>
+        <div className="flex flex-wrap justify-center gap-3">
+          <button onClick={handleRestart} className="px-5 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center gap-2">
+            <RotateCcw className="w-4 h-4" /> Try Again
+          </button>
+          <button onClick={onBackToMocks} className="px-5 py-2.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-200 font-bold text-xs">
+            All Mocks
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-[#0d1117]/60 border border-slate-800 rounded-xl p-6 shadow-2xl backdrop-blur-sm space-y-6">
-      {/* Progress & Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-        <div className="flex items-center gap-2">
-          <HelpCircle className="w-5 h-5 text-cyan-400" />
-          <span className="text-xs font-bold text-slate-300 font-mono">
-            QUESTION {currentIndex + 1} OF {allQuestions.length}
-          </span>
+    <div className="max-w-2xl mx-auto bg-[#0d1117]/70 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
+      <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-800">
+        <div>
+          <button onClick={onBackToMocks} className="text-[11px] text-slate-400 hover:text-cyan-300 flex items-center gap-1 mb-2">
+            <ArrowLeft className="w-3.5 h-3.5" /> All mocks
+          </button>
+          <div className="flex items-center gap-2">
+            <HelpCircle className="w-5 h-5 text-cyan-400" />
+            <span className="text-xs font-bold text-slate-200">{mock.title}</span>
+          </div>
         </div>
-
-        <span className="text-xs font-mono text-cyan-300 bg-cyan-500/15 px-2.5 py-0.5 rounded border border-cyan-500/30">
-          Score: {score}
-        </span>
+        <div className="text-right">
+          <div className="text-xs font-mono text-cyan-300">Question {attempt.currentIndex + 1}/{questions.length}</div>
+          <div className="text-[11px] text-slate-400">Score: {attempt.score}</div>
+        </div>
       </div>
 
-      {/* Question text */}
       <div className="space-y-4">
-        <h3 className="text-base font-semibold text-slate-100 leading-snug font-mono">
-          {currentQ.question}
-        </h3>
-
-        {/* Options */}
+        <h3 className="text-base font-semibold text-slate-100 leading-snug">{currentQ.question}</h3>
         <div className="space-y-2.5">
           {currentQ.options.map((opt, idx) => {
-            const isSelected = selectedOption === idx;
-            const isCorrect = idx === correctIndex;
-
-            let borderStyle = 'border-slate-800 bg-slate-900/60 text-slate-300 hover:border-slate-700 hover:bg-slate-800/60';
-            if (isAnswered) {
-              if (isCorrect) {
-                borderStyle = 'border-emerald-500/80 bg-emerald-500/15 text-emerald-200 shadow-[0_0_8px_rgba(52,211,153,0.25)]';
-              } else if (isSelected) {
-                borderStyle = 'border-rose-500/80 bg-rose-500/15 text-rose-200 shadow-[0_0_8px_rgba(244,63,94,0.25)]';
-              }
-            } else if (isSelected) {
-              borderStyle = 'border-cyan-400 bg-cyan-500/15 text-cyan-200 shadow-[0_0_12px_rgba(34,211,238,0.25)]';
-            }
+            const selected = attempt.selectedOption === idx;
+            const correct = idx === correctIndex;
+            const style = attempt.isAnswered
+              ? correct
+                ? 'border-emerald-500 bg-emerald-500/10 text-emerald-200'
+                : selected
+                ? 'border-rose-500 bg-rose-500/10 text-rose-200'
+                : 'border-slate-800 bg-slate-900/60 text-slate-400'
+              : selected
+              ? 'border-cyan-400 bg-cyan-500/10 text-cyan-100'
+              : 'border-slate-800 bg-slate-900/60 text-slate-300 hover:border-slate-700';
 
             return (
-              <div
+              <button
                 key={idx}
-                onClick={() => handleSelectOption(idx)}
-                className={`p-3.5 rounded-lg border flex items-center justify-between cursor-pointer transition-all ${borderStyle}`}
+                disabled={attempt.isAnswered}
+                onClick={() => !attempt.isAnswered && updateAttempt({ selectedOption: idx })}
+                className={`w-full p-3.5 rounded-xl border flex items-center gap-3 text-left transition-all ${style}`}
               >
-                <div className="flex items-center gap-3 text-xs leading-relaxed">
-                  <span className="w-6 h-6 rounded bg-slate-900 border border-slate-700 font-mono text-xs flex items-center justify-center shrink-0">
-                    {String.fromCharCode(65 + idx)}
-                  </span>
-                  <span>{opt}</span>
-                </div>
-
-                {isAnswered && isCorrect && (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                )}
-                {isAnswered && isSelected && !isCorrect && (
-                  <XCircle className="w-5 h-5 text-rose-400 shrink-0" />
-                )}
-              </div>
+                <span className="w-6 h-6 rounded border border-slate-700 flex items-center justify-center text-[11px] shrink-0">{String.fromCharCode(65 + idx)}</span>
+                <span className="text-xs leading-relaxed">{opt}</span>
+                {attempt.isAnswered && correct && <CheckCircle2 className="w-4 h-4 ml-auto text-emerald-400" />}
+                {attempt.isAnswered && selected && !correct && <XCircle className="w-4 h-4 ml-auto text-rose-400" />}
+              </button>
             );
           })}
         </div>
       </div>
 
-      {/* Explanation banner on submit */}
-      {isAnswered && (
-        <div className="p-4 rounded-xl bg-[#05070a] border border-slate-800 space-y-2 text-xs">
-          <div className="flex items-center justify-between">
-            <span className="font-bold text-cyan-300 font-mono flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              Physical & Mathematical Explanation
-            </span>
-            {onAskAIForHelp && (
-              <button
-                onClick={() => onAskAIForHelp(currentQ)}
-                className="text-[11px] text-purple-300 hover:underline flex items-center gap-1 font-mono"
-              >
-                Ask AI Tutor to elaborate
-              </button>
-            )}
+      {attempt.isAnswered && (
+        <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
+          <div className="flex items-center justify-between gap-3">
+            <span className="font-bold text-cyan-300 flex items-center gap-1.5"><Sparkles className="w-4 h-4" /> Explanation</span>
+            <button onClick={() => onAskAIForHelp?.(currentQ)} className="text-[11px] text-purple-300 hover:underline">Explain further</button>
           </div>
-          <p className="text-slate-300 leading-relaxed font-sans">
-            {currentQ.explanation}
-          </p>
+          <p className="text-slate-300 leading-relaxed">{currentQ.explanation}</p>
         </div>
       )}
 
-      {/* Action footer */}
       <div className="flex items-center justify-between pt-2">
-        <span className="text-[11px] text-slate-400 font-mono">
-          Select an option, then check the explanation
-        </span>
-
-        {!isAnswered ? (
+        <span className="text-[11px] text-slate-500">Your current attempt survives reloads in this browser session.</span>
+        {!attempt.isAnswered ? (
           <button
             onClick={handleConfirmAnswer}
-            disabled={selectedOption === null}
-            className="px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs disabled:opacity-40 transition-all shadow-[0_0_10px_rgba(34,211,238,0.3)] active:scale-95 font-mono"
-          >
-            Check Answer
-          </button>
+            disabled={attempt.selectedOption === null}
+            className="px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs disabled:opacity-40"
+          >Check Answer</button>
         ) : (
-          <button
-            onClick={handleNext}
-            className="px-5 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all shadow-[0_0_10px_rgba(34,211,238,0.3)] active:scale-95 font-mono"
-          >
-            <span>{currentIndex + 1 < allQuestions.length ? 'Next Question' : 'View Final Results'}</span>
-            <ChevronRight className="w-4 h-4" />
+          <button onClick={handleNext} className="px-5 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold text-xs flex items-center gap-1.5">
+            {attempt.currentIndex + 1 < questions.length ? 'Next Question' : 'View Results'} <ChevronRight className="w-4 h-4" />
           </button>
         )}
       </div>
