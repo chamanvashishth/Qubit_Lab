@@ -32,13 +32,13 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-semibold">
               <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              Learning Overview
+              Where You Are
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              Your Learning Space
+              Your Place to Learn
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
-              Keep your learning tools and topics in one place.
+              Pick up where you left off and choose what to explore next.
             </p>
           </div>
 
