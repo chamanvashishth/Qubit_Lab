@@ -99,7 +99,21 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
   }
 
   const questions = mock.questions;
-  const currentQ = questions[attempt.currentIndex];
+  if (questions.length === 0) {
+    return (
+      <div className="max-w-xl mx-auto p-6 rounded-2xl bg-white/[.05] border border-white/10 text-center text-zinc-300">
+        This practice mock does not contain any questions yet.
+      </div>
+    );
+  }
+
+  // Session storage can contain stale data after a mock is updated.
+  // Clamp the index so a corrupted/stale attempt cannot crash the quiz UI.
+  const currentIndex = Math.min(
+    Math.max(0, Number.isFinite(attempt.currentIndex) ? attempt.currentIndex : 0),
+    questions.length - 1
+  );
+  const currentQ = questions[currentIndex];
   const correctIndex = currentQ.correctAnswer ?? currentQ.correctIndex ?? 0;
 
   const updateAttempt = (patch: Partial<QuizAttempt>) =>
@@ -114,9 +128,9 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
   };
 
   const handleNext = () => {
-    if (attempt.currentIndex + 1 < questions.length) {
+    if (currentIndex + 1 < questions.length) {
       updateAttempt({
-        currentIndex: attempt.currentIndex + 1,
+        currentIndex: currentIndex + 1,
         selectedOption: null,
         isAnswered: false,
       });
@@ -179,7 +193,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
           </div>
         </div>
         <div className="text-right">
-          <div className="text-xs font-mono text-[#e9ff8a]">Question {attempt.currentIndex + 1}/{questions.length}</div>
+          <div className="text-xs font-mono text-[#e9ff8a]">Question {currentIndex + 1}/{questions.length}</div>
           <div className="text-[11px] text-zinc-400">Score: {attempt.score}</div>
         </div>
       </div>
@@ -237,7 +251,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
           >Check Answer</button>
         ) : (
           <button onClick={handleNext} className="px-5 py-2 rounded-lg bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] text-slate-950 font-bold text-xs flex items-center gap-1.5">
-            {attempt.currentIndex + 1 < questions.length ? 'Next Question' : 'View Results'} <ChevronRight className="w-4 h-4" />
+            {currentIndex + 1 < questions.length ? 'Next Question' : 'View Results'} <ChevronRight className="w-4 h-4" />
           </button>
         )}
       </div>
