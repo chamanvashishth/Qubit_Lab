@@ -16,7 +16,7 @@ const DEFAULT_SUGGESTIONS = [
   "Explain why Hadamard creates equal superposition",
   "What is the physical meaning of the No-Cloning Theorem?",
   "How does phase kickback work in quantum algorithms?",
-  "Why is quantum entanglement faster than light, or is it?",
+  "Does quantum entanglement allow faster-than-light communication?",
   "Explain Grover's amplitude amplification step-by-step",
 ];
 
