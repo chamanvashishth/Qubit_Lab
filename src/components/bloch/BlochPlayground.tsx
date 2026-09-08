@@ -101,19 +101,19 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#091124] border border-cyan-500/25 rounded-2xl p-5 shadow-xl shadow-black/40">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#091124] border border-[#dfff3f]/25 rounded-2xl p-5 shadow-xl shadow-black/40">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+          <div className="p-2 rounded-xl bg-[#dfff3f]/10 text-[#dfff3f] border border-[#dfff3f]/20">
             <Compass className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
+            <h3 className="text-base font-bold text-zinc-100 flex items-center gap-2">
               Interactive Bloch Sphere
-              <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300">
+              <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#dfff3f]/15 text-[#e9ff8a]">
                 SU(2) Qubit Geometry
               </span>
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-zinc-400">
               Drag mouse to orbit sphere in 3D • Adjust polar angle θ and azimuth φ • Apply unitary gate rotations
             </p>
           </div>
@@ -132,13 +132,13 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* 3D Bloch sphere */}
-        <div className="lg:col-span-7 bg-[#050914] border border-cyan-500/30 rounded-2xl p-6 shadow-2xl shadow-black/60 flex flex-col items-center">
+        <div className="lg:col-span-7 bg-[#050914] border border-[#dfff3f]/30 rounded-2xl p-6 shadow-2xl shadow-black/60 flex flex-col items-center">
           <div className="w-full flex items-center justify-between mb-4">
-            <span className="text-xs font-mono font-bold text-cyan-400 flex items-center gap-1.5">
+            <span className="text-xs font-mono font-bold text-[#dfff3f] flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
               3D Bloch Sphere
             </span>
-            <span className="text-[11px] font-mono text-slate-400">
+            <span className="text-[11px] font-mono text-zinc-400">
               Left Click + Drag to Orbit • Scroll to Zoom
             </span>
           </div>
@@ -152,8 +152,8 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
           />
 
           {/* Quick Presets */}
-          <div className="w-full mt-6 pt-4 border-t border-slate-800">
-            <span className="text-xs font-mono text-slate-400 block mb-2 font-semibold">
+          <div className="w-full mt-6 pt-4 border-t border-white/10">
+            <span className="text-xs font-mono text-zinc-400 block mb-2 font-semibold">
               Canonical Basis State Presets:
             </span>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -168,7 +168,7 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
                 <button
                   key={p.key}
                   onClick={() => setPreset(p.key)}
-                  className="py-1.5 px-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/40 text-[11px] font-mono text-slate-300 hover:text-cyan-300 transition-colors text-center"
+                  className="py-1.5 px-2 rounded-lg bg-white/[.05] hover:bg-white/[.08] border border-white/10 hover:border-[#dfff3f]/40 text-[11px] font-mono text-zinc-300 hover:text-[#e9ff8a] transition-colors text-center"
                 >
                   {p.label}
                 </button>
@@ -180,8 +180,8 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
         {/* Right Column: Mathematical Readout & Gate Actions */}
         <div className="lg:col-span-5 space-y-6">
           {/* Coordinate Sliders */}
-          <div className="bg-[#080d1e] border border-cyan-500/20 rounded-2xl p-5 shadow-xl shadow-black/40 space-y-4">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-cyan-400 font-mono flex items-center gap-1.5">
+          <div className="bg-[#080d1e] border border-[#dfff3f]/20 rounded-2xl p-5 shadow-xl shadow-black/40 space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#dfff3f] font-mono flex items-center gap-1.5">
               <Sliders className="w-3.5 h-3.5" />
               Spherical Polar Angle Coordinates
             </h4>
@@ -189,8 +189,8 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
             {/* Theta slider */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs font-mono">
-                <span className="text-slate-300">Polar Angle θ (0 to π):</span>
-                <span className="text-cyan-400 font-bold">
+                <span className="text-zinc-300">Polar Angle θ (0 to π):</span>
+                <span className="text-[#dfff3f] font-bold">
                   {((theta * 180) / Math.PI).toFixed(1)}° ({(theta / Math.PI).toFixed(2)}π)
                 </span>
               </div>
@@ -201,14 +201,14 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
                 step="0.02"
                 value={theta}
                 onChange={(e) => setTheta(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                className="w-full h-1.5 bg-white/[.08] rounded-lg appearance-none cursor-pointer accent-cyan-400"
               />
             </div>
 
             {/* Phi slider */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs font-mono">
-                <span className="text-slate-300">Azimuthal Phase φ (0 to 2π):</span>
+                <span className="text-zinc-300">Azimuthal Phase φ (0 to 2π):</span>
                 <span className="text-purple-400 font-bold">
                   {((phi * 180) / Math.PI).toFixed(1)}° ({(phi / Math.PI).toFixed(2)}π)
                 </span>
@@ -220,17 +220,17 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
                 step="0.02"
                 value={phi}
                 onChange={(e) => setPhi(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-400"
+                className="w-full h-1.5 bg-white/[.08] rounded-lg appearance-none cursor-pointer accent-purple-400"
               />
             </div>
           </div>
 
           {/* Unitary Gate Rotation Triggers */}
-          <div className="bg-[#080d1e] border border-cyan-500/20 rounded-2xl p-5 shadow-xl shadow-black/40 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 font-mono">
+          <div className="bg-[#080d1e] border border-[#dfff3f]/20 rounded-2xl p-5 shadow-xl shadow-black/40 space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-300 font-mono">
               Apply Unitary Rotation Gates
             </h4>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-zinc-400">
               Click a gate to perform an instantaneous physical rotation on the Bloch vector:
             </p>
 
@@ -245,7 +245,7 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
                 <button
                   key={g.gate}
                   onClick={() => applyGate(g.gate)}
-                  className="py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500 text-xs font-mono font-bold text-slate-200 hover:text-cyan-300 transition-colors"
+                  className="py-2 rounded-lg bg-white/[.05] hover:bg-white/[.08] border border-white/10 hover:border-[#dfff3f] text-xs font-mono font-bold text-zinc-200 hover:text-[#e9ff8a] transition-colors"
                 >
                   {g.label}
                 </button>
@@ -254,29 +254,29 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
           </div>
 
           {/* Vector & Density Matrix Details */}
-          <div className="bg-[#080d1e] border border-cyan-500/20 rounded-2xl p-5 shadow-xl shadow-black/40 font-mono text-xs space-y-2.5">
-            <span className="text-xs font-bold uppercase tracking-wider text-cyan-400 block font-mono">
+          <div className="bg-[#080d1e] border border-[#dfff3f]/20 rounded-2xl p-5 shadow-xl shadow-black/40 font-mono text-xs space-y-2.5">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#dfff3f] block font-mono">
               Cartesian Vector Coordinates (x, y, z)
             </span>
 
             <div className="grid grid-cols-3 gap-2">
-              <div className="p-2 rounded bg-slate-950 border border-slate-800 text-center">
-                <span className="text-slate-400 block text-[10px]">x = sinθ cosφ</span>
-                <span className="text-cyan-300 font-bold">{x.toFixed(3)}</span>
+              <div className="p-2 rounded bg-black/55 border border-white/10 text-center">
+                <span className="text-zinc-400 block text-[10px]">x = sinθ cosφ</span>
+                <span className="text-[#e9ff8a] font-bold">{x.toFixed(3)}</span>
               </div>
-              <div className="p-2 rounded bg-slate-950 border border-slate-800 text-center">
-                <span className="text-slate-400 block text-[10px]">y = sinθ sinφ</span>
+              <div className="p-2 rounded bg-black/55 border border-white/10 text-center">
+                <span className="text-zinc-400 block text-[10px]">y = sinθ sinφ</span>
                 <span className="text-purple-300 font-bold">{y.toFixed(3)}</span>
               </div>
-              <div className="p-2 rounded bg-slate-950 border border-slate-800 text-center">
-                <span className="text-slate-400 block text-[10px]">z = cosθ</span>
+              <div className="p-2 rounded bg-black/55 border border-white/10 text-center">
+                <span className="text-zinc-400 block text-[10px]">z = cosθ</span>
                 <span className="text-indigo-300 font-bold">{z.toFixed(3)}</span>
               </div>
             </div>
 
-            <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 flex justify-between">
-              <span className="text-slate-400">Measurement Probabilities:</span>
-              <span className="text-slate-200">
+            <div className="p-3 rounded-lg bg-black/55 border border-white/10 flex justify-between">
+              <span className="text-zinc-400">Measurement Probabilities:</span>
+              <span className="text-zinc-200">
                 P(0)={(prob0 * 100).toFixed(1)}% | P(1)={(prob1 * 100).toFixed(1)}%
               </span>
             </div>
