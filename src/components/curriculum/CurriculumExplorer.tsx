@@ -5,10 +5,10 @@ import {
 } from 'lucide-react';
 import { INITIAL_CURRICULUM } from '../../data/curriculum';
 import { CurriculumModule, Submodule } from '../../types/quantum';
-import { FoundationsModule } from '../modules/FoundationsModule';
-import { ConceptsModule } from '../modules/ConceptsModule';
-import { MathModule } from '../modules/MathModule';
-import { AlgorithmsModule } from '../modules/AlgorithmsModule';
+import { FoundationsModule } from './modules/FoundationsModule';
+import { ConceptsModule } from './modules/ConceptsModule';
+import { MathModule } from './modules/MathModule';
+import { AlgorithmsModule } from './modules/AlgorithmsModule';
 import { CircuitComposer } from '../circuit/CircuitComposer';
 
 interface CurriculumExplorerProps {
