@@ -9,13 +9,15 @@ import { QuantumQuiz } from './components/quiz/QuantumQuiz';
 import { LearnerDashboard } from './components/dashboard/LearnerDashboard';
 import { AITutorChat } from './components/chat/AITutorChat';
 import { Atom, Sparkles, Terminal, BookOpen, Sliders, Layers } from 'lucide-react';
-import { CircuitState, QuizQuestion } from './types/quantum';
+import { CircuitState, QuizQuestion, UserProgress } from './types/quantum';
+import { loadProgress, recordQuizScore, toggleTopic } from './utils/progress';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [isAIChatOpen, setIsAIChatOpen] = useState<boolean>(false);
   const [aiChatContext, setAiChatContext] = useState<string>('');
   const [externalPrompt, setExternalPrompt] = useState<string>('');
+  const [progress, setProgress] = useState<UserProgress>(() => loadProgress());
 
   const openAIChatWithPrompt = (prompt: string, contextDescription: string) => {
     setAiChatContext(contextDescription);
@@ -85,6 +87,8 @@ export default function App() {
 
         {activeTab === 'curriculum' && (
           <CurriculumExplorer
+            progress={progress}
+            onToggleCompleted={(topicId) => setProgress((current) => toggleTopic(current, topicId))}
             onAskAIExplain={(topic) => {
               openAIChatWithPrompt(
                 `Can you explain the key physics, mathematical formulation, and experimental realization of "${topic}"?`,
@@ -116,13 +120,14 @@ export default function App() {
           <QuantumQuiz
             onAskAIForHelp={handleQuizAIHelp}
             onCompleteQuiz={(score, total) => {
-              // Quiz completed
+              const percentage = total > 0 ? (score / total) * 100 : 0;
+              setProgress((current) => recordQuizScore(current, 'overall', percentage));
             }}
           />
         )}
 
         {activeTab === 'dashboard' && (
-          <LearnerDashboard onNavigate={(tab) => setActiveTab(tab)} />
+          <LearnerDashboard progress={progress} onNavigate={(tab) => setActiveTab(tab)} />
         )}
       </main>
 
