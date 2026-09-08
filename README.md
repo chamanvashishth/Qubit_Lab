@@ -1,157 +1,150 @@
 <div align="center">
 
-<img src="./docs/assets/qubitlab-banner.svg" alt="QubitLab — Interactive Quantum Computing Platform" width="100%" />
+<img src="./docs/assets/qubitlab-banner.svg" alt="QubitLab interactive quantum computing platform" width="100%" />
 
 # QubitLab
 
-### Learn quantum computing by building, visualizing, experimenting, and asking questions.
+### An interactive platform for learning, building, visualizing, and experimenting with quantum computing.
 
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
 [![Three.js](https://img.shields.io/badge/Three.js-3D-000000?logo=three.js&logoColor=white)](https://threejs.org/)
-[![Express](https://img.shields.io/badge/Express-Backend-000000?logo=express&logoColor=white)](https://expressjs.com/)
-[![Google GenAI](https://img.shields.io/badge/AI-Google%20GenAI-4285F4?logo=google&logoColor=white)](https://ai.google.dev/)
+[![Express](https://img.shields.io/badge/Express-4-000000?logo=express&logoColor=white)](https://expressjs.com/)
 
-**[Explore the architecture](#architecture)** · **[Get started](#quick-start)** · **[Features](#features)** · **[Contribute](#contributing)**
+**[Architecture](#architecture)** · **[How it works](#how-it-works)** · **[Features](#features)** · **[Quick start](#quick-start)** · **[Contributing](#contributing)**
 
 </div>
 
 ---
 
-## What is QubitLab?
+## Overview
 
-**QubitLab** is an interactive quantum computing learning and experimentation platform. It brings together structured learning content, circuit composition, state visualization, a 3D Bloch sphere, code exploration, quizzes, a learner dashboard, and an AI-assisted tutor.
+QubitLab is an interactive quantum computing learning environment that combines structured curriculum content, circuit construction, quantum-state visualization, code exploration, practice assessments, learner progress, and AI-assisted explanations.
 
-The project is built around one practical idea:
-
-> **Quantum computing is easier to understand when theory and experimentation happen together.**
-
-### The learning loop
+The application is designed around an interactive learning loop:
 
 ```
-Learn  →  Build  →  Visualize  →  Experiment  →  Test  →  Learn again
+Learn → Build → Simulate → Visualize → Test → Improve
 ```
 
-Instead of treating quantum computing as only mathematics or only programming, QubitLab connects concepts to interactive tools.
+Instead of separating theory from experimentation, QubitLab connects concepts directly to interactive tools.
 
 ---
 
-## Contents
+## Features
 
-- [Features](#features)
-- [How QubitLab works](#how-qubitlab-works)
-- [Architecture](#architecture)
-- [Project structure](#project-structure)
-- [Technology stack](#technology-stack)
-- [Quick start](#quick-start)
-- [Environment configuration](#environment-configuration)
-- [Available commands](#available-commands)
-- [Development workflow](#development-workflow)
-- [Collaborators](#collaborators)
-- [Security](#security)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-
----
-
-# Features
-
-| Area | What it provides |
+| Area | Capability |
 |---|---|
-| **Curriculum** | Structured learning content covering foundations, concepts, mathematics, and algorithms. |
-| **Circuit Composer** | An interactive workspace for building and exploring quantum circuits. |
-| **3D Bloch Sphere** | Visual exploration of qubit states and their geometric representation. |
-| **State Visualization** | Tools for inspecting and understanding quantum state representations. |
-| **Quantum Sandbox** | A dedicated environment for experimenting with quantum code and ideas. |
-| **AI Tutor** | Context-aware assistance for concepts, circuits, code explanations, debugging, and quiz help. |
-| **Quantum Quiz** | Knowledge checks to reinforce concepts through assessment. |
-| **Learner Dashboard** | A central interface for navigating the learning experience. |
+| Curriculum | Structured modules covering quantum foundations, core concepts, gates, mathematics, and algorithms |
+| Circuit Composer | Interactive construction and simulation of quantum circuits |
+| Quantum Engine | Browser-side quantum state and gate simulation utilities |
+| State Visualization | State-vector and measurement-oriented visual exploration |
+| Bloch Sphere | Interactive 3D representation of single-qubit states |
+| Code Sandbox | Exploration of quantum programming concepts and generated code |
+| Multi-SDK Export | Circuit export support for Qiskit, PennyLane, Cirq, and OpenQASM |
+| Practice Mocks | Five module-based mocks with 10 MCQs each |
+| Learner Dashboard | Dynamic learning progress and assessment summaries |
+| AI Tutor | Context-aware explanations for concepts, circuits, code, and quiz questions |
 
 ---
 
-# How QubitLab Works
+# How It Works
 
-## 1. Start with a concept
+## 1. Learn through the curriculum
 
-The **Curriculum Explorer** organizes learning into four primary areas:
+The learning experience is organized into five areas:
 
-```text
+```
 Quantum Foundations
         ↓
 Core Concepts
         ↓
-Mathematical Foundations
+Gates & Circuits
+        ↓
+Quantum Mathematics
         ↓
 Quantum Algorithms
 ```
 
-This gives learners a structured path instead of forcing them to jump directly into advanced circuits or code.
+Each area connects theory with interactive experimentation.
 
-## 2. Build and experiment
+## 2. Build a circuit
 
-After learning a concept, the **Circuit Composer** provides a practical environment for exploring quantum operations.
+The Circuit Composer allows users to construct circuits by placing quantum gates across qubit wires and time steps.
 
-Users can connect theory to circuit behavior rather than treating gates as isolated syntax.
+The application then sends the circuit representation through the internal quantum simulation utilities.
 
-## 3. Visualize the state
+## 3. Inspect the result
 
-Quantum systems are difficult to reason about from equations alone. QubitLab therefore includes visual tools such as:
+The circuit output can be explored through:
 
-- Bloch-sphere exploration
-- State-vector visualization
-- Interactive quantum representations
+- State-vector representations
+- Measurement-oriented visualizations
+- Bloch-sphere views for individual qubits
+- Generated code for supported quantum frameworks
 
-## 4. Explore through code
+## 4. Practice with module mocks
 
-The **Quantum Code Sandbox** provides a separate space for working with quantum-programming ideas.
+Each major curriculum area has a dedicated practice mock containing **10 multiple-choice questions**.
 
-The AI assistant can be used to explain or inspect supported code interactions within the application.
+The quiz system provides:
 
-## 5. Test understanding
+- Question-by-question interaction
+- Immediate answer feedback
+- Explanations
+- Score calculation
+- Best-score tracking during the active browser session
 
-The **Quantum Quiz** provides assessment and AI-assisted help, completing the learning cycle:
+## 5. Ask for help
 
-```
-Concept → Experiment → Visualization → Assessment
-```
+The AI tutor can receive context from different parts of the application, including:
+
+- Quantum concepts
+- Circuit analysis
+- Generated code
+- Debugging requests
+- Quiz explanations
 
 ---
 
 # Architecture
 
-QubitLab uses a feature-oriented frontend architecture with shared data, types, and quantum utilities separated from presentation components.
+QubitLab uses a React-based feature architecture with shared types, structured data, reusable simulation utilities, and an Express server for API functionality.
 
 ```mermaid
 flowchart TB
-    Browser[Browser]
-    HTML[index.html]
-    Main[src/main.tsx]
-    App[src/App.tsx]
+    U[User Browser]
 
-    Browser --> HTML --> Main --> App
+    U --> V[Vite / React Application]
+    V --> A[src/App.tsx]
 
-    App --> Landing[Landing]
-    App --> Curriculum[Curriculum]
-    App --> Composer[Circuit Composer]
-    App --> Bloch[Bloch Playground]
-    App --> Sandbox[Code Sandbox]
-    App --> Quiz[Quantum Quiz]
-    App --> Dashboard[Learner Dashboard]
-    App --> Tutor[AI Tutor]
+    A --> C[Curriculum Explorer]
+    A --> CC[Circuit Composer]
+    A --> B[Bloch Playground]
+    A --> S[Quantum Code Sandbox]
+    A --> Q[Practice Mocks]
+    A --> D[Learner Dashboard]
+    A --> T[AI Tutor]
 
-    Curriculum --> Modules[Learning Modules]
-    Composer --> Engine[Quantum Engine]
-    Bloch --> Engine
-    Sandbox --> Engine
+    C --> DATA[Curriculum Data]
+    Q --> MQ[Mock Quiz Data]
 
-    App -. server/API integration .-> Server[server/index.ts]
-    Tutor -. AI integration .-> GenAI[Google GenAI]
+    CC --> QE[Quantum Engine]
+    B --> QE
+    S --> QE
+
+    D --> SS[Session Storage]
+    Q --> SS
+    A --> SS
+
+    T --> API[Express API]
+    API --> AI[Configured AI Provider]
 ```
 
-### Application entry flow
+## Frontend flow
 
-```text
+```
 index.html
     │
     ▼
@@ -160,15 +153,58 @@ src/main.tsx
     ▼
 src/App.tsx
     │
-    ├── Landing
+    ├── Navigation
     ├── Curriculum
     ├── Circuit Composer
     ├── Bloch Playground
-    ├── Quantum Sandbox
-    ├── Quiz
-    ├── Dashboard
+    ├── Code Sandbox
+    ├── Practice Mocks
+    ├── Learner Dashboard
     └── AI Tutor
 ```
+
+## Data and simulation flow
+
+```
+User interaction
+      │
+      ▼
+React component state
+      │
+      ├── Curriculum / Quiz data
+      │
+      ├── Quantum circuit model
+      │         │
+      │         ▼
+      │    Quantum Engine
+      │         │
+      │         ▼
+      │    Visualizations / Code Export
+      │
+      └── Session Storage
+                │
+                ▼
+       Restore state after reload
+       within the active browser session
+```
+
+---
+
+# Session Behavior
+
+QubitLab intentionally uses **browser session storage** for learner interaction state.
+
+This provides a practical balance between usability and privacy:
+
+| Action | Behavior |
+|---|---|
+| Open a new browser session | Starts with fresh session data |
+| Reload the application | Restores relevant in-session state |
+| Continue a quiz after reload | Current attempt can be restored |
+| Navigate between pages | Selected application state is retained |
+| Close the browser session | Session-based data is cleared according to browser behavior |
+
+Persistent user accounts and cross-device progress synchronization are not currently part of the application architecture.
 
 ---
 
@@ -179,44 +215,44 @@ Qubit_Lab/
 │
 ├── docs/
 │   └── assets/
-│       └── qubitlab-banner.svg     # README visual identity
+│       └── qubitlab-banner.svg
 │
-├── public/                         # Static assets
+├── public/
 │
 ├── server/
-│   └── index.ts                    # Server/API entry point
+│   └── index.ts                  # API and production/development server
 │
 ├── src/
 │   ├── components/
-│   │   ├── bloch/                  # Bloch sphere and qubit geometry
-│   │   ├── chat/                   # AI tutor interface
-│   │   ├── circuit/                # Circuit composition
-│   │   ├── curriculum/             # Learning experience
-│   │   │   └── modules/            # Foundations, concepts, math, algorithms
-│   │   ├── dashboard/              # Learner dashboard
-│   │   ├── landing/                # Landing experience
-│   │   ├── layout/                 # Shared layout and navigation
-│   │   ├── quiz/                   # Assessment experience
-│   │   ├── sandbox/                # Quantum code workspace
-│   │   └── visualization/          # Quantum state visualization
+│   │   ├── bloch/                # Bloch sphere features
+│   │   ├── chat/                 # AI tutor interface
+│   │   ├── circuit/              # Circuit composition
+│   │   ├── curriculum/           # Learning modules
+│   │   ├── dashboard/            # Learner progress
+│   │   ├── landing/              # Landing experience
+│   │   ├── layout/               # Navigation and shared layout
+│   │   ├── quiz/                 # Practice mock interface
+│   │   ├── sandbox/              # Quantum code workspace
+│   │   └── visualization/        # State visualization
 │   │
 │   ├── data/
-│   │   └── curriculum.ts           # Structured curriculum data
+│   │   ├── curriculum.ts         # Structured learning content
+│   │   └── mockQuizzes.ts        # 5 module mocks, 10 MCQs each
 │   │
 │   ├── types/
-│   │   └── quantum.ts              # Shared quantum TypeScript types
+│   │   └── quantum.ts            # Shared TypeScript models
 │   │
 │   ├── utils/
-│   │   └── quantumEngine.ts        # Quantum simulation utilities
+│   │   ├── progress.ts           # Session-based learner progress
+│   │   └── quantumEngine.ts      # Quantum simulation utilities
 │   │
-│   ├── App.tsx                     # Application coordinator
-│   ├── main.tsx                    # React entry point
-│   └── index.css                   # Global styles
+│   ├── App.tsx                   # Application coordinator
+│   ├── main.tsx                  # React entry point
+│   └── index.css                 # Global styling
 │
-├── index.html
 ├── package.json
-├── tsconfig.json
 ├── vite.config.ts
+├── tsconfig.json
 └── README.md
 ```
 
@@ -224,28 +260,30 @@ Qubit_Lab/
 
 # Technology Stack
 
-### Frontend
+## Frontend
 
-- **React 19** — UI and component architecture
-- **TypeScript** — Static typing
-- **Vite** — Development and build tooling
-- **Tailwind CSS** — Styling
-- **Motion** — Interface animation
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Motion
 
-### Visualization
+## Visualization
 
-- **Three.js** — 3D rendering and Bloch-sphere visualization
-- **WebGL** — Browser-side graphics through the visualization stack
+- Three.js
+- WebGL through the browser graphics stack
 
-### Backend and Tooling
+## Backend
 
-- **Express** — Server-side/API functionality
-- **tsx** — TypeScript runtime tooling
-- **esbuild** — Production server bundling
+- Express
+- tsx
+- esbuild
 
-### AI
+## AI Integration
 
-- **Google GenAI** — AI-assisted learning integration
+The server supports AI-assisted functionality through a server-side provider configuration.
+
+The frontend does not need to contain private provider credentials.
 
 ---
 
@@ -253,10 +291,8 @@ Qubit_Lab/
 
 ## Prerequisites
 
-You need:
-
-- **Node.js 18+** recommended
-- **npm**
+- Node.js 18 or newer
+- npm
 
 Verify your installation:
 
@@ -265,70 +301,39 @@ node --version
 npm --version
 ```
 
----
-
-## Step 1 — Clone the repository
+## Clone
 
 ```bash
 git clone https://github.com/chamanvashishth/Qubit_Lab.git
 cd Qubit_Lab
 ```
 
-## Step 2 — Install dependencies
+## Install dependencies
 
 ```bash
 npm install
 ```
 
-## Step 3 — Configure the environment
+## Configure optional server-side AI
 
-Create your local environment configuration and provide the required AI key:
+AI functionality requires a provider credential configured **only in the server environment**.
 
-```env
-GEMINI_API_KEY=your_api_key_here
-```
+Do not place real credentials in:
 
-If AI-assisted functionality is not configured, features depending on that key may not work.
+- README files
+- frontend source files
+- committed environment files
+- client-side configuration
 
-## Step 4 — Start development mode
+Use your deployment platform's environment-variable configuration or an untracked local environment file.
+
+## Run locally
 
 ```bash
 npm run dev
 ```
 
-Open the local URL printed in the terminal.
-
-## Step 5 — Validate TypeScript
-
-```bash
-npm run lint
-```
-
-## Step 6 — Create a production build
-
-```bash
-npm run build
-```
-
----
-
-# Environment Configuration
-
-| Variable | Purpose | Required for |
-|---|---|---|
-| `GEMINI_API_KEY` | Google GenAI authentication | AI-assisted features |
-
-### Important
-
-Never commit secrets to the repository.
-
-Do **not** publish:
-
-- API keys
-- Access tokens
-- Passwords
-- Private credentials
-- Production secrets
+Open the local address printed by the development server.
 
 ---
 
@@ -336,139 +341,153 @@ Do **not** publish:
 
 | Command | Purpose |
 |---|---|
-| `npm run dev` | Start the development server |
+| `npm run dev` | Start development mode |
 | `npm run lint` | Run TypeScript validation |
-| `npm run build` | Build the frontend and production server bundle |
+| `npm run build` | Build the frontend and server bundle |
 | `npm run start` | Run the production server |
 | `npm run clean` | Remove generated build output |
 
----
+Recommended validation before deployment:
 
-# Development Workflow
-
-A focused workflow for contributors:
-
-```text
-1. Pull the latest changes
-          ↓
-2. Create a focused branch
-          ↓
-3. Implement one coherent change
-          ↓
-4. Run validation
-          ↓
-5. Review the diff
-          ↓
-6. Commit clearly
-          ↓
-7. Open a pull request
+```bash
+npm run lint
+npm run build
 ```
 
-### Engineering principles
-
-- Prefer understandable code over clever abstractions.
-- Avoid unnecessary dependencies.
-- Keep features grouped by domain.
-- Keep reusable logic separate from UI where practical.
-- Make focused changes rather than broad unrelated rewrites.
-- Validate before pushing.
-
-The goal is not the fewest lines of code. The goal is **the simplest structure that remains maintainable**.
-
 ---
 
-# Collaborators
+# Deployment Model
 
-QubitLab is maintained with collaboration from the following repository members:
+The application runs as a combined frontend and server deployment:
 
-| Collaborator | GitHub Username |
-|---|---|
-| **Chaman Vashishth** | [@chamanvashishth](https://github.com/chamanvashishth) |
-| **Akshita Sharma** | [@asharma975565-ship-it](https://github.com/asharma975565-ship-it) |
-| **Vineet Sharma** | [@hellovneet](https://github.com/hellovneet) |
-| **Mehak Ansari** | [@mehfa1](https://github.com/mehfa1) |
-| **Narayan Mandal** | [@narayankr03-gif](https://github.com/narayankr03-gif) |
+```
+Build
+  │
+  ├── Vite builds the React frontend
+  │
+  └── esbuild bundles the server entry
+          │
+          ▼
+      Production server
+          │
+          ├── Serves static frontend
+          └── Handles API requests
+```
+
+For production deployment:
+
+1. Configure the required server environment variables in the hosting platform.
+2. Build the project.
+3. Start the production server.
+4. Verify the health/API and browser application.
+
+Never expose provider credentials through the client bundle.
 
 ---
 
 # Security
 
-Before pushing changes:
+This repository should not contain secrets or private operational data.
 
-- Check that no secret is embedded in source code.
-- Keep environment files out of version control.
-- Do not expose private keys through frontend bundles.
-- Review staged changes before committing.
-- Rotate any credential that is accidentally published.
+Before pushing changes, verify that you are not committing:
+
+- API keys
+- Access tokens
+- Passwords
+- Private URLs
+- Database credentials
+- Personal contact information
+- Production configuration files containing secrets
+
+Recommended practices:
+
+```text
+Source code        → Git repository
+Public assets      → Git repository
+Environment values → Hosting platform / local untracked configuration
+Secrets            → Never committed
+```
+
+If a credential is accidentally committed, removing it from the README or source file is not sufficient. The credential should be revoked or rotated.
 
 ---
 
-# Roadmap
+# Development Principles
 
-Potential directions for future development:
+- Keep components focused on a clear responsibility.
+- Keep structured content separate from presentation code.
+- Reuse simulation and utility logic rather than duplicating it.
+- Prefer simple, maintainable solutions over unnecessary abstractions.
+- Validate TypeScript and production builds before deployment.
+- Do not introduce persistent user data unless the product explicitly requires it.
+- Keep secrets server-side.
 
-- [ ] Additional quantum algorithms and experiments
-- [ ] More circuit operations and simulation capabilities
-- [ ] Expanded learning paths
-- [ ] Persistent learner progress
-- [ ] User authentication and profiles
-- [ ] Additional assessment and challenge modes
-- [ ] More visualization tools
-- [ ] Broader interoperability with quantum SDK ecosystems
+---
+
+# Contributors
+
+- [@chamanvashishth](https://github.com/chamanvashishth)
+- [@asharma975565-ship-it](https://github.com/asharma975565-ship-it)
+- [@hellovneet](https://github.com/hellovneet)
+- [@mehfa1](https://github.com/mehfa1)
+- [@narayankr03-gif](https://github.com/narayankr03-gif)
 
 ---
 
 # Contributing
 
-Contributions are welcome.
+1. Fork the repository.
+2. Create a focused branch.
 
-1. **Fork** the repository.
-2. Create a branch:
+```bash
+git checkout -b feature/your-change
+```
 
-   ```bash
-   git checkout -b feature/your-feature
-   ```
+3. Implement one coherent change.
+4. Validate it.
 
-3. Make focused changes.
-4. Validate the project:
+```bash
+npm run lint
+npm run build
+```
 
-   ```bash
-   npm run lint
-   npm run build
-   ```
+5. Review the diff and ensure no secrets are included.
+6. Commit with a clear message.
+7. Open a pull request describing:
+   - What changed
+   - Why it changed
+   - How it was tested
 
-5. Commit with a meaningful message:
+---
 
-   ```bash
-   git commit -m "feat: describe the change"
-   ```
+# Roadmap
 
-6. Push your branch and open a pull request.
+Potential future directions include:
 
-### Pull request expectations
-
-A good pull request should explain:
-
-- What changed
-- Why it changed
-- Which area of the application is affected
-- How the change was validated
+- Persistent authenticated learner profiles
+- Cross-device progress synchronization
+- Additional quantum algorithms
+- Expanded circuit simulation capabilities
+- More practice and challenge modes
+- Additional visualizations
+- Improved SDK interoperability
+- Automated testing coverage
 
 ---
 
 # License
 
-A license file is not currently defined in the repository.
+No explicit license is currently defined in the repository.
 
-Before formally distributing QubitLab as an open-source project, add an explicit license defining usage, modification, and distribution rights.
+Before public distribution as an open-source project, add a license file that defines usage, modification, and distribution rights.
 
 ---
 
 <div align="center">
 
-### Built for interactive quantum computing exploration.
+Built for interactive quantum computing exploration.
 
-**Learn · Build · Visualize · Experiment**
+**Learn · Build · Simulate · Visualize · Test**
 
 [Back to top](#qubitlab)
 
