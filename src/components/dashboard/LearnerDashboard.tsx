@@ -1,6 +1,6 @@
 import React from 'react';
 import { 
-  Award, CheckCircle2, Circle, TrendingUp, Sliders, 
+  Award, Circle, TrendingUp, Sliders, 
   Terminal, BookOpen, Clock, Zap, Shield, ArrowRight, Sparkles 
 } from 'lucide-react';
 
@@ -129,7 +129,7 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
                 >
                   <div className="flex items-center gap-3">
                     {isStart ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <Circle className="w-4 h-4 text-emerald-400 shrink-0" />
                     ) : isNext ? (
                       <div className="w-4 h-4 rounded-full border-2 border-cyan-400 flex items-center justify-center shrink-0">
                         <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
