@@ -1,6 +1,6 @@
 import React from 'react';
-import { 
-  Atom, BookOpen, Sliders, Layers, Terminal, 
+import {
+  BookOpen, Sliders, Layers, Terminal, 
   Award, TrendingUp, Sparkles, Home 
 } from 'lucide-react';
 
@@ -45,9 +45,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="text-base sm:text-lg font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 font-mono">
                 QUANTUM<span className="text-cyan-400">.LAB</span>
               </span>
-              <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 hidden sm:inline-block">
-                SIH '24
-              </span>
             </div>
           </div>
         </div>
@@ -74,22 +71,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Right Actions: Live Simulator Indicator & AI Copilot */}
+        {/* Right actions */}
         <div className="flex items-center gap-3">
-          {/* Simulator Active Status Pill */}
-          <div className="hidden sm:flex items-center gap-2.5 bg-slate-900/60 rounded-full px-3 py-1.5 border border-slate-800 backdrop-blur-sm">
-            <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
-            <span className="text-[10px] font-mono uppercase tracking-widest text-slate-300">
-              Simulator Active
-            </span>
-          </div>
+          {
 
           <button
             onClick={onOpenAI}
             className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs flex items-center gap-2 shadow-[0_0_15px_rgba(168,85,247,0.35)] border border-purple-400/30 transition-all active:scale-95 shrink-0"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">AI Copilot</span>
+            <span className="hidden sm:inline">AI Tutor</span>
             <span className="sm:hidden">AI Tutor</span>
           </button>
         </div>
