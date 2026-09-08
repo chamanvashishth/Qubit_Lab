@@ -55,15 +55,15 @@ export const StateVectorVisualizer: React.FC<StateVectorVisualizerProps> = ({
   return (
     <div className="space-y-6">
       {/* Dirac Statevector Header Banner */}
-      <div className="bg-[#0d1117]/60 border border-slate-800 rounded-xl p-4 backdrop-blur-sm shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
+      <div className="bg-white/[.05] border border-white/10 rounded-xl p-4 backdrop-blur-sm shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_8px_rgba(34,211,238,0.25)]">
+            <span className="p-1.5 rounded-lg bg-[#dfff3f]/10 text-[#dfff3f] border border-[#dfff3f]/20 shadow-[0_0_8px_rgba(34,211,238,0.25)]">
               <Sparkles className="w-4 h-4" />
             </span>
             <div>
-              <h4 className="text-sm font-semibold text-slate-100 font-mono">Quantum State Vector |ψ⟩</h4>
-              <p className="text-xs text-slate-400">Computational basis expansion in 2^{numQubits} = {1 << numQubits} dimensions</p>
+              <h4 className="text-sm font-semibold text-zinc-100 font-mono">Quantum State Vector |ψ⟩</h4>
+              <p className="text-xs text-zinc-400">Computational basis expansion in 2^{numQubits} = {1 << numQubits} dimensions</p>
             </div>
           </div>
 
@@ -74,21 +74,21 @@ export const StateVectorVisualizer: React.FC<StateVectorVisualizerProps> = ({
                 Entangled State
               </span>
             ) : (
-              <span className="px-2.5 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs flex items-center gap-1.5 font-medium shadow-[0_0_8px_rgba(34,211,238,0.2)]">
+              <span className="px-2.5 py-1 rounded-full bg-[#dfff3f]/15 border border-[#dfff3f]/30 text-[#e9ff8a] text-xs flex items-center gap-1.5 font-medium shadow-[0_0_8px_rgba(34,211,238,0.2)]">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 Separable Pure State
               </span>
             )}
 
-            <span className="px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-300 text-xs font-mono">
+            <span className="px-2.5 py-1 rounded-full bg-white/[.05] border border-white/10 text-zinc-300 text-xs font-mono">
               Entropy H: {(typeof entropy === 'number' && !isNaN(entropy) ? entropy : 0).toFixed(2)} bits
             </span>
           </div>
         </div>
 
         {/* Dirac mathematical representation */}
-        <div className="mt-3 p-3 rounded-lg bg-[#05070a] border border-slate-800 flex items-center justify-between overflow-x-auto">
-          <div className="font-mono text-cyan-300 text-sm tracking-wide whitespace-nowrap">
+        <div className="mt-3 p-3 rounded-lg bg-black/70 border border-white/10 flex items-center justify-between overflow-x-auto">
+          <div className="font-mono text-[#e9ff8a] text-sm tracking-wide whitespace-nowrap">
             |ψ⟩ = {simulation.diracNotation}
           </div>
         </div>
@@ -97,11 +97,11 @@ export const StateVectorVisualizer: React.FC<StateVectorVisualizerProps> = ({
       {/* Probability Amplitude Breakdown Cards */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-cyan-400" />
+          <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-1.5">
+            <Layers className="w-3.5 h-3.5 text-[#dfff3f]" />
             State Vector Amplitudes & Phase Discs
           </h4>
-          <span className="text-xs text-slate-400 font-mono">
+          <span className="text-xs text-zinc-400 font-mono">
             Σ|cᵢ|² = {(simulation.stateVector?.reduce((s, v) => s + (v.probability || 0), 0) || 0).toFixed(4)}
           </span>
         </div>
@@ -120,29 +120,29 @@ export const StateVectorVisualizer: React.FC<StateVectorVisualizerProps> = ({
                 key={sv.basis}
                 className={`p-2.5 rounded-xl border transition-all duration-200 backdrop-blur-sm ${
                   isNonZero
-                    ? 'bg-[#0d1117]/80 border-cyan-500/40 hover:border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.15)]'
-                    : 'bg-slate-900/20 border-slate-800/60 opacity-50'
+                    ? 'bg-white/[.06] border-[#dfff3f]/40 hover:border-[#e9ff8a] shadow-[0_0_12px_rgba(6,182,212,0.15)]'
+                    : 'bg-white/[.02] border-white/10 opacity-50'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="font-mono font-bold text-xs text-cyan-200">
+                  <span className="font-mono font-bold text-xs text-[#f0ffc0]">
                     |{sv.basis}⟩
                   </span>
-                  <span className="text-[10px] text-slate-400 font-mono">
+                  <span className="text-[10px] text-zinc-400 font-mono">
                     {(prob * 100).toFixed(1)}%
                   </span>
                 </div>
 
                 {/* Probability Bar with Inset Glow */}
-                <div className="w-full h-2 bg-slate-900 rounded overflow-hidden mb-2 border border-slate-800">
+                <div className="w-full h-2 bg-white/[.05] rounded overflow-hidden mb-2 border border-white/10">
                   <div
-                    className="h-full bg-cyan-500/30 border-r border-cyan-400 rounded transition-all duration-300 shadow-[inset_0_0_10px_rgba(6,182,212,0.5)]"
+                    className="h-full bg-[#dfff3f]/30 border-r border-[#e9ff8a] rounded transition-all duration-300 shadow-[inset_0_0_10px_rgba(6,182,212,0.5)]"
                     style={{ width: `${prob * 100}%` }}
                   />
                 </div>
 
                 {/* Phase Dial Mini Graphic */}
-                <div className="flex items-center justify-between pt-1 border-t border-slate-800/80 text-[10px] font-mono text-slate-400">
+                <div className="flex items-center justify-between pt-1 border-t border-white/10 text-[10px] font-mono text-zinc-400">
                   <div className="flex items-center gap-1">
                     <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 20 20">
                       <circle cx="10" cy="10" r="8" fill="none" stroke="#1e293b" strokeWidth="2" />
@@ -168,29 +168,29 @@ export const StateVectorVisualizer: React.FC<StateVectorVisualizerProps> = ({
       </div>
 
       {/* Measurement Sampling Histogram Section */}
-      <div className="bg-[#0d1117]/60 border border-slate-800 rounded-xl p-5 backdrop-blur-sm shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+      <div className="bg-white/[.05] border border-white/10 rounded-xl p-5 backdrop-blur-sm shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
           <div className="flex items-center gap-2">
             <span className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-[0_0_8px_rgba(99,102,241,0.25)]">
               <BarChart2 className="w-4 h-4" />
             </span>
             <div>
-              <h4 className="text-sm font-semibold text-slate-100 font-mono">Measurement Sampling Histogram</h4>
-              <p className="text-xs text-slate-400">Simulated detector counts over N circuit execution shots</p>
+              <h4 className="text-sm font-semibold text-zinc-100 font-mono">Measurement Sampling Histogram</h4>
+              <p className="text-xs text-zinc-400">Simulated detector counts over N circuit execution shots</p>
             </div>
           </div>
 
           {/* Shot Count Switcher & Measure Trigger */}
           <div className="flex items-center gap-2 flex-wrap">
-            <div className="flex items-center bg-slate-900/80 border border-slate-800 rounded-lg p-0.5 text-xs font-mono">
+            <div className="flex items-center bg-white/[.05] border border-white/10 rounded-lg p-0.5 text-xs font-mono">
               {[100, 500, 1024, 4096].map((shots) => (
                 <button
                   key={shots}
                   onClick={() => handleShotsChange(shots)}
                   className={`px-2.5 py-1 rounded transition-colors ${
                     selectedShots === shots
-                      ? 'bg-cyan-500 text-slate-950 font-bold shadow-[0_0_8px_rgba(34,211,238,0.5)]'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-[#dfff3f] text-slate-950 font-bold shadow-[0_0_8px_rgba(34,211,238,0.5)]'
+                      : 'text-zinc-400 hover:text-zinc-200'
                   }`}
                 >
                   {shots}
@@ -201,7 +201,7 @@ export const StateVectorVisualizer: React.FC<StateVectorVisualizerProps> = ({
             <button
               onClick={handleCollapseSimulation}
               disabled={isCollapsing}
-              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-semibold text-xs flex items-center gap-1.5 transition-all shadow-[0_0_12px_rgba(34,211,238,0.35)] active:scale-95 disabled:opacity-50"
+              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] hover:from-[#efff96] hover:to-[#ffb347] text-slate-950 font-semibold text-xs flex items-center gap-1.5 transition-all shadow-[0_0_12px_rgba(34,211,238,0.35)] active:scale-95 disabled:opacity-50"
             >
               <Play className={`w-3.5 h-3.5 ${isCollapsing ? 'animate-spin' : ''}`} />
               {isCollapsing ? 'Measuring...' : 'Measure 1 Shot'}
@@ -211,19 +211,19 @@ export const StateVectorVisualizer: React.FC<StateVectorVisualizerProps> = ({
 
         {/* Live Collapse Single-Shot Banner */}
         {collapsedState && (
-          <div className="mt-4 p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-between text-xs">
+          <div className="mt-4 p-3 rounded-lg bg-[#dfff3f]/10 border border-[#dfff3f]/30 flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span className="text-slate-200">
+              <Sparkles className="w-4 h-4 text-[#dfff3f]" />
+              <span className="text-zinc-200">
                 Single measurement collapsed wavefunction into state:
               </span>
-              <span className="font-mono font-bold text-cyan-300 text-sm bg-slate-900 px-2 py-0.5 rounded border border-cyan-500/40">
+              <span className="font-mono font-bold text-[#e9ff8a] text-sm bg-white/[.05] px-2 py-0.5 rounded border border-[#dfff3f]/40">
                 |{collapsedState}⟩
               </span>
             </div>
             <button
               onClick={() => setCollapsedState(null)}
-              className="text-slate-400 hover:text-slate-200 text-xs"
+              className="text-zinc-400 hover:text-zinc-200 text-xs"
             >
               Dismiss
             </button>
@@ -240,17 +240,17 @@ export const StateVectorVisualizer: React.FC<StateVectorVisualizerProps> = ({
             return (
               <div key={sv.basis} className="space-y-1">
                 <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="font-bold text-slate-200">|{sv.basis}⟩</span>
-                  <div className="flex items-center gap-3 text-slate-400 text-[11px]">
+                  <span className="font-bold text-zinc-200">|{sv.basis}⟩</span>
+                  <div className="flex items-center gap-3 text-zinc-400 text-[11px]">
                     <span>Observed: {count} shots ({(percentage || 0).toFixed(1)}%)</span>
-                    <span className="text-cyan-400">Theory: {(theoreticalPct || 0).toFixed(1)}%</span>
+                    <span className="text-[#dfff3f]">Theory: {(theoreticalPct || 0).toFixed(1)}%</span>
                   </div>
                 </div>
 
-                <div className="w-full h-4 bg-slate-900 rounded overflow-hidden flex relative border border-slate-800">
+                <div className="w-full h-4 bg-white/[.05] rounded overflow-hidden flex relative border border-white/10">
                   {/* Empirical Shots bar */}
                   <div
-                    className="h-full bg-cyan-500/25 border-r border-cyan-400 rounded transition-all duration-300 shadow-[inset_0_0_12px_rgba(6,182,212,0.4)]"
+                    className="h-full bg-[#dfff3f]/25 border-r border-[#e9ff8a] rounded transition-all duration-300 shadow-[inset_0_0_12px_rgba(6,182,212,0.4)]"
                     style={{ width: `${Math.max(0, Math.min(100, percentage))}%` }}
                   />
                   {/* Theoretical marker line */}
@@ -265,10 +265,10 @@ export const StateVectorVisualizer: React.FC<StateVectorVisualizerProps> = ({
           })}
         </div>
 
-        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+        <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-zinc-400">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-2 rounded-sm bg-gradient-to-r from-cyan-500 to-indigo-600 inline-block" />
+              <span className="w-3 h-2 rounded-sm bg-gradient-to-r from-[#dfff3f] to-[#4b55ff] inline-block" />
               Observed Counts (Sampling)
             </span>
             <span className="flex items-center gap-1.5">
@@ -276,7 +276,7 @@ export const StateVectorVisualizer: React.FC<StateVectorVisualizerProps> = ({
               Exact Born Rule Probability
             </span>
           </div>
-          <span className="font-mono text-slate-500">Total Shots: {simulation.totalShots}</span>
+          <span className="font-mono text-zinc-500">Total Shots: {simulation.totalShots}</span>
         </div>
       </div>
     </div>
