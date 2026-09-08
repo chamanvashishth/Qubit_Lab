@@ -76,14 +76,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-zinc-200 flex flex-col font-sans relative overflow-x-hidden template-grid">
-      {/* Background radial dot grid overlay for Immersive UI */}
-      <div
-        className="fixed inset-0 opacity-10 pointer-events-none z-0"
-        style={{
-          backgroundImage: 'radial-gradient(#1e293b 1px, transparent 1px)',
-          backgroundSize: '24px 24px',
-        }}
-      />
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="orb orb-blue w-[34rem] h-[34rem] -top-56 left-[12%] opacity-45" />
+        <div className="orb orb-orange w-[40rem] h-[40rem] -bottom-72 -right-32 opacity-40" />
+        <div className="orb orb-pink w-20 h-20 top-[42%] right-[9%] opacity-70" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,.16)_52%,rgba(0,0,0,.72)_100%)]" />
+      </div>
 
       {/* Top Navigation */}
       <Navbar
