@@ -391,7 +391,10 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
                 </div>
 
                 {/* Wire Slot Columns */}
-                <div className="flex-1 grid grid-cols-8 gap-2 relative">
+                <div
+                  className="flex-1 grid gap-2 relative"
+                  style={{ gridTemplateColumns: `repeat(${numSteps}, minmax(0, 1fr))` }}
+                >
                   {/* Background horizontal wire line */}
                   <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] bg-white/[.08] group-hover:bg-white/[.12] transition-colors z-0" />
 
