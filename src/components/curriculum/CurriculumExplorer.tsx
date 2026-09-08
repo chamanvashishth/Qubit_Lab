@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { 
   BookOpen, CheckCircle2, Circle, ChevronRight, Sparkles, 
   Clock, Award, Play, Sliders, Layers, Compass, Zap, Shield 
 } from 'lucide-react';
 import { INITIAL_CURRICULUM } from '../../data/curriculum';
-import { CurriculumModule, Submodule } from '../../types/quantum';
+import { CurriculumModule, UserProgress } from '../../types/quantum';
 import { FoundationsModule } from './modules/FoundationsModule';
 import { ConceptsModule } from './modules/ConceptsModule';
 import { MathModule } from './modules/MathModule';
@@ -12,31 +12,36 @@ import { AlgorithmsModule } from './modules/AlgorithmsModule';
 import { CircuitComposer } from '../circuit/CircuitComposer';
 
 interface CurriculumExplorerProps {
+  progress: UserProgress;
+  onToggleCompleted: (topicId: string) => void;
   onAskAIExplain?: (topic: string) => void;
   onOpenQuiz?: () => void;
 }
 
 export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
+  progress,
+  onToggleCompleted,
   onAskAIExplain,
   onOpenQuiz,
 }) => {
-  const [modules, setModules] = useState<CurriculumModule[]>(INITIAL_CURRICULUM);
-  const [selectedModuleId, setSelectedModuleId] = useState<string>(modules[0].id);
-  const [selectedSubmoduleId, setSelectedSubmoduleId] = useState<string>(modules[0].submodules[0].id);
+  const modules = useMemo<CurriculumModule[]>(() =>
+    INITIAL_CURRICULUM.map((module) => ({
+      ...module,
+      submodules: module.submodules.map((submodule) => ({
+        ...submodule,
+        completed: progress.completedTopics.includes(submodule.id),
+      })),
+    })),
+    [progress.completedTopics]
+  );
+
+  const [selectedModuleId, setSelectedModuleId] = useState<string>(INITIAL_CURRICULUM[0]?.id ?? '');
+  const [selectedSubmoduleId, setSelectedSubmoduleId] = useState<string>(INITIAL_CURRICULUM[0]?.submodules[0]?.id ?? '');
 
   const currentModule = modules.find((m) => m.id === selectedModuleId) || modules[0];
   const currentSubmodule = currentModule.submodules.find((s) => s.id === selectedSubmoduleId) || currentModule.submodules[0];
 
-  const toggleSubmoduleCompleted = (subId: string) => {
-    setModules((prev) =>
-      prev.map((m) => ({
-        ...m,
-        submodules: m.submodules.map((s) =>
-          s.id === subId ? { ...s, completed: !s.completed } : s
-        ),
-      }))
-    );
-  };
+  const toggleSubmoduleCompleted = (subId: string) => onToggleCompleted(subId);
 
   // Render the interactive laboratory corresponding to the selected topic
   const renderInteractiveLaboratory = () => {
