@@ -178,35 +178,35 @@ export default function App() {
       />
 
       {/* Footer */}
-      <footer className="w-full bg-[#05070a] border-t border-slate-800 mt-16 py-8 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-mono">
+      <footer className="w-full mt-16 py-8 relative z-10 border-t border-white/10 bg-black/45 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500 font-mono">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>
-            <span className="text-slate-200 font-bold">QUANTUM.LAB</span>
+            <div className="w-2 h-2 rounded-full bg-[#dfff3f] shadow-[0_0_12px_rgba(223,255,63,.75)]"></div>
+            <span className="text-zinc-200 font-bold">QUBITLAB</span>
           </div>
 
           <div className="flex items-center gap-6">
             <button
               onClick={() => setActiveTab('composer')}
-              className="hover:text-cyan-300 transition-colors"
+              className="hover:text-[#dfff3f] transition-colors"
             >
               Composer
             </button>
             <button
               onClick={() => setActiveTab('bloch')}
-              className="hover:text-cyan-300 transition-colors"
+              className="hover:text-[#dfff3f] transition-colors"
             >
               3D Bloch
             </button>
             <button
               onClick={() => setActiveTab('sandbox')}
-              className="hover:text-cyan-300 transition-colors"
+              className="hover:text-[#dfff3f] transition-colors"
             >
               Sandbox
             </button>
             <button
               onClick={() => setActiveTab('curriculum')}
-              className="hover:text-cyan-300 transition-colors"
+              className="hover:text-[#dfff3f] transition-colors"
             >
               Curriculum
             </button>
