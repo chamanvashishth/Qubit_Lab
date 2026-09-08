@@ -18,13 +18,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAI,
 }) => {
   const navItems = [
-    { id: 'home', label: 'Overview', icon: Home },
-    { id: 'curriculum', label: 'Curriculum', icon: BookOpen },
+    { id: 'home', label: 'Home', icon: Home },
+    { id: 'curriculum', label: 'Learn', icon: BookOpen },
     { id: 'composer', label: 'Composer', icon: Sliders },
-    { id: 'bloch', label: '3D Bloch', icon: Layers },
-    { id: 'sandbox', label: 'Sandbox', icon: Terminal },
+    { id: 'bloch', label: 'Bloch Sphere', icon: Layers },
+    { id: 'sandbox', label: 'Code', icon: Terminal },
     { id: 'quiz', label: 'Quizzes', icon: Award },
-    { id: 'dashboard', label: 'Skill Tree', icon: TrendingUp },
+    { id: 'dashboard', label: 'Learning Path', icon: TrendingUp },
   ];
 
   return (
