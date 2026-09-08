@@ -74,8 +74,8 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
         </div>
 
         <div>
-          <h3 className="text-xl font-bold text-slate-100 font-mono">QUANTUM MASTERY REPORT</h3>
-          <p className="text-xs text-slate-400 mt-1">Smart India Hackathon (SIH) Quantum Readiness Assessment</p>
+          <h3 className="text-xl font-bold text-slate-100 font-mono">QUIZ RESULTS</h3>
+          <p className="text-xs text-slate-400 mt-1">See how you did and review the concepts you practiced.</p>
         </div>
 
         <div className="p-6 rounded-xl bg-[#05070a] border border-slate-800 flex items-center justify-around">
@@ -92,7 +92,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
 
         <p className="text-xs text-slate-300 leading-relaxed">
           {percentage >= 80
-            ? "Outstanding work! You have demonstrated advanced intuition in Hilbert spaces, quantum algorithms, and gate unitaries."
+            ? "Great work. You answered many questions correctly and are building a stronger understanding of quantum concepts."
             : "Good effort! Review the interactive Bloch spheres and algorithm simulations to solidify your quantum foundation."}
         </p>
 
