@@ -111,8 +111,8 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
       const ctrl = selectedControlQubit === qubit ? (qubit === 0 ? 1 : 0) : selectedControlQubit;
       newGate.controlQubit = Math.min(ctrl, numQubits - 1);
     } else if (selectedGateType === 'SWAP') {
-      const other = qubit === 0 ? 1 : 0;
-      newGate.secondTarget = Math.min(other, numQubits - 1);
+      const other = (qubit + 1) % numQubits;
+      newGate.secondTarget = other;
     } else if (selectedGateType === 'CCNOT') {
       const controls = Array.from({ length: numQubits }, (_, index) => index)
         .filter((index) => index !== qubit)
@@ -122,6 +122,28 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
     } else if (selectedGateType === 'RX' || selectedGateType === 'RY' || selectedGateType === 'RZ') {
       newGate.param = paramAngle;
     }
+
+    const candidateWires = [
+      newGate.targetQubit,
+      newGate.controlQubit,
+      newGate.controlQubit2,
+      newGate.secondTarget,
+    ].filter((wire): wire is number => wire !== undefined);
+
+    const occupiedWires = new Set(
+      gates
+        .filter((gate) => gate.step === step)
+        .flatMap((gate) => [
+          gate.targetQubit,
+          gate.controlQubit,
+          gate.controlQubit2,
+          gate.secondTarget,
+        ].filter((wire): wire is number => wire !== undefined))
+    );
+
+    // Multi-qubit gates occupy every wire they touch. Do not allow a control
+    // or secondary target to overlap another operation in the same column.
+    if (candidateWires.some((wire) => occupiedWires.has(wire))) return;
 
     setGates((prev) => [...prev, newGate]);
   };
