@@ -69,7 +69,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
             <h3 className="text-sm font-bold text-slate-100 font-mono">QUANTUM CURRICULUM</h3>
           </div>
           <span className="text-[10px] font-mono text-cyan-300 bg-cyan-500/15 px-2 py-0.5 rounded border border-cyan-500/30">
-            SIH Roadmap
+            Learning Path
           </span>
         </div>
 
