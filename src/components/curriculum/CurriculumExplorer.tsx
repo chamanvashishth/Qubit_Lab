@@ -161,7 +161,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
         </div>
       </div>
 
-      {/* Right Content Area: Theoretical Deep-Dive & Interactive Lab */}
+      {/* Learning content and practice */}
       <div className="lg:col-span-8 space-y-6">
         {/* Submodule Header Banner */}
         <div className="bg-[#0d1117]/60 border border-slate-800 rounded-xl p-6 shadow-xl backdrop-blur-sm space-y-4">
@@ -200,7 +200,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
             </div>
           </div>
 
-          {/* Theory / Pedagogical Content */}
+          {/* Lesson content */}
           <div className="p-4 rounded-xl bg-[#05070a] border border-slate-800 text-xs sm:text-sm text-slate-300 leading-relaxed space-y-3 font-sans">
             <p>{currentSubmodule.content}</p>
 
@@ -214,7 +214,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
             <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs text-amber-200">
                 <Award className="w-4 h-4 text-amber-400" />
-                <span>Knowledge Check Available for this topic ({currentSubmodule.quiz.length} Questions)</span>
+                <span>Practice quiz available for this topic ({currentSubmodule.quiz.length} Questions)</span>
               </div>
               <button
                 onClick={onOpenQuiz}
@@ -226,14 +226,14 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
           )}
         </div>
 
-        {/* Embedded Interactive Laboratory */}
+        {/* Interactive practice */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2 font-mono">
               <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.8)]"></span>
-              Interactive Laboratory & Visual Workbench
+              Interactive Practice
             </h3>
-            <span className="text-xs text-slate-400 font-mono">Live Simulation</span>
+            <span className="text-xs text-slate-400 font-mono">Interactive</span>
           </div>
 
           {renderInteractiveLaboratory()}
