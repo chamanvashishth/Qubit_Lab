@@ -2,7 +2,8 @@ name: Deploy QubitLab to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -25,20 +26,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
+          node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --no-audit --no-fund
+
+      - name: Build static frontend
+        run: npm exec vite build
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-
-      - name: Build static frontend
-        run: npx vite build
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
