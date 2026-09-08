@@ -1,5 +1,5 @@
 name: Deploy QubitLab to GitHub Pages
-run-name: Deploy QubitLab to GitHub Pages
+run-name: Deploy QubitLab to GitHub Pages # trigger pages deployment
 
 on:
   push:
