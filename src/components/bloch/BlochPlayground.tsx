@@ -108,7 +108,7 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
           </div>
           <div>
             <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              Interactive 3D Bloch Sphere Laboratory
+              Interactive Bloch Sphere
               <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300">
                 SU(2) Qubit Geometry
               </span>
@@ -131,12 +131,12 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: 3D WebGL Canvas */}
+        {/* 3D Bloch sphere */}
         <div className="lg:col-span-7 bg-[#050914] border border-cyan-500/30 rounded-2xl p-6 shadow-2xl shadow-black/60 flex flex-col items-center">
           <div className="w-full flex items-center justify-between mb-4">
             <span className="text-xs font-mono font-bold text-cyan-400 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-              WebGL 3D Render Engine
+              3D Bloch Sphere
             </span>
             <span className="text-[11px] font-mono text-slate-400">
               Left Click + Drag to Orbit • Scroll to Zoom
