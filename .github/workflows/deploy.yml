@@ -1,4 +1,5 @@
 name: Deploy QubitLab to GitHub Pages
+run-name: GitHub Pages deployment
 
 on:
   push:
