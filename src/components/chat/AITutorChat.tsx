@@ -20,6 +20,27 @@ const DEFAULT_SUGGESTIONS = [
   "Explain Grover's amplitude amplification step-by-step",
 ];
 
+const staticGuideReply = (question: string) => {
+  const q = question.toLowerCase();
+
+  if (q.includes('hadamard') || q.includes('superposition'))
+    return "The Hadamard gate maps |0⟩ to (|0⟩ + |1⟩)/√2 and |1⟩ to (|0⟩ − |1⟩)/√2. The important point is that this creates a coherent superposition, not a classical 50/50 choice.";
+
+  if (q.includes('entangl'))
+    return "Entanglement creates correlations that cannot generally be described as independent states. Measuring one qubit can determine the correlated outcome of another, but it cannot transmit usable information faster than light.";
+
+  if (q.includes('grover'))
+    return "Grover's algorithm repeatedly amplifies the marked state's amplitude. Each iteration applies an oracle followed by inversion about the mean, gradually increasing the probability of measuring the target.";
+
+  if (q.includes('no-cloning') || q.includes('cloning'))
+    return "The No-Cloning Theorem says an unknown arbitrary quantum state cannot be copied perfectly. A universal cloning operation would violate the linearity of quantum mechanics.";
+
+  if (q.includes('qubit'))
+    return "A qubit is a normalized quantum state α|0⟩ + β|1⟩, where |α|² + |β|² = 1. Measurement returns classical outcomes with probabilities determined by those amplitudes.";
+
+  return "This GitHub Pages build is running in static mode, so the external AI service is optional. For this topic, start with the state, identify the operation being applied, then inspect how the amplitudes and measurement probabilities change.";
+};
+
 export const AITutorChat: React.FC<AITutorChatProps> = ({
   currentContext,
   isOpen,
@@ -30,7 +51,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Hi! I’m your quantum computing tutor. Ask me about qubits, gates, circuits, algorithms, or quantum code, and I’ll explain the idea step by step.",
+      content: "Hi! I’m your quantum learning guide. Ask me about qubits, gates, circuits, algorithms, or quantum code, and I’ll explain the idea step by step.",
       timestamp: Date.now(),
     },
   ]);
@@ -90,11 +111,11 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (err: any) {
       console.error('Learning Guide chat error:', err);
-      // Fallback response if API key is not configured yet
+      // GitHub Pages is static: keep the learning flow useful when no backend is configured.
       const fallbackMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        content: err?.message || "The tutor service is unavailable right now. Please try again shortly.",
+        content: staticGuideReply(textToSend),
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, fallbackMessage]);
