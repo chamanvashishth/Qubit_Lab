@@ -9,16 +9,16 @@ interface LearnerDashboardProps {
 }
 
 const SKILL_NODES = [
-  { id: '1', title: 'Qubit Basics', status: 'start here', category: 'Foundations' },
-  { id: '2', title: 'Bra-Ket Notation', status: 'start here', category: 'Math' },
-  { id: '3', title: 'Bloch Sphere', status: 'start here', category: 'Visualization' },
-  { id: '4', title: 'Single-Qubit Gates', status: 'start here', category: 'Gates' },
-  { id: '5', title: 'Bell States and Entanglement', status: 'next', category: 'Entanglement' },
-  { id: '6', title: 'Quantum Teleportation', status: 'next', category: 'Protocols' },
-  { id: '7', title: 'Deutsch-Jozsa Algorithm', status: 'next', category: 'Algorithms' },
+  { id: '1', title: 'Classical vs Quantum Computing', status: 'start here', category: 'Foundations' },
+  { id: '2', title: 'Bits vs Qubits', status: 'start here', category: 'Foundations' },
+  { id: '3', title: 'Bra-Ket Notation', status: 'start here', category: 'Foundations' },
+  { id: '4', title: 'Quantum Superposition', status: 'next', category: 'Core Concepts' },
+  { id: '5', title: 'Measurement', status: 'next', category: 'Core Concepts' },
+  { id: '6', title: 'Single-Qubit Gates', status: 'next', category: 'Gates' },
+  { id: '7', title: 'Entanglement and Bell States', status: 'next', category: 'Core Concepts' },
   { id: '8', title: 'Grover Search', status: 'later', category: 'Algorithms' },
-  { id: '9', title: 'Shor’s Algorithm', status: 'later', category: 'Algorithms' },
-  { id: '10', title: 'Quantum Error Correction', status: 'later', category: 'Error Correction' },
+  { id: '9', title: 'Quantum Fourier Transform', status: 'later', category: 'Algorithms' },
+  { id: '10', title: 'Shor’s Algorithm', status: 'later', category: 'Algorithms' },
 ];
 
 export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }) => {
