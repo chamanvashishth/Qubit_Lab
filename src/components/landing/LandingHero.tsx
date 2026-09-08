@@ -171,7 +171,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Card 1: IBM Quantum Composer */}
+          {/* Card 1: Circuit Composer */}
           <div
             onClick={() => onNavigate('composer')}
             className="group p-6 rounded-2xl bg-[#091124] border border-cyan-500/20 hover:border-cyan-400/60 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-cyan-950/40 flex flex-col justify-between"
@@ -259,7 +259,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
             </div>
           </div>
 
-          {/* Card 5: AI Quantum Copilot */}
+          {/* Card 5: AI Tutor */}
           <div
             onClick={onOpenAI}
             className="group p-6 rounded-2xl bg-[#091124] border border-sky-500/20 hover:border-sky-400/60 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-sky-950/40 flex flex-col justify-between"
@@ -281,7 +281,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
             </div>
           </div>
 
-          {/* Card 6: Mastery Quiz & SIH Readiness */}
+          {/* Card 6: Practice Quiz */}
           <div
             onClick={() => onNavigate('quiz')}
             className="group p-6 rounded-2xl bg-[#091124] border border-amber-500/20 hover:border-amber-400/60 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-amber-950/40 flex flex-col justify-between"
