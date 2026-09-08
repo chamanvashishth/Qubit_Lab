@@ -103,13 +103,13 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
       {/* Left Sidebar: Syllabus & Module Tree */}
-      <div className="lg:col-span-4 bg-[#0d1117]/60 border border-slate-800 rounded-xl p-4 shadow-xl backdrop-blur-sm space-y-4 h-fit max-h-[85vh] overflow-y-auto">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div className="lg:col-span-4 bg-white/[.05] border border-white/10 rounded-xl p-4 shadow-xl backdrop-blur-sm space-y-4 h-fit max-h-[85vh] overflow-y-auto">
+        <div className="flex items-center justify-between pb-3 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-cyan-400" />
-            <h3 className="text-sm font-bold text-slate-100 font-mono">QUANTUM CURRICULUM</h3>
+            <BookOpen className="w-5 h-5 text-[#dfff3f]" />
+            <h3 className="text-sm font-bold text-zinc-100 font-mono">QUANTUM CURRICULUM</h3>
           </div>
-          <span className="text-[10px] font-mono text-cyan-300 bg-cyan-500/15 px-2 py-0.5 rounded border border-cyan-500/30">
+          <span className="text-[10px] font-mono text-[#e9ff8a] bg-[#dfff3f]/15 px-2 py-0.5 rounded border border-[#dfff3f]/30">
             Learning Path
           </span>
         </div>
@@ -126,8 +126,8 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
                 key={mod.id}
                 className={`rounded-xl border transition-all ${
                   isSelected
-                    ? 'bg-[#0d1117]/90 border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.15)]'
-                    : 'bg-slate-900/40 border-slate-800/80 hover:border-slate-700'
+                    ? 'bg-white/[.06] border-[#dfff3f]/40 shadow-[0_0_12px_rgba(6,182,212,0.15)]'
+                    : 'bg-white/[.05]/40 border-white/10 hover:border-white/15'
                 }`}
               >
                 {/* Module Header */}
@@ -139,19 +139,19 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
                   className="p-3 cursor-pointer flex items-center justify-between"
                 >
                   <div className="flex items-center gap-2.5">
-                    <span className="w-5 h-5 rounded bg-slate-900 border border-slate-800 font-mono text-[11px] text-cyan-400 flex items-center justify-center font-bold">
+                    <span className="w-5 h-5 rounded bg-white/[.05] border border-white/10 font-mono text-[11px] text-[#dfff3f] flex items-center justify-center font-bold">
                       {idx + 1}
                     </span>
                     <div>
-                      <h4 className="text-xs font-bold text-slate-200 font-mono">{mod.title}</h4>
-                      <p className="text-[10px] text-slate-400 font-mono">
+                      <h4 className="text-xs font-bold text-zinc-200 font-mono">{mod.title}</h4>
+                      <p className="text-[10px] text-zinc-400 font-mono">
                         {completedCount}/{totalCount} Completed
                       </p>
                     </div>
                   </div>
                   <ChevronRight
-                    className={`w-4 h-4 text-slate-400 transition-transform ${
-                      isSelected ? 'rotate-90 text-cyan-400' : ''
+                    className={`w-4 h-4 text-zinc-400 transition-transform ${
+                      isSelected ? 'rotate-90 text-[#dfff3f]' : ''
                     }`}
                   />
                 </div>
@@ -167,8 +167,8 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
                           onClick={() => setSelectedSubmoduleId(sub.id)}
                           className={`p-2 rounded-lg text-xs cursor-pointer flex items-center justify-between transition-colors ${
                             isSubSelected
-                              ? 'bg-cyan-500/15 text-cyan-300 font-medium border border-cyan-500/30'
-                              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                              ? 'bg-[#dfff3f]/15 text-[#e9ff8a] font-medium border border-[#dfff3f]/30'
+                              : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[.05]'
                           }`}
                         >
                           <div className="flex items-center gap-2 truncate">
@@ -177,7 +177,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
                                 e.stopPropagation();
                                 toggleSubmoduleCompleted(sub.id);
                               }}
-                              className="text-slate-500 hover:text-cyan-400"
+                              className="text-zinc-500 hover:text-[#dfff3f]"
                             >
                               {sub.completed ? (
                                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
@@ -188,7 +188,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
                             <span className="truncate">{sub.title}</span>
                           </div>
 
-                          <span className="text-[10px] font-mono text-slate-500 shrink-0 ml-2">
+                          <span className="text-[10px] font-mono text-zinc-500 shrink-0 ml-2">
                             {sub.durationMinutes}m
                           </span>
                         </div>
@@ -205,10 +205,10 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
       {/* Learning content and practice */}
       <div className="lg:col-span-8 space-y-6">
         {/* Submodule Header Banner */}
-        <div className="bg-[#0d1117]/60 border border-slate-800 rounded-xl p-6 shadow-xl backdrop-blur-sm space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+        <div className="bg-white/[.05] border border-white/10 rounded-xl p-6 shadow-xl backdrop-blur-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
             <div>
-              <div className="flex items-center gap-2 text-xs font-mono text-cyan-400 mb-1">
+              <div className="flex items-center gap-2 text-xs font-mono text-[#dfff3f] mb-1">
                 <span>{currentModule.title}</span>
                 <span>•</span>
                 <span className="capitalize">{currentSubmodule.difficulty}</span>
@@ -222,7 +222,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors border ${
                   currentSubmodule.completed
                     ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 shadow-[0_0_8px_rgba(52,211,153,0.25)]'
-                    : 'bg-slate-900/80 text-slate-300 border-slate-700 hover:border-slate-600'
+                    : 'bg-white/[.05] text-zinc-300 border-white/15 hover:border-slate-600'
                 }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
@@ -242,11 +242,11 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
           </div>
 
           {/* Lesson content */}
-          <div className="p-4 rounded-xl bg-[#05070a] border border-slate-800 text-xs sm:text-sm text-slate-300 leading-relaxed space-y-3 font-sans">
+          <div className="p-4 rounded-xl bg-black/70 border border-white/10 text-xs sm:text-sm text-zinc-300 leading-relaxed space-y-3 font-sans">
             <p>{currentSubmodule.content}</p>
 
 {topicFormula && (
-              <div className="p-3 rounded-lg bg-slate-900/90 border border-cyan-500/25 font-mono text-xs text-cyan-300 shadow-[inset_0_0_10px_rgba(6,182,212,0.1)]">
+              <div className="p-3 rounded-lg bg-black/45 border border-[#dfff3f]/25 font-mono text-xs text-[#e9ff8a] shadow-[inset_0_0_10px_rgba(6,182,212,0.1)]">
                 Key idea: {topicFormula}
               </div>
             )}
@@ -272,11 +272,11 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
         {/* Interactive practice */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2 font-mono">
+            <h3 className="text-sm font-bold text-zinc-200 flex items-center gap-2 font-mono">
               <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.8)]"></span>
               Interactive Practice
             </h3>
-            <span className="text-xs text-slate-400 font-mono">Interactive</span>
+            <span className="text-xs text-zinc-400 font-mono">Interactive</span>
           </div>
 
           {renderInteractiveLaboratory()}
