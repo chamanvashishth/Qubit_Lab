@@ -106,9 +106,11 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
       const other = qubit === 0 ? 1 : 0;
       newGate.secondTarget = Math.min(other, numQubits - 1);
     } else if (selectedGateType === 'CCNOT') {
-      newGate.controlQubit = 0;
-      newGate.controlQubit2 = 1;
-      newGate.targetQubit = qubit;
+      const controls = Array.from({ length: numQubits }, (_, index) => index)
+        .filter((index) => index !== qubit)
+        .slice(0, 2);
+      newGate.controlQubit = controls[0];
+      newGate.controlQubit2 = controls[1];
     } else if (selectedGateType === 'RX' || selectedGateType === 'RY' || selectedGateType === 'RZ') {
       newGate.param = paramAngle;
     }
