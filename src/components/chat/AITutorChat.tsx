@@ -69,17 +69,18 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: textToSend.trim(),
+          messages: [
+            ...messages.slice(-8).map(({ role, content }) => ({ role, content })),
+            { role: 'user', content: textToSend.trim() },
+          ],
           context: currentContext || 'User is exploring the Quantum Computing Learning Platform.',
-          history: messages.slice(-8), // Keep recent conversation context
         }),
       });
 
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(`Server returned error ${response.status}`);
+        throw new Error(data.error || data.details || `Server returned error ${response.status}`);
       }
-
-      const data = await response.json();
       const assistantMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
@@ -93,7 +94,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
       const fallbackMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        content: "The tutor service is unavailable right now. Please check your connection or try again shortly.",
+        content: err?.message || "The tutor service is unavailable right now. Please try again shortly.",
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, fallbackMessage]);
