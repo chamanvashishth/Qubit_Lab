@@ -18,6 +18,7 @@ export default function App() {
   const [aiChatContext, setAiChatContext] = useState<string>('');
   const [externalPrompt, setExternalPrompt] = useState<string>('');
   const [progress, setProgress] = useState<UserProgress>(() => loadProgress());
+  const [curriculumTopicId, setCurriculumTopicId] = useState<string | undefined>();
 
   const openAIChatWithPrompt = (prompt: string, contextDescription: string) => {
     setAiChatContext(contextDescription);
@@ -88,6 +89,7 @@ export default function App() {
         {activeTab === 'curriculum' && (
           <CurriculumExplorer
             progress={progress}
+            selectedTopicId={curriculumTopicId}
             onToggleCompleted={(topicId) => setProgress((current) => toggleTopic(current, topicId))}
             onAskAIExplain={(topic) => {
               openAIChatWithPrompt(
@@ -127,7 +129,14 @@ export default function App() {
         )}
 
         {activeTab === 'dashboard' && (
-          <LearnerDashboard progress={progress} onNavigate={(tab) => setActiveTab(tab)} />
+          <LearnerDashboard
+            progress={progress}
+            onNavigate={(tab) => setActiveTab(tab)}
+            onOpenTopic={(topicId) => {
+              setCurriculumTopicId(topicId);
+              setActiveTab('curriculum');
+            }}
+          />
         )}
       </main>
 
