@@ -205,8 +205,7 @@ export const QuantumCodeSandbox: React.FC<QuantumCodeSandboxProps> = ({
     setTimeout(() => {
       let simulatedOutput = '';
       if (selectedTemplate === 'bell') {
-        simulatedOutput = `[QubitLab Quantum Runner — Backend: ${framework.toUpperCase()}_SIMULATOR_AER]
-Execution Duration: 14.2ms | Total Shots: 1024 | Qubits: 2
+        simulatedOutput = `Example output
 
 Circuit Diagram:
 q_0: ──■──H────
@@ -216,11 +215,9 @@ c: 2/══════════
 
 Measurement Histogram:
 {'00': 518 shots (50.59%), '11': 506 shots (49.41%)}
-Theoretical Purity: 1.0000 | Shannon Entropy: 0.9998 bits
-Job completed with status: SUCCESS`;
+This is an example result for the selected circuit.`;
       } else if (selectedTemplate === 'ghz') {
-        simulatedOutput = `[QubitLab Quantum Runner — Backend: ${framework.toUpperCase()}_SIMULATOR_AER]
-Execution Duration: 18.5ms | Total Shots: 1024 | Qubits: 3
+        simulatedOutput = `Example output
 
 Circuit Diagram:
 q_0: ──H──■────────
@@ -231,16 +228,13 @@ q_2: ────────X─────
 
 Measurement Histogram:
 {'000': 514 shots (50.20%), '111': 510 shots (49.80%)}
-Maximally Entangled Tripartite State Verified.
-Job completed with status: SUCCESS`;
+This example shows the two expected GHZ outcomes.`;
       } else {
-        simulatedOutput = `[QubitLab Quantum Runner — Backend: ${framework.toUpperCase()}_SIMULATOR_AER]
-Execution Duration: 22.1ms | Total Shots: 1024 | Qubits: 2
+        simulatedOutput = `Example output
 
 Measurement Histogram:
 {'11': 1024 shots (100.00%)}
-Target state |11> amplified with 100% constructive probability!
-Job completed with status: SUCCESS`;
+This example illustrates how Grover's algorithm increases the probability of the target state.`;
       }
       setOutput(simulatedOutput);
       setIsRunning(false);
@@ -263,13 +257,11 @@ Job completed with status: SUCCESS`;
           </div>
           <div>
             <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              Quantum Programming IDE & Sandbox
-              <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300">
-                Multi-SDK
-              </span>
+              Quantum Code Examples
+              
             </h3>
             <p className="text-xs text-slate-400">
-              Run Qiskit Aer, PennyLane, and Cirq scripts • Inspect circuit diagrams and shot histograms
+              Choose a framework and explore example circuits. Edit the code to experiment with the ideas.
             </p>
           </div>
         </div>
@@ -357,7 +349,7 @@ Job completed with status: SUCCESS`;
                   className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium flex items-center gap-1.5 transition-colors border border-slate-700"
                 >
                   <Bug className="w-3.5 h-3.5 text-amber-400" />
-                  AI Debugger
+                  Check Code
                 </button>
               )}
             </div>
@@ -368,7 +360,7 @@ Job completed with status: SUCCESS`;
               className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-cyan-500/25 active:scale-95 disabled:opacity-50 transition-all"
             >
               <Play className={`w-3.5 h-3.5 ${isRunning ? 'animate-spin' : ''}`} />
-              {isRunning ? 'Running Simulation...' : 'Run Simulation'}
+              {isRunning ? 'Preparing Preview...' : 'Preview Output'}
             </button>
           </div>
         </div>
@@ -379,7 +371,7 @@ Job completed with status: SUCCESS`;
             <div className="flex items-center gap-2">
               <Terminal className="w-4 h-4 text-cyan-400" />
               <span className="text-xs font-mono font-bold text-slate-300">
-                Quantum Simulation Terminal
+                Example Output
               </span>
             </div>
 
@@ -399,7 +391,7 @@ Job completed with status: SUCCESS`;
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-slate-400 py-16">
                 <Terminal className="w-8 h-8 mb-2 opacity-40 text-cyan-400" />
-                <p>Click "Run Simulation" to compile and execute on quantum simulator backend</p>
+                <p>Choose "Preview Output" to see an example result for the selected circuit.</p>
               </div>
             )}
           </div>
