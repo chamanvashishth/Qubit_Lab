@@ -62,7 +62,7 @@ app.post('/api/chat', async (req: Request, res: Response) => {
 
     const ai = getGeminiClient();
 
-    const systemInstruction = `You are the Quantum AI Copilot for QubitLab, an elite quantum computing learning platform built for the Smart India Hackathon (SIH).
+    const systemInstruction = `You are the Quantum Learning Guide for QubitLab, an elite quantum computing learning platform built for the Smart India Hackathon (SIH).
 You hold a Ph.D. in Theoretical Quantum Physics and have industry mastery in IBM Quantum Composer, Qiskit, Cirq, and PennyLane.
 Your pedagogical style is rigorous yet intuitive:
 1. Ground your answers in physical reality and linear algebra (Dirac bra-ket notation, statevectors, density matrices).
@@ -120,7 +120,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`QubitLab Quantum OS server listening on http://0.0.0.0:${PORT}`);
+    console.log(`QubitLab server listening on http://0.0.0.0:${PORT}`);
   });
 }
 
