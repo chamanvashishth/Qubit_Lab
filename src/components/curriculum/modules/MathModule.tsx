@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Compass, Binary, Layers, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
-import { C } from '../../utils/quantumEngine';
-import { Complex } from '../../types/quantum';
+import { C } from '../../../utils/quantumEngine';
+import { Complex } from '../../../types/quantum';
 
 export const MathModule: React.FC = () => {
   // Complex Argand plane state
