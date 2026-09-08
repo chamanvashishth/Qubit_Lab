@@ -57,7 +57,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-              Interactive lessons and tools for quantum computing
+              Learn quantum computing by trying things yourself
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
@@ -120,7 +120,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
             <div className="w-full flex items-center justify-between mb-2">
               <span className="text-xs font-mono font-bold text-cyan-400 flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
-                Single-Qubit Explorer
+                Try a Single Qubit
               </span>
               <span className="text-[11px] font-mono text-slate-400">|ψ⟩ = U|0⟩</span>
             </div>
@@ -163,10 +163,10 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
       <div className="space-y-6">
         <div className="text-center space-y-2 max-w-2xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-white">
-            Learn Quantum Computing Step by Step
+            Learn Quantum Computing Without the Rush
           </h2>
           <p className="text-xs sm:text-sm text-slate-400">
-            Use simple explanations and interactive tools to connect quantum theory with hands-on practice.
+            Read the idea, try it out, and see what changes.
           </p>
         </div>
 
@@ -237,7 +237,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
             </div>
           </div>
 
-          {/* Card 4: Algorithm Explorer */}
+          {/* Card 4: Explore Algorithms */}
           <div
             onClick={() => onNavigate('curriculum')}
             className="group p-6 rounded-2xl bg-[#091124] border border-emerald-500/20 hover:border-emerald-400/60 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-emerald-950/40 flex flex-col justify-between"
@@ -247,7 +247,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
                 <Zap className="w-6 h-6" />
               </div>
               <h3 className="text-base font-bold text-slate-100 group-hover:text-emerald-300 transition-colors">
-                Algorithm Explorer
+                Explore Algorithms
               </h3>
               <p className="text-xs text-slate-400 mt-2 leading-relaxed">
                 Explore well-known quantum algorithms and understand the ideas behind each step.
@@ -276,7 +276,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono text-sky-400">
-              <span>Ask the Tutor</span>
+              <span>Ask a Question</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
