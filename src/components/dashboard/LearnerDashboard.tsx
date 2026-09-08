@@ -3,13 +3,23 @@ import {
   Award, CheckCircle2, Circle, TrendingUp, Sliders,
   Terminal, BookOpen, Zap, ArrowRight, Sparkles
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { INITIAL_CURRICULUM } from '../../data/curriculum';
 import { UserProgress } from '../../types/quantum';
 
+type AppTab = 'dashboard' | 'curriculum' | 'composer' | 'bloch' | 'sandbox' | 'quiz';
+
 interface LearnerDashboardProps {
   progress: UserProgress;
-  onNavigate: (tab: 'dashboard' | 'curriculum' | 'composer' | 'bloch' | 'sandbox' | 'quiz') => void;
+  onNavigate: (tab: AppTab) => void;
 }
+
+const QUICK_ACTIONS: { tab: Exclude<AppTab, 'dashboard' | 'curriculum'>; icon: LucideIcon; title: string; description: string; color: string }[] = [
+  { tab: 'composer', icon: Sliders, title: 'Circuit Composer', description: 'Build and simulate circuits', color: 'text-cyan-400' },
+  { tab: 'bloch', icon: Award, title: 'Bloch Sphere', description: 'Explore single-qubit states', color: 'text-indigo-400' },
+  { tab: 'sandbox', icon: Terminal, title: 'Code Examples', description: 'Compare quantum SDK syntax', color: 'text-purple-400' },
+  { tab: 'quiz', icon: BookOpen, title: 'Quiz', description: 'Check your understanding', color: 'text-amber-400' },
+];
 
 export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ progress, onNavigate }) => {
   const nodes = useMemo(
@@ -130,20 +140,18 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ progress, on
           <div className="bg-[#080d1e] border border-cyan-500/20 rounded-2xl p-5 shadow-xl shadow-black/40 space-y-4">
             <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2"><Zap className="w-4 h-4 text-cyan-400" /> Start exploring</h3>
             <div className="space-y-2.5">
-              {[
-                ['composer', Sliders, 'Circuit Composer', 'Build and simulate circuits', 'text-cyan-400'],
-                ['bloch', Award, 'Bloch Sphere', 'Explore single-qubit states', 'text-indigo-400'],
-                ['sandbox', Terminal, 'Code Examples', 'Compare quantum SDK syntax', 'text-purple-400'],
-                ['quiz', BookOpen, 'Quiz', 'Check your understanding', 'text-amber-400'],
-              ].map(([tab, Icon, title, description, color]) => (
-                <button key={tab as string} onClick={() => onNavigate(tab as 'composer' | 'bloch' | 'sandbox' | 'quiz')} className="w-full p-3 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/40 text-left transition-all flex items-center justify-between group">
-                  <div className="flex items-center gap-2.5">
-                    <Icon className={`w-4 h-4 ${color}`} />
-                    <div><div className="text-xs font-bold text-slate-200">{title}</div><div className="text-[10px] text-slate-400">{description}</div></div>
-                  </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-1 transition-transform" />
-                </button>
-              ))}
+              {QUICK_ACTIONS.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <button key={action.tab} onClick={() => onNavigate(action.tab)} className="w-full p-3 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/40 text-left transition-all flex items-center justify-between group">
+                    <div className="flex items-center gap-2.5">
+                      <Icon className={`w-4 h-4 ${action.color}`} />
+                      <div><div className="text-xs font-bold text-slate-200">{action.title}</div><div className="text-[10px] text-slate-400">{action.description}</div></div>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
