@@ -16,7 +16,7 @@ interface CurriculumExplorerProps {
   selectedTopicId?: string;
   onToggleCompleted: (topicId: string) => void;
   onAskAIExplain?: (topic: string) => void;
-  onOpenQuiz?: () => void;
+  onOpenQuiz?: (quizId: string) => void;
 }
 
 export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
@@ -68,6 +68,16 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
         return null;
     }
   })();
+
+  const quizIdByModule: Record<string, string> = {
+    'mod-foundations': 'foundations',
+    'mod-concepts': 'concepts',
+    'mod-gates': 'gates',
+    'mod-math': 'math',
+    'mod-algorithms': 'algorithms',
+  };
+
+  const currentQuizId = quizIdByModule[selectedModuleId];
 
   // Render the interactive laboratory corresponding to the selected topic
   const renderInteractiveLaboratory = () => {
@@ -242,18 +252,18 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
             )}
           </div>
 
-          {/* Practice Quiz Link if available */}
-          {currentSubmodule.quiz && currentSubmodule.quiz.length > 0 && onOpenQuiz && (
-            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
+          {/* Module practice mock */}
+          {currentQuizId && onOpenQuiz && (
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-xs text-amber-200">
-                <Award className="w-4 h-4 text-amber-400" />
-                <span>Practice quiz available for this topic ({currentSubmodule.quiz.length} Questions)</span>
+                <Award className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>Practice mock available for this module (10 MCQs)</span>
               </div>
               <button
-                onClick={onOpenQuiz}
-                className="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shadow-[0_0_8px_rgba(245,158,11,0.3)]"
+                onClick={() => onOpenQuiz(currentQuizId)}
+                className="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shrink-0"
               >
-                Take Quiz
+                Start Mock
               </button>
             </div>
           )}
