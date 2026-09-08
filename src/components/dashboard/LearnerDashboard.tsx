@@ -39,7 +39,8 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ progress, on
   const totalCount = nodes.length;
   const progressPercent = totalCount ? Math.round((completedCount / totalCount) * 100) : 0;
   const nextId = nodes.find((node) => !node.completed)?.id;
-  const bestQuiz = progress.quizScores.overall ?? 0;
+  const quizScores = Object.values(progress.quizScores);
+  const bestQuiz = quizScores.length ? Math.max(...quizScores) : 0;
 
   return (
     <div className="space-y-8">
