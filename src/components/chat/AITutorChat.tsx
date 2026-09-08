@@ -30,7 +30,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Hello! I am your AI Quantum Computing Tutor, powered by Google Gemini. I can guide you through Hilbert spaces, derive circuit unitaries, debug your Qiskit/Cirq code, or explain any quantum mechanical phenomenon. What concept would you like to explore today?",
+      content: "Hi! I’m your quantum computing tutor. Ask me about qubits, gates, circuits, algorithms, or quantum code, and I’ll explain the idea step by step.",
       timestamp: Date.now(),
     },
   ]);
@@ -83,7 +83,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
       const assistantMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        content: data.reply || "I analyzed your quantum question. Feel free to ask more about gates, algorithms, or physics!",
+        content: data.reply || "I couldn’t reach the tutor service right now. Please try again in a moment.",
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
@@ -93,9 +93,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
       const fallbackMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        content: `Here is the explanation for: "${textToSend}"\n\n` +
-          `In quantum mechanics, quantum states exist as linear combinations (superpositions) in a complex Hilbert space ℂ²ⁿ. When a transformation is applied, unitary operators preserve the total Euclidean norm ⟨ψ|ψ⟩ = 1, ensuring total probability is conserved under the Born rule P(x) = |⟨x|ψ⟩|².\n\n` +
-          `*(Note: Server response completed. Configure your GEMINI_API_KEY in Settings to enable real-time Gemini 3.8 Flash live streaming!)*`,
+        content: "The tutor service is unavailable right now. Please check your connection or try again shortly.",
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, fallbackMessage]);
@@ -122,13 +120,10 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
           </div>
           <div>
             <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2 font-mono">
-              QUANTUM.AI COPILOT
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
-                Gemini
-              </span>
+              AI TUTOR
             </h3>
             <p className="text-[11px] text-slate-400 truncate max-w-[260px]">
-              {currentContext ? `Context: ${currentContext}` : 'Real-time quantum pedagogy & state evaluation'}
+              {currentContext ? `Context: ${currentContext}` : 'Ask questions and learn at your own pace'}
             </p>
           </div>
         </div>
@@ -165,7 +160,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
 
               {msg.role === 'assistant' && (
                 <div className="mt-2 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
-                  <span className="font-mono text-cyan-400/80">AI Quantum Tutor</span>
+                  <span className="font-mono text-cyan-400/80">AI Tutor</span>
                   <button
                     onClick={() => copyMessage(msg.id, msg.content)}
                     className="hover:text-slate-200 flex items-center gap-1 font-mono"
@@ -190,7 +185,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
             <div className="w-7 h-7 rounded-lg bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 flex items-center justify-center shrink-0 animate-spin">
               <RefreshCw className="w-4 h-4" />
             </div>
-            <span>Evaluating quantum state & formulating response...</span>
+            <span>Thinking...</span>
           </div>
         )}
         <div ref={messagesEndRef} />
