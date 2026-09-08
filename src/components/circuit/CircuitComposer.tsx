@@ -22,6 +22,7 @@ const GATE_PALETTE: { type: GateType; label: string; desc: string; color: string
   { type: 'S', label: 'S', desc: 'Phase gate: π/2 phase rotation', color: 'bg-indigo-500/20 text-indigo-300 border-indigo-500 hover:bg-indigo-500/30' },
   { type: 'T', label: 'T', desc: 'π/8 gate: π/4 phase rotation', color: 'bg-pink-500/20 text-pink-400 border-pink-500 hover:bg-pink-500/30' },
   { type: 'RX', label: 'Rx(θ)', desc: 'Rotation around X-axis', color: 'bg-teal-500/20 text-teal-300 border-teal-500 hover:bg-teal-500/30' },
+  { type: 'RY', label: 'Ry(θ)', desc: 'Rotation around Y-axis', color: 'bg-sky-500/20 text-sky-300 border-sky-500 hover:bg-sky-500/30' },
   { type: 'RZ', label: 'Rz(θ)', desc: 'Rotation around Z-axis', color: 'bg-violet-500/20 text-violet-300 border-violet-500 hover:bg-violet-500/30' },
   { type: 'CNOT', label: 'CX', desc: 'Controlled-NOT: Entangles 2 qubits', color: 'bg-pink-500/20 text-pink-400 border-pink-500 hover:bg-pink-500/30', isMulti: true },
   { type: 'CZ', label: 'CZ', desc: 'Controlled-Z: Entangled phase flip', color: 'bg-orange-500/20 text-orange-400 border-orange-500 hover:bg-orange-500/30', isMulti: true },
@@ -45,6 +46,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
   const [copiedFramework, setCopiedFramework] = useState<string | null>(null);
   const [selectedPreset, setSelectedPreset] = useState<string>('bell');
   const [currentScrubStep, setCurrentScrubStep] = useState<number | null>(null);
+  const [shots, setShots] = useState(1024);
 
   // Derive circuit state
   const circuitState: CircuitState = useMemo(() => ({
@@ -57,10 +59,24 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
   const simulation: SimulationResult = useMemo(() => {
     if (currentScrubStep !== null) {
       const filtered = gates.filter((g) => g.step <= currentScrubStep);
-      return simulateCircuit({ numQubits, numSteps, gates: filtered });
+      return simulateCircuit({ numQubits, numSteps, gates: filtered }, shots);
     }
-    return simulateCircuit(circuitState);
-  }, [circuitState, currentScrubStep]);
+    return simulateCircuit(circuitState, shots);
+  }, [circuitState, currentScrubStep, shots]);
+
+  const changeQubitCount = (nextCount: number) => {
+    const safeCount = Math.max(1, Math.min(5, nextCount));
+    setNumQubits(safeCount);
+    setSelectedControlQubit((current) => Math.min(current, safeCount - 1));
+    setGates((current) =>
+      current.filter((gate) =>
+        gate.targetQubit < safeCount &&
+        (gate.controlQubit === undefined || gate.controlQubit < safeCount) &&
+        (gate.controlQubit2 === undefined || gate.controlQubit2 < safeCount) &&
+        (gate.secondTarget === undefined || gate.secondTarget < safeCount)
+      )
+    );
+  };
 
   // Handle cell click in composer wire grid
   const handleSlotClick = (qubit: number, step: number) => {
@@ -71,6 +87,9 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
       setGates((prev) => prev.filter((g) => g.id !== existing.id));
       return;
     }
+
+    if ((selectedGateType === 'CNOT' || selectedGateType === 'CZ' || selectedGateType === 'SWAP') && numQubits < 2) return;
+    if (selectedGateType === 'CCNOT' && numQubits < 3) return;
 
     // Otherwise place selected gate
     const newGate: GatePlacement = {
@@ -225,7 +244,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
           <div className="flex items-center bg-slate-900/80 border border-slate-800 rounded-lg px-2 py-1 gap-2 text-xs">
             <span className="text-slate-400 font-mono">Qubits:</span>
             <button
-              onClick={() => numQubits > 1 && setNumQubits(numQubits - 1)}
+              onClick={() => changeQubitCount(numQubits - 1)}
               disabled={numQubits <= 1}
               className="w-5 h-5 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 font-bold"
             >
@@ -233,7 +252,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
             </button>
             <span className="font-mono text-cyan-300 font-bold">{numQubits}</span>
             <button
-              onClick={() => numQubits < 5 && setNumQubits(numQubits + 1)}
+              onClick={() => changeQubitCount(numQubits + 1)}
               disabled={numQubits >= 5}
               className="w-5 h-5 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 font-bold"
             >
@@ -242,7 +261,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
           </div>
 
           <button
-            onClick={() => setGates([])}
+            onClick={() => { setGates([]); setCurrentScrubStep(null); }}
             className="px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-rose-500/20 hover:text-rose-300 text-slate-300 text-xs font-medium border border-slate-700 transition-colors flex items-center gap-1.5"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -481,9 +500,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
         <StateVectorVisualizer
           simulation={simulation}
           numQubits={numQubits}
-          onResimulateShots={(shots) => {
-            // Re-simulate with requested shots
-          }}
+          onResimulateShots={setShots}
         />
       )}
 
