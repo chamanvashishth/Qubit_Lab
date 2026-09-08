@@ -120,10 +120,10 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
           </div>
           <div>
             <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2 font-mono">
-              AI TUTOR
+              QUANTUM TUTOR
             </h3>
             <p className="text-[11px] text-slate-400 truncate max-w-[260px]">
-              {currentContext ? `Context: ${currentContext}` : 'Ask questions and learn at your own pace'}
+              {currentContext ? `Context: ${currentContext}` : 'Ask anything while you work through the topic'}
             </p>
           </div>
         </div>
@@ -217,7 +217,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about circuits, unitaries, Qiskit code..."
+            placeholder="Ask about qubits, circuits, or code..."
             className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-mono"
           />
           <button
