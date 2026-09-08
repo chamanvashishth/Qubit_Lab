@@ -17,6 +17,7 @@
   html { background: var(--ink); }
   body {
     margin: 0;
+    min-height: 100vh;
     min-width: 320px;
     background:
       radial-gradient(circle at 18% 24%, rgba(75, 85, 255, 0.14), transparent 22rem),
@@ -38,9 +39,10 @@
 
 .template-grid {
   background-image:
-    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
-  background-size: 32px 32px;
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.035), transparent 28rem),
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size: auto, 48px 48px, 48px 48px;
 }
 
 .glass-panel {
@@ -92,3 +94,20 @@
   box-shadow: 0 10px 30px rgba(223,255,63,.12);
 }
 .template-button:hover { background: #edff84; transform: translateY(-1px); }
+
+
+/* Template-derived layout primitives used across the application */
+.glass-section {
+  background: linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.018));
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 30px 90px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.07);
+  backdrop-filter: blur(18px);
+}
+.glass-card:hover {
+  border-color: rgba(255,255,255,.25);
+  box-shadow: 0 22px 70px rgba(0,0,0,.34), 0 0 40px rgba(75,85,255,.07);
+}
+.glass-panel, .glass-card, .glass-section { transform: translateZ(0); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
