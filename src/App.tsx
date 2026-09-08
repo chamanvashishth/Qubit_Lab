@@ -75,7 +75,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020408] text-slate-200 flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200 font-sans relative">
+    <div className="min-h-screen bg-[#050505] text-zinc-200 flex flex-col font-sans relative overflow-x-hidden template-grid">
       {/* Background radial dot grid overlay for Immersive UI */}
       <div
         className="fixed inset-0 opacity-10 pointer-events-none z-0"
