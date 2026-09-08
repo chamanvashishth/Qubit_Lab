@@ -26,8 +26,17 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
 
-  const currentQ = allQuestions[currentIndex] || allQuestions[0];
+  if (allQuestions.length === 0) {
+    return (
+      <div className="max-w-xl mx-auto bg-[#0d1117]/60 border border-slate-800 rounded-xl p-8 text-center">
+        <BookOpen className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
+        <h3 className="text-base font-bold text-slate-100">No quiz questions are available yet.</h3>
+        <p className="text-xs text-slate-400 mt-2">Add questions to the curriculum data and they will appear here automatically.</p>
+      </div>
+    );
+  }
 
+  const currentQ = allQuestions[currentIndex];
   const correctIndex = currentQ.correctAnswer ?? currentQ.correctIndex ?? 0;
 
   const handleSelectOption = (idx: number) => {
@@ -197,7 +206,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
       {/* Action footer */}
       <div className="flex items-center justify-between pt-2">
         <span className="text-[11px] text-slate-400 font-mono">
-          Select an option and verify with unitary principles
+          Select an option, then check the explanation
         </span>
 
         {!isAnswered ? (
