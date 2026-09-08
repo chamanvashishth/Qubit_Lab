@@ -9,16 +9,16 @@ interface LearnerDashboardProps {
 }
 
 const SKILL_NODES = [
-  { id: '1', title: 'Qubit Basics', status: 'mastered', category: 'Foundations' },
-  { id: '2', title: 'Bra-Ket Dirac Math', status: 'mastered', category: 'Math' },
-  { id: '3', title: 'Bloch Sphere 3D', status: 'mastered', category: 'Visualization' },
-  { id: '4', title: 'Single Qubit Gates', status: 'mastered', category: 'Gates' },
-  { id: '5', title: 'Bell State Entanglement', status: 'in-progress', category: 'Entanglement' },
-  { id: '6', title: 'Quantum Teleportation', status: 'in-progress', category: 'Protocols' },
-  { id: '7', title: 'Deutsch-Jozsa Algorithm', status: 'in-progress', category: 'Algorithms' },
-  { id: '8', title: 'Grover Search', status: 'locked', category: 'Algorithms' },
-  { id: '9', title: 'Shor Factoring', status: 'locked', category: 'Algorithms' },
-  { id: '10', title: 'Surface Codes & QEC', status: 'locked', category: 'Fault Tolerance' },
+  { id: '1', title: 'Qubit Basics', status: 'start here', category: 'Foundations' },
+  { id: '2', title: 'Bra-Ket Notation', status: 'start here', category: 'Math' },
+  { id: '3', title: 'Bloch Sphere', status: 'start here', category: 'Visualization' },
+  { id: '4', title: 'Single-Qubit Gates', status: 'start here', category: 'Gates' },
+  { id: '5', title: 'Bell States and Entanglement', status: 'next', category: 'Entanglement' },
+  { id: '6', title: 'Quantum Teleportation', status: 'next', category: 'Protocols' },
+  { id: '7', title: 'Deutsch-Jozsa Algorithm', status: 'next', category: 'Algorithms' },
+  { id: '8', title: 'Grover Search', status: 'later', category: 'Algorithms' },
+  { id: '9', title: 'Shor’s Algorithm', status: 'later', category: 'Algorithms' },
+  { id: '10', title: 'Quantum Error Correction', status: 'later', category: 'Error Correction' },
 ];
 
 export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }) => {
@@ -42,7 +42,7 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
             </p>
           </div>
 
-          {/* Overall Readiness Score Ring */}
+          {/* Learning note */}
           <div className="flex items-center gap-4 bg-slate-950/80 border border-cyan-500/30 p-4 rounded-2xl">
             <div className="relative w-16 h-16 flex items-center justify-center">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
@@ -55,7 +55,7 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
                 />
                 <path
                   className="text-cyan-400"
-                  strokeDasharray="86, 100"
+                  strokeDasharray="0, 100"
                   strokeWidth="3.5"
                   strokeLinecap="round"
                   stroke="currentColor"
@@ -63,33 +63,33 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
               </svg>
-              <span className="absolute text-sm font-bold font-mono text-cyan-300">86%</span>
+              <span className="absolute text-sm font-bold font-mono text-cyan-300">—</span>
             </div>
             <div>
-              <div className="text-xs font-mono text-slate-400">Practice status</div>
-              <div className="text-sm font-bold text-slate-100">Keep learning</div>
-              <div className="text-[10px] text-emerald-400 font-mono">Explore the next topic</div>
+              <div className="text-xs font-mono text-slate-400">Learning</div>
+              <div className="text-sm font-bold text-slate-100">Choose a topic</div>
+              <div className="text-[10px] text-emerald-400 font-mono">This path is a suggested order</div>
             </div>
           </div>
         </div>
 
-        {/* Stats Grid */}
+        {/* What you can do */}
         <div className="mt-6 pt-6 border-t border-cyan-500/15 grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-            <span className="text-[11px] font-mono text-slate-400 block">Circuit Practice</span>
-            <span className="text-xl font-bold font-mono text-cyan-400">Build circuits</span>
+            <span className="text-[11px] font-mono text-slate-400 block">Circuits</span>
+            <span className="text-xl font-bold font-mono text-cyan-400">Create and test circuits</span>
           </div>
           <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-            <span className="text-[11px] font-mono text-slate-400 block">Measurements</span>
-            <span className="text-xl font-bold font-mono text-indigo-400">Explore results</span>
+            <span className="text-[11px] font-mono text-slate-400 block">Bloch Sphere</span>
+            <span className="text-xl font-bold font-mono text-indigo-400">Visualize qubit states</span>
           </div>
           <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
             <span className="text-[11px] font-mono text-slate-400 block">Quizzes</span>
-            <span className="text-xl font-bold font-mono text-purple-400">Test yourself</span>
+            <span className="text-xl font-bold font-mono text-purple-400">Check your understanding</span>
           </div>
           <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-            <span className="text-[11px] font-mono text-slate-400 block">Study</span>
-            <span className="text-xl font-bold font-mono text-amber-400">Learn at your pace</span>
+            <span className="text-[11px] font-mono text-slate-400 block">Code</span>
+            <span className="text-xl font-bold font-mono text-amber-400">Explore code examples</span>
           </div>
         </div>
       </div>
@@ -107,30 +107,30 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
           </div>
 
           <p className="text-xs text-slate-300 leading-relaxed">
-            Move from the basics to more advanced topics in a clear order.
+            Use this as a suggested order. Start with the basics and move forward when you feel comfortable.
           </p>
 
           {/* Node Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
             {SKILL_NODES.map((node) => {
-              const isMastered = node.status === 'mastered';
-              const isInProgress = node.status === 'in-progress';
+              const isStart = node.status === 'start here';
+              const isNext = node.status === 'next';
 
               return (
                 <div
                   key={node.id}
                   className={`p-3.5 rounded-xl border flex items-center justify-between transition-all ${
-                    isMastered
+                    isStart
                       ? 'bg-slate-950/90 border-emerald-500/40 text-slate-200 shadow-sm'
-                      : isInProgress
+                      : isNext
                       ? 'bg-cyan-950/30 border-cyan-400 text-cyan-200 shadow-md shadow-cyan-950/40'
                       : 'bg-slate-950/40 border-slate-800/80 text-slate-500 opacity-60'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    {isMastered ? (
+                    {isStart ? (
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    ) : isInProgress ? (
+                    ) : isNext ? (
                       <div className="w-4 h-4 rounded-full border-2 border-cyan-400 flex items-center justify-center shrink-0">
                         <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
                       </div>
@@ -148,9 +148,9 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
 
                   <span
                     className={`text-[10px] font-mono px-2 py-0.5 rounded capitalize ${
-                      isMastered
+                      isStart
                         ? 'bg-emerald-500/15 text-emerald-400'
-                        : isInProgress
+                        : isNext
                         ? 'bg-cyan-500/15 text-cyan-300 font-bold'
                         : 'bg-slate-900 text-slate-500'
                     }`}
@@ -196,7 +196,7 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
                   <Award className="w-4 h-4 text-indigo-400" />
                   <div>
                     <div className="text-xs font-bold text-slate-200 group-hover:text-indigo-300">
-                      3D Bloch Spheres
+                      Bloch Sphere
                     </div>
                     <div className="text-[10px] text-slate-400">Explore single-qubit states</div>
                   </div>
@@ -228,9 +228,9 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
                   <Award className="w-4 h-4 text-amber-400" />
                   <div>
                     <div className="text-xs font-bold text-slate-200 group-hover:text-amber-300">
-                      Knowledge Quiz
+                      Quiz
                     </div>
-                    <div className="text-[10px] text-slate-400">Test quantum concepts</div>
+                    <div className="text-[10px] text-slate-400">Practice key concepts</div>
                   </div>
                 </div>
                 <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-1 transition-transform" />
