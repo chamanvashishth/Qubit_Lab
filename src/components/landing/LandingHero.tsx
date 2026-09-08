@@ -57,18 +57,18 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-              Learn quantum computing by building and exploring
+              Interactive lessons and tools for quantum computing
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-              Learn Quantum Computing with{' '}
+              Learn Quantum Computing{' '}
               <span className="bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent">
-                Clear Concepts and Hands-On Practice
+                Step by Step
               </span>
             </h1>
 
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl">
-              Learn the core ideas behind quantum computing through circuits, visualizations, code examples, and guided practice. Build circuits, explore the Bloch sphere, and understand how quantum operations work.
+              Start with the basics, then explore qubits, gates, circuits, and quantum algorithms through simple explanations and interactive examples.
             </p>
 
             {/* CTAs */}
@@ -101,16 +101,16 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
             {/* Quick Metrics Bar */}
             <div className="pt-6 border-t border-slate-800/80 grid grid-cols-3 gap-4">
               <div>
-                <div className="text-xl sm:text-2xl font-bold font-mono text-cyan-400">2^N Dim</div>
-                <div className="text-[11px] text-slate-400 font-mono">Statevector simulation</div>
+                <div className="text-xl sm:text-2xl font-bold font-mono text-cyan-400">Build</div>
+                <div className="text-[11px] text-slate-400 font-mono">Create quantum circuits</div>
               </div>
               <div>
-                <div className="text-xl sm:text-2xl font-bold font-mono text-indigo-400">3D View</div>
-                <div className="text-[11px] text-slate-400 font-mono">Bloch sphere</div>
+                <div className="text-xl sm:text-2xl font-bold font-mono text-indigo-400">Explore</div>
+                <div className="text-[11px] text-slate-400 font-mono">See qubit states</div>
               </div>
               <div>
-                <div className="text-xl sm:text-2xl font-bold font-mono text-purple-400">Code Examples</div>
-                <div className="text-[11px] text-slate-400 font-mono">Qiskit, PennyLane, Cirq</div>
+                <div className="text-xl sm:text-2xl font-bold font-mono text-purple-400">Practice</div>
+                <div className="text-[11px] text-slate-400 font-mono">Learn with code examples</div>
               </div>
             </div>
           </div>
@@ -225,14 +225,14 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
                 <Terminal className="w-6 h-6" />
               </div>
               <h3 className="text-base font-bold text-slate-100 group-hover:text-purple-300 transition-colors">
-                Quantum Code Playground
+                Code Examples
               </h3>
               <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                Explore quantum code examples and understand how common frameworks describe circuits.
+                Read and edit quantum code examples from common frameworks.
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono text-purple-400">
-              <span>Open Playground</span>
+              <span>Open Code Examples</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -247,7 +247,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
                 <Zap className="w-6 h-6" />
               </div>
               <h3 className="text-base font-bold text-slate-100 group-hover:text-emerald-300 transition-colors">
-                Quantum Algorithm Simulators
+                Algorithm Explorer
               </h3>
               <p className="text-xs text-slate-400 mt-2 leading-relaxed">
                 Explore well-known quantum algorithms and understand the ideas behind each step.
