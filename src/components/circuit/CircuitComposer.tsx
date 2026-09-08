@@ -28,7 +28,7 @@ const GATE_PALETTE: { type: GateType; label: string; desc: string; color: string
   { type: 'CZ', label: 'CZ', desc: 'Controlled-Z: Entangled phase flip', color: 'bg-orange-500/20 text-orange-400 border-orange-500 hover:bg-orange-500/30', isMulti: true },
   { type: 'SWAP', label: 'SWAP', desc: 'Swaps state between two qubits', color: 'bg-rose-500/20 text-rose-400 border-rose-500 hover:bg-rose-500/30', isMulti: true },
   { type: 'CCNOT', label: 'CCX', desc: 'Toffoli: 3-qubit controlled-NOT', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500 hover:bg-yellow-500/30', isMulti: true },
-  { type: 'MEASURE', label: 'M', desc: 'Measurement: collapses wavefunction', color: 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' },
+  { type: 'MEASURE', label: 'M', desc: 'Measurement marker for exported circuits', color: 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' },
 ];
 
 export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain }) => {
@@ -221,7 +221,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
               </span>
             </h3>
             <p className="text-xs text-slate-400">
-              Interactive gate placement & unitary matrix evaluation • Live statevector collapse & Bloch sphere evolution
+              Place gates, inspect the live pre-measurement statevector, and compare Bloch-sphere evolution
             </p>
           </div>
         </div>
