@@ -194,7 +194,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
           </div>
           <div>
             <h3 className="text-base font-bold text-slate-100 flex items-center gap-2 font-mono">
-              QUANTUM.CIRCUIT STUDIO
+              CIRCUIT COMPOSER
               <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-cyan-500/15 border border-cyan-500/30 text-cyan-300">
                 Live Statevector
               </span>
@@ -316,7 +316,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
         )}
       </div>
 
-      {/* Interactive Circuit Composer Wire Grid (IBM Quantum Composer Style) */}
+      {/* Interactive circuit grid */}
       <div className="bg-[#0d1117]/60 border border-slate-800 rounded-xl p-5 shadow-2xl backdrop-blur-sm overflow-x-auto relative">
         <div
           className="absolute inset-0 opacity-10 pointer-events-none rounded-xl"
@@ -495,7 +495,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
               Single-Qubit Bloch Spheres (Reduced Density Matrix Traces)
             </h4>
             <span className="text-xs text-slate-400">
-              3D interactive WebGL • Drag with mouse to orbit
+              Interactive 3D view • Drag to rotate
             </span>
           </div>
 
@@ -562,7 +562,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.6)]" />
-                <span className="text-xs font-bold font-mono text-purple-300">Cirq (Google Quantum)</span>
+                <span className="text-xs font-bold font-mono text-purple-300">Cirq</span>
               </div>
               <button
                 onClick={() => copyCode(exportToCirq(circuitState), 'cirq')}
