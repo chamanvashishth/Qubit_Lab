@@ -1,18 +1,17 @@
 <div align="center">
 
-<img src="./docs/assets/qubitlab-banner.svg" alt="QubitLab interactive quantum computing platform" width="100%" />
+<img src="./docs/assets/qubitlab-banner.svg" alt="QubitLab banner" width="100%" />
 
 # QubitLab
 
-### An interactive platform for learning, building, visualizing, and experimenting with quantum computing.
+### An interactive quantum computing platform for learning, building, simulating, visualizing, and practicing quantum concepts.
 
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
 [![Three.js](https://img.shields.io/badge/Three.js-3D-000000?logo=three.js&logoColor=white)](https://threejs.org/)
-[![Express](https://img.shields.io/badge/Express-4-000000?logo=express&logoColor=white)](https://expressjs.com/)
 
-**[Architecture](#architecture)** · **[How it works](#how-it-works)** · **[Features](#features)** · **[Quick start](#quick-start)** · **[Contributing](#contributing)**
+[Live Application](#live-application) · [Architecture](#architecture) · [Features](#features) · [Getting Started](#getting-started) · [Contributing](#contributing)
 
 </div>
 
@@ -20,191 +19,206 @@
 
 ## Overview
 
-QubitLab is an interactive quantum computing learning environment that combines structured curriculum content, circuit construction, quantum-state visualization, code exploration, practice assessments, learner progress, and AI-assisted explanations.
+QubitLab is a browser-based quantum computing learning environment that connects theory with experimentation.
 
-The application is designed around an interactive learning loop:
+The platform combines a structured curriculum, an interactive circuit composer, a client-side quantum simulator, Bloch-sphere visualization, quantum code exploration, practice mocks, and session-based learner progress.
+
+The central learning workflow is:
 
 ```
-Learn → Build → Simulate → Visualize → Test → Improve
+Learn
+  ↓
+Build
+  ↓
+Simulate
+  ↓
+Visualize
+  ↓
+Practice
+  ↓
+Improve
 ```
 
-Instead of separating theory from experimentation, QubitLab connects concepts directly to interactive tools.
+The objective is simple: reduce the gap between reading about quantum computing and actively experimenting with it.
 
 ---
 
-## Features
+## Live Application
+
+The project is deployed as a Vite-based web application.
+
+The deployment URL is intentionally not hardcoded in this README. This avoids coupling repository documentation to a temporary or environment-specific domain.
+
+---
+
+# Features
 
 | Area | Capability |
 |---|---|
-| Curriculum | Structured modules covering quantum foundations, core concepts, gates, mathematics, and algorithms |
-| Circuit Composer | Interactive construction and simulation of quantum circuits |
-| Quantum Engine | Browser-side quantum state and gate simulation utilities |
-| State Visualization | State-vector and measurement-oriented visual exploration |
-| Bloch Sphere | Interactive 3D representation of single-qubit states |
-| Code Sandbox | Exploration of quantum programming concepts and generated code |
-| Multi-SDK Export | Circuit export support for Qiskit, PennyLane, Cirq, and OpenQASM |
-| Practice Mocks | Five module-based mocks with 10 MCQs each |
-| Learner Dashboard | Dynamic learning progress and assessment summaries |
-| AI Tutor | Context-aware explanations for concepts, circuits, code, and quiz questions |
+| Curriculum | Structured learning across quantum foundations, concepts, gates, mathematics, and algorithms |
+| Circuit Composer | Interactive quantum circuit construction |
+| Quantum Engine | Client-side state-vector simulation utilities |
+| State Analysis | Probabilities, amplitudes, phases, Dirac notation, and shot histograms |
+| Bloch Visualization | Interactive single-qubit state exploration |
+| Code Sandbox | Exploration of generated quantum code |
+| SDK Export | Qiskit, PennyLane, Cirq, and OpenQASM export |
+| Practice Mocks | Module-based MCQs with explanations and scoring |
+| Learner Dashboard | Session-based progress and learning summaries |
+| Contextual Help | Optional assistant interface with local fallback behavior |
 
 ---
 
-# How It Works
+# How QubitLab Works
 
-## 1. Learn through the curriculum
+## 1. Learn
 
-The learning experience is organized into five areas:
+The curriculum is organized into progressive areas:
 
 ```
 Quantum Foundations
         ↓
 Core Concepts
         ↓
-Gates & Circuits
+Gates and Circuits
         ↓
 Quantum Mathematics
         ↓
 Quantum Algorithms
 ```
 
-Each area connects theory with interactive experimentation.
+Content is separated from the UI so learning material can be updated without restructuring core components.
 
-## 2. Build a circuit
+---
 
-The Circuit Composer allows users to construct circuits by placing quantum gates across qubit wires and time steps.
+## 2. Build
 
-The application then sends the circuit representation through the internal quantum simulation utilities.
+The Circuit Composer lets users place operations across:
 
-## 3. Inspect the result
+- Qubit wires
+- Circuit time steps
+- Controlled operations
+- Multi-qubit operations
 
-The circuit output can be explored through:
+The placement system validates wire occupancy to reduce invalid overlaps between operations.
 
-- State-vector representations
-- Measurement-oriented visualizations
-- Bloch-sphere views for individual qubits
-- Generated code for supported quantum frameworks
+---
 
-## 4. Practice with module mocks
+## 3. Simulate
 
-Each major curriculum area has a dedicated practice mock containing **10 multiple-choice questions**.
+Circuit data is passed to the internal quantum engine:
 
-The quiz system provides:
+```
+Circuit Model
+      ↓
+Gate Ordering
+      ↓
+State-Vector Operations
+      ↓
+Probability Calculation
+      ↓
+Shot Sampling
+      ↓
+Simulation Result
+```
 
-- Question-by-question interaction
-- Immediate answer feedback
+The simulator currently operates in the browser and is intentionally constrained to a small number of qubits for practical client-side performance.
+
+---
+
+## 4. Visualize
+
+Simulation results can be explored through:
+
+- Basis-state probabilities
+- Complex amplitudes
+- Relative phase information
+- Dirac notation
+- Measurement shot histograms
+- Bloch vectors for individual qubits
+
+For multi-qubit systems, reduced single-qubit information is used for Bloch-style visualization.
+
+---
+
+## 5. Practice
+
+Practice mocks are connected to the learning modules.
+
+The quiz system supports:
+
+- Multiple-choice questions
+- Immediate interaction and feedback
 - Explanations
 - Score calculation
-- Best-score tracking during the active browser session
+- Best-score tracking during the browser session
 
-## 5. Ask for help
-
-The AI tutor can receive context from different parts of the application, including:
-
-- Quantum concepts
-- Circuit analysis
-- Generated code
-- Debugging requests
-- Quiz explanations
+The UI also protects against stale session state when quiz content changes.
 
 ---
 
 # Architecture
 
-QubitLab uses a React-based feature architecture with shared types, structured data, reusable simulation utilities, and an Express server for API functionality.
+## High-Level Architecture
 
 ```mermaid
 flowchart TB
-    U[User Browser]
+    U[User Browser] --> F[React Application]
 
-    U --> V[Vite / React Application]
-    V --> A[src/App.tsx]
+    F --> APP[Application Coordinator]
 
-    A --> C[Curriculum Explorer]
-    A --> CC[Circuit Composer]
-    A --> B[Bloch Playground]
-    A --> S[Quantum Code Sandbox]
-    A --> Q[Practice Mocks]
-    A --> D[Learner Dashboard]
-    A --> T[AI Tutor]
+    APP --> CUR[Curriculum Explorer]
+    APP --> CIR[Circuit Composer]
+    APP --> BLOCH[Bloch Playground]
+    APP --> CODE[Quantum Code Sandbox]
+    APP --> QUIZ[Practice Mocks]
+    APP --> DASH[Learner Dashboard]
+    APP --> CHAT[Contextual Help]
 
-    C --> DATA[Curriculum Data]
-    Q --> MQ[Mock Quiz Data]
+    CUR --> DATA[Curriculum Data]
+    QUIZ --> QUIZDATA[Mock Quiz Data]
 
-    CC --> QE[Quantum Engine]
-    B --> QE
-    S --> QE
+    CIR --> ENGINE[Quantum Engine]
+    BLOCH --> ENGINE
+    CODE --> ENGINE
 
-    D --> SS[Session Storage]
-    Q --> SS
-    A --> SS
+    ENGINE --> RESULT[Simulation Results]
+    RESULT --> VIS[State and Probability Visualizations]
 
-    T --> API[Express API]
-    API --> AI[Configured AI Provider]
-```
+    APP --> SESSION[Browser Session Storage]
+    QUIZ --> SESSION
+    DASH --> SESSION
 
-## Frontend flow
-
-```
-index.html
-    │
-    ▼
-src/main.tsx
-    │
-    ▼
-src/App.tsx
-    │
-    ├── Navigation
-    ├── Curriculum
-    ├── Circuit Composer
-    ├── Bloch Playground
-    ├── Code Sandbox
-    ├── Practice Mocks
-    ├── Learner Dashboard
-    └── AI Tutor
-```
-
-## Data and simulation flow
-
-```
-User interaction
-      │
-      ▼
-React component state
-      │
-      ├── Curriculum / Quiz data
-      │
-      ├── Quantum circuit model
-      │         │
-      │         ▼
-      │    Quantum Engine
-      │         │
-      │         ▼
-      │    Visualizations / Code Export
-      │
-      └── Session Storage
-                │
-                ▼
-       Restore state after reload
-       within the active browser session
+    CHAT --> OPTIONAL[Optional API Endpoint]
+    CHAT --> FALLBACK[Local Fallback Response]
 ```
 
 ---
 
-# Session Behavior
+## Application Workflow
 
-QubitLab intentionally uses **browser session storage** for learner interaction state.
+```mermaid
+sequenceDiagram
+    participant User
+    participant UI as React UI
+    participant Engine as Quantum Engine
+    participant Storage as Session Storage
 
-This provides a practical balance between usability and privacy:
+    User->>UI: Select feature or interaction
 
-| Action | Behavior |
-|---|---|
-| Open a new browser session | Starts with fresh session data |
-| Reload the application | Restores relevant in-session state |
-| Continue a quiz after reload | Current attempt can be restored |
-| Navigate between pages | Selected application state is retained |
-| Close the browser session | Session-based data is cleared according to browser behavior |
+    alt Circuit interaction
+        UI->>Engine: Submit circuit model
+        Engine->>Engine: Apply ordered gates
+        Engine-->>UI: State and measurement results
+    else Quiz interaction
+        UI->>UI: Evaluate selected answer
+        UI->>Storage: Save active-session progress
+    else Curriculum interaction
+        UI->>Storage: Save active-session learning state
+    end
 
-Persistent user accounts and cross-device progress synchronization are not currently part of the application architecture.
+    User->>UI: Reload application
+    UI->>Storage: Restore valid session state
+```
 
 ---
 
@@ -220,39 +234,39 @@ Qubit_Lab/
 ├── public/
 │
 ├── server/
-│   └── index.ts                  # API and production/development server
+│   └── index.ts
 │
 ├── src/
 │   ├── components/
-│   │   ├── bloch/                # Bloch sphere features
-│   │   ├── chat/                 # AI tutor interface
-│   │   ├── circuit/              # Circuit composition
-│   │   ├── curriculum/           # Learning modules
-│   │   ├── dashboard/            # Learner progress
-│   │   ├── landing/              # Landing experience
-│   │   ├── layout/               # Navigation and shared layout
-│   │   ├── quiz/                 # Practice mock interface
-│   │   ├── sandbox/              # Quantum code workspace
-│   │   └── visualization/        # State visualization
+│   │   ├── bloch/          # Bloch visualization
+│   │   ├── chat/           # Contextual help interface
+│   │   ├── circuit/        # Circuit construction
+│   │   ├── curriculum/     # Learning experience
+│   │   ├── dashboard/      # Learner progress
+│   │   ├── landing/        # Landing experience
+│   │   ├── layout/         # Navigation and shared layout
+│   │   ├── quiz/           # Practice mocks
+│   │   ├── sandbox/        # Quantum code exploration
+│   │   └── visualization/  # Simulation visualization
 │   │
 │   ├── data/
-│   │   ├── curriculum.ts         # Structured learning content
-│   │   └── mockQuizzes.ts        # 5 module mocks, 10 MCQs each
+│   │   ├── curriculum.ts
+│   │   └── mockQuizzes.ts
 │   │
 │   ├── types/
-│   │   └── quantum.ts            # Shared TypeScript models
+│   │   └── quantum.ts
 │   │
 │   ├── utils/
-│   │   ├── progress.ts           # Session-based learner progress
-│   │   └── quantumEngine.ts      # Quantum simulation utilities
+│   │   ├── progress.ts
+│   │   └── quantumEngine.ts
 │   │
-│   ├── App.tsx                   # Application coordinator
-│   ├── main.tsx                  # React entry point
-│   └── index.css                 # Global styling
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── index.css
 │
 ├── package.json
 ├── vite.config.ts
-├── tsconfig.json
+├── vercel.json
 └── README.md
 ```
 
@@ -271,37 +285,69 @@ Qubit_Lab/
 ## Visualization
 
 - Three.js
-- WebGL through the browser graphics stack
+- Browser WebGL capabilities
 
-## Backend
+## Simulation
 
-- Express
-- tsx
-- esbuild
+The internal quantum engine handles:
 
-## AI Integration
+- Single-qubit gates
+- Controlled operations
+- SWAP operations
+- Toffoli operations
+- State-vector evolution
+- Probability calculation
+- Monte Carlo measurement sampling
 
-The server supports AI-assisted functionality through a server-side provider configuration.
+## Code Interoperability
 
-The frontend does not need to contain private provider credentials.
+QubitLab can generate representations for:
+
+- Qiskit
+- PennyLane
+- Cirq
+- OpenQASM
+
+Generated code is intended as an educational starting point and should be validated in the target SDK environment before production use.
 
 ---
 
-# Quick Start
+# Session and Data Behavior
+
+QubitLab uses browser session storage for selected learning state and progress.
+
+| Action | Behavior |
+|---|---|
+| Open a new browser session | Starts with fresh session data |
+| Reload the application | Restores relevant valid session state |
+| Navigate between features | Preserves active-session interaction |
+| Close the session | Browser-managed session data is cleared according to browser behavior |
+
+The project does not currently implement:
+
+- User authentication
+- Cross-device synchronization
+- Persistent cloud profiles
+
+This keeps the default learning experience lightweight and avoids requiring users to create an account.
+
+---
+
+# Getting Started
 
 ## Prerequisites
 
 - Node.js 18 or newer
 - npm
 
-Verify your installation:
+Check your environment:
 
 ```bash
 node --version
 npm --version
 ```
 
-## Clone
+## Clone the repository
 
 ```bash
 git clone https://github.com/chamanvashishth/Qubit_Lab.git
@@ -314,26 +360,13 @@ cd Qubit_Lab
 npm install
 ```
 
-## Configure optional server-side AI
-
-AI functionality requires a provider credential configured **only in the server environment**.
-
-Do not place real credentials in:
-
-- README files
-- frontend source files
-- committed environment files
-- client-side configuration
-
-Use your deployment platform's environment-variable configuration or an untracked local environment file.
-
 ## Run locally
 
 ```bash
 npm run dev
 ```
 
-Open the local address printed by the development server.
+Open the local URL printed by the development server.
 
 ---
 
@@ -341,13 +374,14 @@ Open the local address printed by the development server.
 
 | Command | Purpose |
 |---|---|
-| `npm run dev` | Start development mode |
+| `npm run dev` | Start local development mode |
 | `npm run lint` | Run TypeScript validation |
-| `npm run build` | Build the frontend and server bundle |
-| `npm run start` | Run the production server |
+| `npm run build` | Build the Vite frontend |
+| `npm run build:server` | Build the frontend and server bundle |
+| `npm run start` | Run the bundled production server |
 | `npm run clean` | Remove generated build output |
 
-Recommended validation before deployment:
+Recommended validation:
 
 ```bash
 npm run lint
@@ -356,71 +390,94 @@ npm run build
 
 ---
 
-# Deployment Model
+# Deployment Architecture
 
-The application runs as a combined frontend and server deployment:
+The current frontend deployment is designed for static Vite-compatible hosting.
 
-```
-Build
-  │
-  ├── Vite builds the React frontend
-  │
-  └── esbuild bundles the server entry
-          │
-          ▼
-      Production server
-          │
-          ├── Serves static frontend
-          └── Handles API requests
+```mermaid
+flowchart LR
+    DEV[Source Repository] --> BUILD[Vite Build]
+    BUILD --> DIST[dist/ Static Output]
+    DIST --> HOST[Static Hosting Platform]
+    HOST --> USER[Browser]
+
+    USER --> APP[React Application]
+    APP --> OPTIONALAPI[Optional External API]
 ```
 
-For production deployment:
+The repository includes `vercel.json` for Vercel-compatible static deployment and SPA routing.
 
-1. Configure the required server environment variables in the hosting platform.
-2. Build the project.
-3. Start the production server.
-4. Verify the health/API and browser application.
-
-Never expose provider credentials through the client bundle.
+The application uses root asset paths for normal deployments while retaining support for a repository subpath when built inside the configured GitHub Actions environment.
 
 ---
 
-# Security
+# Security and Repository Hygiene
 
-This repository should not contain secrets or private operational data.
-
-Before pushing changes, verify that you are not committing:
+This README intentionally excludes:
 
 - API keys
 - Access tokens
 - Passwords
-- Private URLs
-- Database credentials
+- Private credentials
 - Personal contact information
-- Production configuration files containing secrets
+- Secret environment values
+- Private operational endpoints
 
-Recommended practices:
+Recommended separation:
 
 ```text
-Source code        → Git repository
-Public assets      → Git repository
-Environment values → Hosting platform / local untracked configuration
-Secrets            → Never committed
+Application source      → Git repository
+Public assets           → Git repository
+Environment configuration → Hosting platform or untracked local environment
+Secrets                 → Never committed
 ```
 
-If a credential is accidentally committed, removing it from the README or source file is not sufficient. The credential should be revoked or rotated.
+If a credential is accidentally committed, deleting it from the source is not sufficient. The credential should be revoked or rotated.
 
 ---
 
 # Development Principles
 
-- Keep components focused on a clear responsibility.
-- Keep structured content separate from presentation code.
-- Reuse simulation and utility logic rather than duplicating it.
-- Prefer simple, maintainable solutions over unnecessary abstractions.
-- Validate TypeScript and production builds before deployment.
-- Do not introduce persistent user data unless the product explicitly requires it.
-- Keep secrets server-side.
+The project follows several practical engineering principles:
+
+- Keep components focused on clear responsibilities.
+- Keep curriculum and quiz content separate from presentation.
+- Reuse simulation logic rather than duplicating it.
+- Validate persisted browser data before rendering.
+- Prefer simple solutions over unnecessary abstraction.
+- Keep secrets outside the client bundle.
+- Treat generated SDK code as exportable learning material, not automatically production-ready code.
+
+---
+
+# Known Scope Boundaries
+
+To keep the browser-based simulator practical, QubitLab is not intended to replace large-scale quantum simulation infrastructure.
+
+The current implementation is most suitable for:
+
+- Learning quantum foundations
+- Experimenting with small circuits
+- Visualizing state evolution
+- Understanding gates and entanglement
+- Practicing conceptual knowledge
+
+Large state-vector simulations grow exponentially with qubit count and require a different computational architecture.
+
+---
+
+# Roadmap
+
+Potential future improvements include:
+
+- Persistent learner profiles
+- Cross-device progress synchronization
+- Native serverless API integration
+- Additional algorithms and circuit templates
+- Expanded challenge modes
+- Automated unit and integration tests
+- Broader SDK interoperability
+- More advanced visualization modes
 
 ---
 
@@ -443,52 +500,36 @@ If a credential is accidentally committed, removing it from the README or source
 git checkout -b feature/your-change
 ```
 
-3. Implement one coherent change.
-4. Validate it.
+3. Make one coherent change.
+4. Validate the project.
 
 ```bash
 npm run lint
 npm run build
 ```
 
-5. Review the diff and ensure no secrets are included.
-6. Commit with a clear message.
-7. Open a pull request describing:
+5. Review your changes and verify that no secrets are included.
+6. Commit with a descriptive message.
+7. Open a pull request explaining:
+
    - What changed
    - Why it changed
-   - How it was tested
-
----
-
-# Roadmap
-
-Potential future directions include:
-
-- Persistent authenticated learner profiles
-- Cross-device progress synchronization
-- Additional quantum algorithms
-- Expanded circuit simulation capabilities
-- More practice and challenge modes
-- Additional visualizations
-- Improved SDK interoperability
-- Automated testing coverage
+   - How it was validated
 
 ---
 
 # License
 
-No explicit license is currently defined in the repository.
+No explicit license file is currently present in the repository.
 
-Before public distribution as an open-source project, add a license file that defines usage, modification, and distribution rights.
+Before treating the project as an open-source project with defined reuse rights, add an appropriate license.
 
 ---
 
 <div align="center">
 
-Built for interactive quantum computing exploration.
+Built for hands-on quantum computing exploration.
 
-**Learn · Build · Simulate · Visualize · Test**
-
-[Back to top](#qubitlab)
+**Learn · Build · Simulate · Visualize · Practice**
 
 </div>
