@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { 
   BookOpen, CheckCircle2, Circle, ChevronRight, Sparkles, 
   Clock, Award, Play, Sliders, Layers, Compass, Zap, Shield 
@@ -13,6 +13,7 @@ import { CircuitComposer } from '../circuit/CircuitComposer';
 
 interface CurriculumExplorerProps {
   progress: UserProgress;
+  selectedTopicId?: string;
   onToggleCompleted: (topicId: string) => void;
   onAskAIExplain?: (topic: string) => void;
   onOpenQuiz?: () => void;
@@ -20,6 +21,7 @@ interface CurriculumExplorerProps {
 
 export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
   progress,
+  selectedTopicId,
   onToggleCompleted,
   onAskAIExplain,
   onOpenQuiz,
@@ -37,6 +39,14 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
 
   const [selectedModuleId, setSelectedModuleId] = useState<string>(INITIAL_CURRICULUM[0]?.id ?? '');
   const [selectedSubmoduleId, setSelectedSubmoduleId] = useState<string>(INITIAL_CURRICULUM[0]?.submodules[0]?.id ?? '');
+
+  useEffect(() => {
+    if (!selectedTopicId) return;
+    const module = INITIAL_CURRICULUM.find((item) => item.submodules.some((topic) => topic.id === selectedTopicId));
+    if (!module) return;
+    setSelectedModuleId(module.id);
+    setSelectedSubmoduleId(selectedTopicId);
+  }, [selectedTopicId]);
 
   const currentModule = modules.find((m) => m.id === selectedModuleId) || modules[0];
   const currentSubmodule = currentModule.submodules.find((s) => s.id === selectedSubmoduleId) || currentModule.submodules[0];
