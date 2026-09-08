@@ -12,6 +12,7 @@ type AppTab = 'dashboard' | 'curriculum' | 'composer' | 'bloch' | 'sandbox' | 'q
 interface LearnerDashboardProps {
   progress: UserProgress;
   onNavigate: (tab: AppTab) => void;
+  onOpenTopic: (topicId: string) => void;
 }
 
 const QUICK_ACTIONS: { tab: Exclude<AppTab, 'dashboard' | 'curriculum'>; icon: LucideIcon; title: string; description: string; color: string }[] = [
@@ -21,7 +22,7 @@ const QUICK_ACTIONS: { tab: Exclude<AppTab, 'dashboard' | 'curriculum'>; icon: L
   { tab: 'quiz', icon: BookOpen, title: 'Quiz', description: 'Check your understanding', color: 'text-amber-400' },
 ];
 
-export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ progress, onNavigate }) => {
+export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ progress, onNavigate, onOpenTopic }) => {
   const nodes = useMemo(
     () => INITIAL_CURRICULUM.flatMap((module) =>
       module.submodules.map((topic) => ({
@@ -109,7 +110,7 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ progress, on
               return (
                 <button
                   key={node.id}
-                  onClick={() => onNavigate('curriculum')}
+                  onClick={() => onOpenTopic(node.id)}
                   className={`p-3.5 rounded-xl border flex items-center justify-between text-left transition-all ${
                     node.completed
                       ? 'bg-emerald-950/20 border-emerald-500/40 text-slate-200'
