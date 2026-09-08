@@ -18,11 +18,27 @@ export function loadProgress(): UserProgress {
     const raw = storage()?.getItem(STORAGE_KEY);
     if (!raw) return { ...DEFAULT_PROGRESS };
     const parsed = JSON.parse(raw);
+    const finiteNumber = (value: unknown, fallback: number) =>
+      typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+
+    const quizScores = parsed.quizScores && typeof parsed.quizScores === 'object'
+      ? Object.fromEntries(
+          Object.entries(parsed.quizScores)
+            .filter(([, score]) => typeof score === 'number' && Number.isFinite(score))
+            .map(([id, score]) => [id, Math.max(0, Math.min(100, Math.round(score as number)))])
+        )
+      : {};
+
     return {
       ...DEFAULT_PROGRESS,
-      ...parsed,
-      completedTopics: Array.isArray(parsed.completedTopics) ? parsed.completedTopics : [],
-      quizScores: parsed.quizScores && typeof parsed.quizScores === 'object' ? parsed.quizScores : {},
+      completedTopics: Array.isArray(parsed.completedTopics)
+        ? parsed.completedTopics.filter((id: unknown): id is string => typeof id === 'string')
+        : [],
+      quizScores,
+      savedCircuitsCount: Math.max(0, finiteNumber(parsed.savedCircuitsCount, DEFAULT_PROGRESS.savedCircuitsCount)),
+      streakDays: Math.max(0, finiteNumber(parsed.streakDays, DEFAULT_PROGRESS.streakDays)),
+      xp: Math.max(0, finiteNumber(parsed.xp, DEFAULT_PROGRESS.xp)),
+      currentLevel: typeof parsed.currentLevel === 'string' ? parsed.currentLevel : DEFAULT_PROGRESS.currentLevel,
     };
   } catch {
     return { ...DEFAULT_PROGRESS };
@@ -35,7 +51,11 @@ export function saveProgress(progress: UserProgress): UserProgress {
 }
 
 const calculateXp = (completedTopics: string[], quizScores: Record<string, number>) =>
-  completedTopics.length * 10 + Object.values(quizScores).reduce((sum, score) => sum + score, 0);
+  completedTopics.length * 10 +
+  Object.values(quizScores).reduce(
+    (sum, score) => sum + (Number.isFinite(score) ? Math.max(0, Math.min(100, score)) : 0),
+    0
+  );
 
 export function toggleTopic(progress: UserProgress, topicId: string): UserProgress {
   const completedTopics = progress.completedTopics.includes(topicId)
