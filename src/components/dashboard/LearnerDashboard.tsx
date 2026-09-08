@@ -24,7 +24,7 @@ const SKILL_NODES = [
 export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }) => {
   return (
     <div className="space-y-8">
-      {/* Top Banner: SIH Competitor Status */}
+      {/* Learning overview */}
       <div className="bg-gradient-to-r from-[#09132c] via-[#0d1c44] to-[#121638] border border-cyan-500/30 rounded-3xl p-6 lg:p-8 shadow-2xl shadow-black/60 relative overflow-hidden">
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-cyan-500/10 to-transparent pointer-events-none" />
 
@@ -32,13 +32,13 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-semibold">
               <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              Smart India Hackathon (SIH) Competitor Track
+              Learning Overview
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              Quantum Intelligence Command Center
+              Your Learning Space
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
-              Track your conceptual mastery, circuit composition experiments, and quantum algorithmic proficiency.
+              Keep your learning tools and topics in one place.
             </p>
           </div>
 
@@ -66,9 +66,9 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
               <span className="absolute text-sm font-bold font-mono text-cyan-300">86%</span>
             </div>
             <div>
-              <div className="text-xs font-mono text-slate-400">SIH Benchmark</div>
-              <div className="text-sm font-bold text-slate-100">Senior Physicist</div>
-              <div className="text-[10px] text-emerald-400 font-mono">+12% this week</div>
+              <div className="text-xs font-mono text-slate-400">Practice status</div>
+              <div className="text-sm font-bold text-slate-100">Keep learning</div>
+              <div className="text-[10px] text-emerald-400 font-mono">Explore the next topic</div>
             </div>
           </div>
         </div>
@@ -76,38 +76,38 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
         {/* Stats Grid */}
         <div className="mt-6 pt-6 border-t border-cyan-500/15 grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-            <span className="text-[11px] font-mono text-slate-400 block">Circuits Executed</span>
-            <span className="text-xl font-bold font-mono text-cyan-400">48 Circuits</span>
+            <span className="text-[11px] font-mono text-slate-400 block">Circuit Practice</span>
+            <span className="text-xl font-bold font-mono text-cyan-400">Build circuits</span>
           </div>
           <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-            <span className="text-[11px] font-mono text-slate-400 block">Detector Shots</span>
-            <span className="text-xl font-bold font-mono text-indigo-400">128,400</span>
+            <span className="text-[11px] font-mono text-slate-400 block">Measurements</span>
+            <span className="text-xl font-bold font-mono text-indigo-400">Explore results</span>
           </div>
           <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-            <span className="text-[11px] font-mono text-slate-400 block">Quizzes Passed</span>
-            <span className="text-xl font-bold font-mono text-purple-400">8 / 10</span>
+            <span className="text-[11px] font-mono text-slate-400 block">Quizzes</span>
+            <span className="text-xl font-bold font-mono text-purple-400">Test yourself</span>
           </div>
           <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-            <span className="text-[11px] font-mono text-slate-400 block">Active Study Streak</span>
-            <span className="text-xl font-bold font-mono text-amber-400">7 Days 🔥</span>
+            <span className="text-[11px] font-mono text-slate-400 block">Study</span>
+            <span className="text-xl font-bold font-mono text-amber-400">Learn at your pace</span>
           </div>
         </div>
       </div>
 
-      {/* Skill Mastery Matrix & Interactive Skill Tree */}
+      {/* Learning path */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Skill Tree Graph */}
         <div className="lg:col-span-8 bg-[#080d1e] border border-cyan-500/20 rounded-2xl p-6 shadow-xl shadow-black/40 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-cyan-500/15">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-cyan-400" />
-              <h3 className="text-base font-bold text-slate-100">Quantum Skill Tree Progression</h3>
+              <h3 className="text-base font-bold text-slate-100">Quantum Learning Path</h3>
             </div>
-            <span className="text-xs text-slate-400 font-mono">Prerequisite Graph</span>
+            <span className="text-xs text-slate-400 font-mono">Topic order</span>
           </div>
 
           <p className="text-xs text-slate-300 leading-relaxed">
-            Follow the pedagogical path from fundamental linear algebra to fault-tolerant quantum algorithms.
+            Move from the basics to more advanced topics in a clear order.
           </p>
 
           {/* Node Grid */}
@@ -163,12 +163,12 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
           </div>
         </div>
 
-        {/* Quick Actions & Recent Circuits */}
+        {/* Quick actions */}
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-[#080d1e] border border-cyan-500/20 rounded-2xl p-5 shadow-xl shadow-black/40 space-y-4">
             <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
               <Zap className="w-4 h-4 text-cyan-400" />
-              Quick Action Workbenches
+              Start exploring
             </h3>
 
             <div className="space-y-2.5">
@@ -198,7 +198,7 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
                     <div className="text-xs font-bold text-slate-200 group-hover:text-indigo-300">
                       3D Bloch Spheres
                     </div>
-                    <div className="text-[10px] text-slate-400">Single qubit trajectories</div>
+                    <div className="text-[10px] text-slate-400">Explore single-qubit states</div>
                   </div>
                 </div>
                 <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-1 transition-transform" />
@@ -214,7 +214,7 @@ export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ onNavigate }
                     <div className="text-xs font-bold text-slate-200 group-hover:text-purple-300">
                       Python Sandbox
                     </div>
-                    <div className="text-[10px] text-slate-400">Qiskit & Cirq IDE</div>
+                    <div className="text-[10px] text-slate-400">Quantum code examples</div>
                   </div>
                 </div>
                 <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-1 transition-transform" />
