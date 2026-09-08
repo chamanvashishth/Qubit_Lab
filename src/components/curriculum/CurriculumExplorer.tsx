@@ -43,6 +43,22 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
 
   const toggleSubmoduleCompleted = (subId: string) => onToggleCompleted(subId);
 
+  const topicFormula = (() => {
+    switch (selectedModuleId) {
+      case 'mod-foundations':
+      case 'mod-concepts':
+        return '|ψ⟩ = α|0⟩ + β|1⟩, with |α|² + |β|² = 1';
+      case 'mod-gates':
+        return 'U†U = I for a unitary quantum gate U';
+      case 'mod-math':
+        return '⟨ψ|ψ⟩ = 1 for a normalized quantum state';
+      case 'mod-algorithms':
+        return 'Algorithmic speedups depend on the problem structure and measurement outcome';
+      default:
+        return null;
+    }
+  })();
+
   // Render the interactive laboratory corresponding to the selected topic
   const renderInteractiveLaboratory = () => {
     if (selectedModuleId === 'mod-foundations') {
@@ -209,9 +225,11 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
           <div className="p-4 rounded-xl bg-[#05070a] border border-slate-800 text-xs sm:text-sm text-slate-300 leading-relaxed space-y-3 font-sans">
             <p>{currentSubmodule.content}</p>
 
-            <div className="p-3 rounded-lg bg-slate-900/90 border border-cyan-500/25 font-mono text-xs text-cyan-300 shadow-[inset_0_0_10px_rgba(6,182,212,0.1)]">
-              Key Formula: |ψ⟩ = α|0⟩ + β|1⟩, where α, β ∈ ℂ and |α|² + |β|² = 1
-            </div>
+{topicFormula && (
+              <div className="p-3 rounded-lg bg-slate-900/90 border border-cyan-500/25 font-mono text-xs text-cyan-300 shadow-[inset_0_0_10px_rgba(6,182,212,0.1)]">
+                Key idea: {topicFormula}
+              </div>
+            )}
           </div>
 
           {/* Practice Quiz Link if available */}
