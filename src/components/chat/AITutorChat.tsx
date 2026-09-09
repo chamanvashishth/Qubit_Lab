@@ -24,10 +24,10 @@ const getApiBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || '').replace(/\
 
 const getFriendlyError = (message?: string) => {
   if (/not configured|environment/i.test(message || '')) {
-    return 'The AI service is not configured yet. Add GEMINI_API_KEY in the Vercel project environment variables, then redeploy.';
+    return 'The AI service is not configured yet. Configure AI_GATEWAY_API_KEY for Vercel AI Gateway or GEMINI_API_KEY for direct Gemini access, then redeploy.';
   }
-  if (/provider rejected|api key|unauthenticated|permission/i.test(message || '')) {
-    return 'The AI provider rejected the server configuration. Check the GEMINI_API_KEY configured in Vercel and redeploy.';
+  if (/credential was rejected|api key|unauthenticated|permission|access denied/i.test(message || '')) {
+    return 'The AI credential was rejected. Check that your Vercel AI Gateway key is stored as AI_GATEWAY_API_KEY, then redeploy.';
   }
   return 'The AI service is temporarily unavailable. Please try again in a moment.';
 };
