@@ -4,6 +4,6 @@
   "outputDirectory": "dist",
   "installCommand": "npm install --no-audit --no-fund",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
