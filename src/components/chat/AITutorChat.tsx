@@ -23,11 +23,15 @@ const DEFAULT_SUGGESTIONS = [
 const getApiBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
 const getFriendlyError = (message?: string) => {
-  if (/not configured|environment/i.test(message || '')) {
-    return 'The AI service is not configured yet. Configure AI_GATEWAY_API_KEY for Vercel AI Gateway or GEMINI_API_KEY for direct Gemini access, then redeploy.';
+  const normalized = message || '';
+  if (/not configured|environment/i.test(normalized)) {
+    return 'The AI service is not configured on this deployment. Add a valid AI key in Vercel and redeploy.';
   }
-  if (/credential was rejected|api key|unauthenticated|permission|access denied/i.test(message || '')) {
-    return 'The AI credential was rejected. Check that your Vercel AI Gateway key is stored as AI_GATEWAY_API_KEY, then redeploy.';
+  if (/credential was rejected|api key|unauthenticated|permission|access denied|invalid.*key/i.test(normalized)) {
+    return 'The configured AI credential was rejected. Verify the key in Vercel and redeploy.';
+  }
+  if (/rate limit|quota|resource exhausted/i.test(normalized)) {
+    return 'The AI service is temporarily rate-limited. Please try again shortly.';
   }
   return 'The AI service is temporarily unavailable. Please try again in a moment.';
 };
