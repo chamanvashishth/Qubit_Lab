@@ -20,7 +20,7 @@ const DEFAULT_SUGGESTIONS = [
   "Explain Grover's amplitude amplification step-by-step",
 ];
 
-const getApiBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+const getApiBaseUrl = () => (import.meta.env.VITE_AQ.Ab8RN6LEFr-RsazooPwIOsSrGyNf-3p8obMSdBnbqpNIB3ZZXQ || '').replace(/\/$/, '');
 
 const getFriendlyError = (message?: string) => {
   if (/not configured|environment/i.test(message || '')) {
