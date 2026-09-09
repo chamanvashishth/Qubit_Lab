@@ -111,3 +111,34 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+
+/* Responsive hardening: keep dense scientific UI usable on small screens. */
+@media (max-width: 640px) {
+  html { font-size: 15px; }
+  body { overflow-x: hidden; }
+  .template-grid { background-size: auto, 32px 32px, 32px 32px; }
+  .orb-blue, .orb-orange { transform: scale(.68); transform-origin: center; }
+  button, input, select, textarea { max-width: 100%; }
+  pre, code { overflow-wrap: anywhere; }
+}
+
+.responsive-scroll-x {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.responsive-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .responsive-hide-mobile { display: none !important; }
+  .responsive-stack { flex-direction: column !important; align-items: stretch !important; }
+}
+
+@media (max-width: 480px) {
+  .gold-ring { border-width: 3px; }
+}
