@@ -19,8 +19,21 @@ const buildSystemInstruction = (context: string) =>
     .filter(Boolean)
     .join('\n');
 
+const getGatewayKey = () => {
+  const explicitGatewayKey = process.env.AI_GATEWAY_API_KEY?.trim();
+  if (explicitGatewayKey) return explicitGatewayKey;
+
+  // Backward-compatible recovery for deployments where a Vercel AI Gateway key
+  // was accidentally saved under GEMINI_API_KEY. Direct Gemini keys normally
+  // start with AIza, while Vercel gateway credentials use a different format.
+  const legacyKey = process.env.GEMINI_API_KEY?.trim();
+  if (legacyKey && !legacyKey.startsWith('AIza')) return legacyKey;
+
+  return null;
+};
+
 async function callVercelGateway(messages: IncomingMessage[], systemInstruction: string) {
-  const apiKey = process.env.AI_GATEWAY_API_KEY;
+  const apiKey = getGatewayKey();
   if (!apiKey) return null;
 
   const response = await fetch('https://ai-gateway.vercel.sh/v1/chat/completions', {
@@ -63,8 +76,9 @@ async function callVercelGateway(messages: IncomingMessage[], systemInstruction:
 }
 
 async function callGemini(messages: IncomingMessage[], systemInstruction: string) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return null;
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
+  // Do not send a Vercel AI Gateway credential to the Google Gemini API.
+  if (!apiKey || !apiKey.startsWith('AIza')) return null;
 
   const { GoogleGenAI } = await import('@google/genai');
   const ai = new GoogleGenAI({ apiKey });
@@ -130,14 +144,14 @@ export default async function handler(req: any, res: any) {
 
     // Prefer Vercel AI Gateway only when an explicit gateway credential is configured.
 // Do not use VERCEL_OIDC_TOKEN as an AI credential: it is not a substitute for AI_GATEWAY_API_KEY.
-    if (process.env.AI_GATEWAY_API_KEY) {
+    if (getGatewayKey()) {
       reply = await callVercelGateway(messages, systemInstruction);
-    } else if (process.env.GEMINI_API_KEY) {
+    } else if (process.env.GEMINI_API_KEY?.trim()?.startsWith('AIza')) {
       reply = await callGemini(messages, systemInstruction);
     } else {
       json(res, 503, {
         error: 'AI service is not configured.',
-        hint: 'Configure AI_GATEWAY_API_KEY for Vercel AI Gateway, or GEMINI_API_KEY for direct Google Gemini access.',
+        hint: 'Add a valid AI_GATEWAY_API_KEY or GEMINI_API_KEY and redeploy.',
       });
       return;
     }
@@ -157,7 +171,7 @@ export default async function handler(req: any, res: any) {
     if (status === 401 || status === 403 || /api key|unauthenticated|permission|access denied|invalid.*key/i.test(message)) {
       json(res, 502, {
         error: 'The AI credential was rejected.',
-        hint: 'For a Vercel AI Gateway key, save it as AI_GATEWAY_API_KEY. Do not save it as GEMINI_API_KEY.',
+        hint: 'The configured AI credential was rejected. Verify the key and redeploy.',
       });
       return;
     }
