@@ -54,12 +54,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onSelectTab, onOpenAI
         </div>
       </div>
 
-      <div className="lg:hidden max-w-7xl mx-auto mt-2 glass-panel rounded-xl px-2 py-1.5 overflow-x-auto">
-        <nav className="flex min-w-max gap-1">
+      <div className="lg:hidden max-w-7xl mx-auto mt-2 glass-panel rounded-xl px-2 py-1.5 overflow-x-auto responsive-scroll-x" aria-label="Primary navigation">
+        <nav className="flex min-w-max gap-1 pr-2">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = activeTab === item.id;
-            return <button key={item.id} onClick={() => onSelectTab(item.id)} className={`px-3 py-1.5 rounded-lg text-[10px] flex items-center gap-1.5 ${active ? 'bg-white/10 text-white' : 'text-zinc-500'}`}><Icon className="w-3.5 h-3.5" />{item.label}</button>;
+            return <button key={item.id} onClick={() => onSelectTab(item.id)} className={`shrink-0 min-h-9 px-3 py-1.5 rounded-lg text-[10px] flex items-center gap-1.5 ${active ? 'bg-white/10 text-white' : 'text-zinc-500'}`}><Icon className="w-3.5 h-3.5" />{item.label}</button>;
           })}
         </nav>
       </div>
