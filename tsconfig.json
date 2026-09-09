@@ -1,1 +1,16 @@
-{"compilerOptions":{"target":"ES2022","module":"ESNext","lib":["ES2022","DOM","DOM.Iterable"],"skipLibCheck":true,"moduleResolution":"bundler","isolatedModules":true,"moduleDetection":"force","jsx":"react-jsx","baseUrl":".","paths":{"@/*":["./src/*"]},"noEmit":true},"include":["src","server","vite.config.ts"]}
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": { "@/*": ["./src/*"] },
+    "noEmit": true
+  },
+  "include": ["src", "server", "api", "vite.config.ts"]
+}
