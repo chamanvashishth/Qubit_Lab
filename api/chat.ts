@@ -41,7 +41,7 @@ export default async function handler(req: any, res: any) {
     if (!apiKey) {
       json(res, 503, {
         error: 'AI service is not configured.',
-        hint: 'AQ.Ab8RN6LEFr-RsazooPwIOsSrGyNf-3p8obMSdBnbqpNIB3ZZXQ in the Vercel project environment variables and redeploy.',
+        hint: 'Set GEMINI_API_KEY in the Vercel project environment variables and redeploy.',
       });
       return;
     }
