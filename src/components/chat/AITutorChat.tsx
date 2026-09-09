@@ -20,15 +20,17 @@ const DEFAULT_SUGGESTIONS = [
   "Explain Grover's amplitude amplification step-by-step",
 ];
 
-const staticGuideReply = (question: string) =>
-  "I can still help with this question, but the live AI service is not available in this deployment. Configure the optional serverless AI endpoint to enable open-ended answers with conversation context.";
-
 const getApiBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
-const getFallbackReply = (question: string, context?: string) =>
-  context
-    ? `I couldn't reach the AI service. Your question was: "${question}". Current context: ${context}. Please try again when the AI endpoint is available.`
-    : staticGuideReply(question);
+const getFriendlyError = (message?: string) => {
+  if (/not configured|environment/i.test(message || '')) {
+    return 'The AI service is not configured yet. Add GEMINI_API_KEY in the Vercel project environment variables, then redeploy.';
+  }
+  if (/provider rejected|api key|unauthenticated|permission/i.test(message || '')) {
+    return 'The AI provider rejected the server configuration. Check the GEMINI_API_KEY configured in Vercel and redeploy.';
+  }
+  return 'The AI service is temporarily unavailable. Please try again in a moment.';
+};
 
 export const AITutorChat: React.FC<AITutorChatProps> = ({
   currentContext,
@@ -89,7 +91,9 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
 
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(data.error || data.details || `Server returned error ${response.status}`);
+        const error = new Error(data.error || data.details || `Server returned error ${response.status}`);
+        (error as Error & { status?: number }).status = response.status;
+        throw error;
       }
       const assistantMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
@@ -100,11 +104,10 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (err: any) {
       console.error('Learning Guide chat error:', err);
-      // GitHub Pages is static: keep the learning flow useful when no backend is configured.
       const fallbackMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        content: getFallbackReply(textToSend, currentContext),
+        content: getFriendlyError(err?.message),
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, fallbackMessage]);
@@ -131,10 +134,10 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
           </div>
           <div>
             <h3 className="text-sm font-bold text-zinc-100 flex items-center gap-2 font-mono">
-              QUANTUM GUIDE
+              QUBITLAB ASSISTANT
             </h3>
             <p className="text-[11px] text-zinc-400 truncate max-w-[260px]">
-              {currentContext ? `Context: ${currentContext}` : 'Ask anything while you work through the topic'}
+              {currentContext ? `Context: ${currentContext}` : 'Ask anything. I can use the current page as context when relevant.'}
             </p>
           </div>
         </div>
@@ -228,7 +231,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about qubits, circuits, or code..."
+            placeholder="Ask anything..."
             className="flex-1 px-3.5 py-2.5 rounded-xl bg-black/45 border border-white/15 text-xs text-zinc-200 placeholder-slate-500 focus:outline-none focus:border-[#dfff3f] font-mono"
           />
           <button
