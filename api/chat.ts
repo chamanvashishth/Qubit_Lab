@@ -20,7 +20,7 @@ const buildSystemInstruction = (context: string) =>
     .join('\n');
 
 async function callVercelGateway(messages: IncomingMessage[], systemInstruction: string) {
-  const apiKey = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
+  const apiKey = process.env.AI_GATEWAY_API_KEY;
   if (!apiKey) return null;
 
   const response = await fetch('https://ai-gateway.vercel.sh/v1/chat/completions', {
@@ -128,9 +128,9 @@ export default async function handler(req: any, res: any) {
 
     let reply: string | null = null;
 
-    // Prefer Vercel AI Gateway. This matches Vercel AI Gateway keys and avoids
-    // incorrectly sending a gateway credential to the Google Gemini API.
-    if (process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN) {
+    // Prefer Vercel AI Gateway only when an explicit gateway credential is configured.
+// Do not use VERCEL_OIDC_TOKEN as an AI credential: it is not a substitute for AI_GATEWAY_API_KEY.
+    if (process.env.AI_GATEWAY_API_KEY) {
       reply = await callVercelGateway(messages, systemInstruction);
     } else if (process.env.GEMINI_API_KEY) {
       reply = await callGemini(messages, systemInstruction);
