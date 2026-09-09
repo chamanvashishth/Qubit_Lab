@@ -20,26 +20,15 @@ const DEFAULT_SUGGESTIONS = [
   "Explain Grover's amplitude amplification step-by-step",
 ];
 
-const staticGuideReply = (question: string) => {
-  const q = question.toLowerCase();
+const staticGuideReply = (question: string) =>
+  "I can still help with this question, but the live AI service is not available in this deployment. Configure the optional serverless AI endpoint to enable open-ended answers with conversation context.";
 
-  if (q.includes('hadamard') || q.includes('superposition'))
-    return "The Hadamard gate maps |0⟩ to (|0⟩ + |1⟩)/√2 and |1⟩ to (|0⟩ − |1⟩)/√2. The important point is that this creates a coherent superposition, not a classical 50/50 choice.";
+const getApiBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
-  if (q.includes('entangl'))
-    return "Entanglement creates correlations that cannot generally be described as independent states. Measuring one qubit can determine the correlated outcome of another, but it cannot transmit usable information faster than light.";
-
-  if (q.includes('grover'))
-    return "Grover's algorithm repeatedly amplifies the marked state's amplitude. Each iteration applies an oracle followed by inversion about the mean, gradually increasing the probability of measuring the target.";
-
-  if (q.includes('no-cloning') || q.includes('cloning'))
-    return "The No-Cloning Theorem says an unknown arbitrary quantum state cannot be copied perfectly. A universal cloning operation would violate the linearity of quantum mechanics.";
-
-  if (q.includes('qubit'))
-    return "A qubit is a normalized quantum state α|0⟩ + β|1⟩, where |α|² + |β|² = 1. Measurement returns classical outcomes with probabilities determined by those amplitudes.";
-
-  return "This GitHub Pages build is running in static mode, so the external AI service is optional. For this topic, start with the state, identify the operation being applied, then inspect how the amplitudes and measurement probabilities change.";
-};
+const getFallbackReply = (question: string, context?: string) =>
+  context
+    ? `I couldn't reach the AI service. Your question was: "${question}". Current context: ${context}. Please try again when the AI endpoint is available.`
+    : staticGuideReply(question);
 
 export const AITutorChat: React.FC<AITutorChatProps> = ({
   currentContext,
@@ -86,7 +75,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/chat`, {
+      const response = await fetch(`${getApiBaseUrl()}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -115,7 +104,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
       const fallbackMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        content: staticGuideReply(textToSend),
+        content: getFallbackReply(textToSend, currentContext),
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, fallbackMessage]);
