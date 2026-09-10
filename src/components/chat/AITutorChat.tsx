@@ -1,9 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { 
-  Sparkles, Send, Bot, User, X, Minimize2, Maximize2, 
-  HelpCircle, Lightbulb, RefreshCw, ChevronDown, Check, Copy 
-} from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Sparkles, Send, Bot, User, X, RefreshCw, Check, Copy, BookOpen, Cpu } from 'lucide-react';
 import { ChatMessage } from '../../types/quantum';
+import { answerLocally } from '../../utils/localTutor';
 
 interface AITutorChatProps {
   currentContext?: string;
@@ -13,40 +11,19 @@ interface AITutorChatProps {
 }
 
 const DEFAULT_SUGGESTIONS = [
-  "Explain why Hadamard creates equal superposition",
-  "What is the physical meaning of the No-Cloning Theorem?",
-  "How does phase kickback work in quantum algorithms?",
-  "Does quantum entanglement allow faster-than-light communication?",
-  "Explain Grover's amplitude amplification step-by-step",
+  'Explain why Hadamard creates equal superposition',
+  'What is the physical meaning of the No-Cloning Theorem?',
+  'How does phase kickback work?',
+  'Does entanglement allow faster-than-light communication?',
+  'Explain Grover amplitude amplification step-by-step',
 ];
 
-const getApiBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
-
-const getFriendlyError = (message?: string) => {
-  const normalized = message || '';
-  if (/not configured|environment/i.test(normalized)) {
-    return 'The AI service is not configured on this deployment. Add a valid AI key in Vercel and redeploy.';
-  }
-  if (/credential was rejected|api key|unauthenticated|permission|access denied|invalid.*key/i.test(normalized)) {
-    return 'The configured AI credential was rejected. Verify the key in Vercel and redeploy.';
-  }
-  if (/rate limit|quota|resource exhausted/i.test(normalized)) {
-    return 'The AI service is temporarily rate-limited. Please try again shortly.';
-  }
-  return 'The AI service is temporarily unavailable. Please try again in a moment.';
-};
-
-export const AITutorChat: React.FC<AITutorChatProps> = ({
-  currentContext,
-  isOpen,
-  onClose,
-  externalPrompt,
-}) => {
+export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen, onClose, externalPrompt }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Hi! I’m your quantum learning guide. Ask me about qubits, gates, circuits, algorithms, or quantum code, and I’ll explain the idea step by step.",
+      content: 'Hi. I’m the local QubitLab Guide. I work offline from the built-in syllabus and knowledge base, so I do not need an API key or network request.',
       timestamp: Date.now(),
     },
   ]);
@@ -54,11 +31,12 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastExternalPrompt = useRef('');
 
-  // Auto-fill external prompt if provided
   useEffect(() => {
-    if (externalPrompt) {
-      sendMessage(externalPrompt);
+    if (externalPrompt && externalPrompt !== lastExternalPrompt.current) {
+      lastExternalPrompt.current = externalPrompt;
+      void sendMessage(externalPrompt);
     }
   }, [externalPrompt]);
 
@@ -67,184 +45,90 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({
   }, [messages, isLoading]);
 
   const sendMessage = async (textToSend: string) => {
-    if (!textToSend.trim() || isLoading) return;
+    const text = textToSend.trim();
+    if (!text || isLoading) return;
 
-    const userMessage: ChatMessage = {
-      id: `user-${Date.now()}`,
-      role: 'user',
-      content: textToSend.trim(),
-      timestamp: Date.now(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+    const now = Date.now();
+    setMessages((prev) => [...prev, { id: `user-${now}`, role: 'user', content: text, timestamp: now }]);
     setInput('');
     setIsLoading(true);
 
-    try {
-      const response = await fetch(`${getApiBaseUrl()}/api/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [
-            ...messages.slice(-8).map(({ role, content }) => ({ role, content })),
-            { role: 'user', content: textToSend.trim() },
-          ],
-          context: currentContext || 'User is exploring the Quantum Computing Learning Platform.',
-        }),
-      });
-
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        const error = new Error(data.error || data.details || `Server returned error ${response.status}`);
-        (error as Error & { status?: number }).status = response.status;
-        throw error;
-      }
-      const assistantMessage: ChatMessage = {
-        id: `assistant-${Date.now()}`,
-        role: 'assistant',
-        content: data.reply || "I couldn’t reach the tutor service right now. Please try again in a moment.",
-        timestamp: Date.now(),
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-    } catch (err: any) {
-      console.error('Learning Guide chat error:', err);
-      const fallbackMessage: ChatMessage = {
-        id: `assistant-${Date.now()}`,
-        role: 'assistant',
-        content: getFriendlyError(err?.message),
-        timestamp: Date.now(),
-      };
-      setMessages((prev) => [...prev, fallbackMessage]);
-    } finally {
-      setIsLoading(false);
-    }
+    // Keep the UI responsive while still doing all reasoning locally.
+    await new Promise<void>((resolve) => window.setTimeout(resolve, 120));
+    const reply = answerLocally(text);
+    setMessages((prev) => [...prev, { id: `assistant-${Date.now()}`, role: 'assistant', content: reply, timestamp: Date.now() }]);
+    setIsLoading(false);
   };
 
-  const copyMessage = (id: string, text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
+  const copyMessage = async (id: string, text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(id);
+      window.setTimeout(() => setCopiedId(null), 1600);
+    } catch {
+      // Clipboard access is optional; the answer remains visible.
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-black/75 border-l border-white/10 shadow-2xl backdrop-blur-md flex flex-col transition-all duration-300">
-      {/* Header */}
-      <div className="p-4 bg-white/[.06] border-b border-white/10 flex items-center justify-between backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-[#dfff3f]/10 border border-[#dfff3f]/30 text-[#e9ff8a] shadow-[0_0_10px_rgba(34,211,238,0.25)]">
-            <Sparkles className="w-5 h-5 animate-pulse" />
+    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-black/85 border-l border-white/10 shadow-2xl backdrop-blur-md flex flex-col">
+      <div className="p-4 bg-white/[.06] border-b border-white/10 flex items-center justify-between">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="p-2 rounded-xl bg-[#dfff3f]/10 border border-[#dfff3f]/30 text-[#e9ff8a]">
+            <Sparkles className="w-5 h-5" />
           </div>
-          <div>
+          <div className="min-w-0">
             <h3 className="text-sm font-bold text-zinc-100 flex items-center gap-2 font-mono">
-              QUBITLAB ASSISTANT
+              QUBITLAB LOCAL GUIDE
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full border border-emerald-400/30 text-emerald-300 bg-emerald-400/10">OFFLINE</span>
             </h3>
-            <p className="text-[11px] text-zinc-400 truncate max-w-[260px]">
-              {currentContext ? `Context: ${currentContext}` : 'Ask anything. I can use the current page as context when relevant.'}
+            <p className="text-[11px] text-zinc-400 truncate max-w-[330px]">
+              {currentContext || 'Syllabus + local knowledge + circuit context'}
             </p>
           </div>
         </div>
-
-        <button
-          onClick={onClose}
-          className="p-1.5 rounded-lg bg-white/[.05] hover:bg-white/[.08] text-zinc-400 hover:text-zinc-200 border border-white/10 transition-colors"
-        >
+        <button onClick={onClose} className="p-1.5 rounded-lg bg-white/[.05] hover:bg-white/[.1] text-zinc-400 hover:text-zinc-200 border border-white/10">
           <X className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Message List */}
+      <div className="px-3 py-2 border-b border-white/10 bg-black/40 flex gap-2 text-[10px] font-mono text-zinc-400">
+        <span className="inline-flex items-center gap-1"><BookOpen className="w-3 h-3" /> syllabus retrieval</span>
+        <span className="inline-flex items-center gap-1"><Cpu className="w-3 h-3" /> deterministic answers</span>
+      </div>
+
       <div className="flex-1 p-4 overflow-y-auto space-y-4">
         {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            {msg.role === 'assistant' && (
-              <div className="w-7 h-7 rounded-lg bg-[#dfff3f]/10 border border-[#dfff3f]/30 text-[#dfff3f] flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_8px_rgba(34,211,238,0.2)]">
-                <Bot className="w-4 h-4" />
-              </div>
-            )}
-
-            <div
-              className={`max-w-[85%] rounded-2xl p-3.5 text-xs leading-relaxed ${
-                msg.role === 'user'
-                  ? 'bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] text-white shadow-[0_0_12px_rgba(6,182,212,0.25)]'
-                  : 'bg-white/[.06] border border-white/10 text-zinc-200 shadow-md whitespace-pre-wrap backdrop-blur-sm'
-              }`}
-            >
+          <div key={msg.id} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            {msg.role === 'assistant' && <div className="w-7 h-7 rounded-lg bg-[#dfff3f]/10 border border-[#dfff3f]/30 text-[#dfff3f] flex items-center justify-center shrink-0 mt-0.5"><Bot className="w-4 h-4" /></div>}
+            <div className={`max-w-[86%] rounded-2xl p-3.5 text-xs leading-relaxed ${msg.role === 'user' ? 'bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] text-slate-950' : 'bg-white/[.06] border border-white/10 text-zinc-200 whitespace-pre-wrap'}`}>
               <div>{msg.content}</div>
-
               {msg.role === 'assistant' && (
-                <div className="mt-2 pt-2 border-t border-white/10 flex items-center justify-between text-[10px] text-zinc-400">
-                  <span className="font-mono text-[#dfff3f]/80">Learning Guide</span>
-                  <button
-                    onClick={() => copyMessage(msg.id, msg.content)}
-                    className="hover:text-zinc-200 flex items-center gap-1 font-mono"
-                  >
+                <div className="mt-2 pt-2 border-t border-white/10 flex items-center justify-end text-[10px] text-zinc-400">
+                  <button onClick={() => void copyMessage(msg.id, msg.content)} className="hover:text-zinc-200 flex items-center gap-1 font-mono">
                     {copiedId === msg.id ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                     {copiedId === msg.id ? 'Copied' : 'Copy'}
                   </button>
                 </div>
               )}
             </div>
-
-            {msg.role === 'user' && (
-              <div className="w-7 h-7 rounded-lg bg-white/[.08] border border-white/15 text-zinc-300 flex items-center justify-center shrink-0 mt-0.5">
-                <User className="w-4 h-4" />
-              </div>
-            )}
+            {msg.role === 'user' && <div className="w-7 h-7 rounded-lg bg-white/[.08] border border-white/15 text-zinc-300 flex items-center justify-center shrink-0 mt-0.5"><User className="w-4 h-4" /></div>}
           </div>
         ))}
-
-        {isLoading && (
-          <div className="flex gap-3 items-center text-xs text-[#e9ff8a] font-mono">
-            <div className="w-7 h-7 rounded-lg bg-[#dfff3f]/20 border border-[#dfff3f]/40 text-[#e9ff8a] flex items-center justify-center shrink-0 animate-spin">
-              <RefreshCw className="w-4 h-4" />
-            </div>
-            <span>Thinking...</span>
-          </div>
-        )}
+        {isLoading && <div className="flex gap-3 items-center text-xs text-[#e9ff8a] font-mono"><div className="w-7 h-7 rounded-lg bg-[#dfff3f]/20 border border-[#dfff3f]/40 flex items-center justify-center animate-spin"><RefreshCw className="w-4 h-4" /></div><span>Searching local knowledge...</span></div>}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Suggested prompts */}
       <div className="p-2.5 bg-white/[.045] border-t border-white/10 overflow-x-auto flex gap-1.5 no-scrollbar">
-        {DEFAULT_SUGGESTIONS.map((sug, i) => (
-          <button
-            key={i}
-            onClick={() => sendMessage(sug)}
-            className="px-2.5 py-1 rounded-lg bg-white/[.05] hover:bg-white/[.08] border border-white/10 hover:border-[#dfff3f]/30 text-[11px] text-zinc-300 hover:text-[#e9ff8a] whitespace-nowrap transition-colors font-mono"
-          >
-            {sug}
-          </button>
-        ))}
+        {DEFAULT_SUGGESTIONS.map((suggestion) => <button key={suggestion} onClick={() => void sendMessage(suggestion)} className="px-2.5 py-1 rounded-lg bg-white/[.05] hover:bg-white/[.08] border border-white/10 hover:border-[#dfff3f]/30 text-[11px] text-zinc-300 hover:text-[#e9ff8a] whitespace-nowrap font-mono">{suggestion}</button>)}
       </div>
 
-      {/* Input bar */}
       <div className="p-3 bg-black/70 border-t border-white/10">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            sendMessage(input);
-          }}
-          className="flex items-center gap-2"
-        >
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask anything..."
-            className="flex-1 px-3.5 py-2.5 rounded-xl bg-black/45 border border-white/15 text-xs text-zinc-200 placeholder-slate-500 focus:outline-none focus:border-[#dfff3f] font-mono"
-          />
-          <button
-            type="submit"
-            disabled={!input.trim() || isLoading}
-            className="p-2.5 rounded-xl bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] hover:from-[#efff96] hover:to-[#ffb347] text-slate-950 disabled:opacity-40 transition-all shadow-[0_0_10px_rgba(34,211,238,0.3)] active:scale-95"
-          >
-            <Send className="w-4 h-4" />
-          </button>
+        <form onSubmit={(event) => { event.preventDefault(); void sendMessage(input); }} className="flex items-center gap-2">
+          <input type="text" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Ask the local guide..." className="flex-1 px-3.5 py-2.5 rounded-xl bg-black/45 border border-white/15 text-xs text-zinc-200 placeholder-slate-500 focus:outline-none focus:border-[#dfff3f] font-mono" />
+          <button type="submit" disabled={!input.trim() || isLoading} className="p-2.5 rounded-xl bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] text-slate-950 disabled:opacity-40"><Send className="w-4 h-4" /></button>
         </form>
       </div>
     </div>
