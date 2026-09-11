@@ -11,11 +11,11 @@ interface AITutorChatProps {
 }
 
 const DEFAULT_SUGGESTIONS = [
-  'Why does Hadamard create superposition?',
-  'What does CNOT do?',
-  'What is quantum entanglement?',
-  'Explain the Bloch sphere',
-  'How does Grover search work?',
+  'What is quantum computing?',
+  'Explain superposition in simple terms',
+  'What is a qubit?',
+  'Why is Python popular for AI?',
+  'How does machine learning work?',
 ];
 
 export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen, onClose, externalPrompt }) => {
@@ -44,18 +44,52 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
+  const getAIReply = async (conversation: ChatMessage[], question: string): Promise<string> => {
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            ...conversation
+              .filter((message) => message.id !== 'welcome')
+              .slice(-10)
+              .map((message) => ({ role: message.role, content: message.content })),
+            { role: 'user', content: question },
+          ],
+          context: currentContext || '',
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || typeof data.reply !== 'string' || !data.reply.trim()) {
+        throw new Error('AI service unavailable');
+      }
+
+      return data.reply.trim();
+    } catch {
+      // Keep the guide useful when the AI service is temporarily unavailable.
+      return answerLocally(question);
+    }
+  };
+
   const sendMessage = async (textToSend: string) => {
     const text = textToSend.trim();
     if (!text || isLoading) return;
 
     const now = Date.now();
-    setMessages((prev) => [...prev, { id: `user-${now}`, role: 'user', content: text, timestamp: now }]);
+    const userMessage: ChatMessage = { id: `user-${now}`, role: 'user', content: text, timestamp: now };
+    const conversation = [...messages, userMessage];
+
+    setMessages(conversation);
     setInput('');
     setIsLoading(true);
 
-    await new Promise<void>((resolve) => window.setTimeout(resolve, 120));
-    const reply = answerLocally(text);
-    setMessages((prev) => [...prev, { id: `assistant-${Date.now()}`, role: 'assistant', content: reply, timestamp: Date.now() }]);
+    const reply = await getAIReply(messages, text);
+    setMessages((prev) => [
+      ...prev,
+      { id: `assistant-${Date.now()}`, role: 'assistant', content: reply, timestamp: Date.now() },
+    ]);
     setIsLoading(false);
   };
 
@@ -81,7 +115,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
           <div className="min-w-0">
             <h3 className="text-sm font-bold text-zinc-100 font-mono">QUBITLAB GUIDE</h3>
             <p className="text-[11px] text-zinc-400 truncate max-w-[330px]">
-              {currentContext || 'Ask a question about what you are learning.'}
+              {currentContext || 'Ask me anything.'}
             </p>
           </div>
         </div>
@@ -118,7 +152,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
 
       <div className="p-3 bg-black/70 border-t border-white/10">
         <form onSubmit={(event) => { event.preventDefault(); void sendMessage(input); }} className="flex items-center gap-2">
-          <input type="text" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Ask a question..." aria-label="Ask a question" className="flex-1 px-3.5 py-2.5 rounded-xl bg-black/45 border border-white/15 text-xs text-zinc-200 placeholder-slate-500 focus:outline-none focus:border-[#dfff3f] font-mono" />
+          <input type="text" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Ask anything..." aria-label="Ask a question" className="flex-1 px-3.5 py-2.5 rounded-xl bg-black/45 border border-white/15 text-xs text-zinc-200 placeholder-slate-500 focus:outline-none focus:border-[#dfff3f] font-mono" />
           <button type="submit" disabled={!input.trim() || isLoading} aria-label="Send question" className="p-2.5 rounded-xl bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] text-slate-950 disabled:opacity-40"><Send className="w-4 h-4" /></button>
         </form>
       </div>
