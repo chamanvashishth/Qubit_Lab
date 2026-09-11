@@ -4,9 +4,9 @@
 
 # QubitLab
 
-### Learn quantum computing by actually playing with it.
+### Learn quantum computing by actually working with it.
 
-Build a circuit. See what changes. Understand the result. Test yourself.
+Build a circuit. Run it. See the state change. Understand why. Test yourself.
 
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -15,62 +15,54 @@ Build a circuit. See what changes. Understand the result. Test yourself.
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Deployment](https://img.shields.io/badge/deployment-Vercel-black?logo=vercel&logoColor=white)](https://vercel.com/)
 
-[Features](#features) · [How it works](#how-it-works) · [Architecture](#architecture) · [Getting started](#getting-started) · [Deployment](#deployment)
+[Overview](#overview) · [Features](#features) · [How it works](#how-it-works) · [Architecture](#architecture) · [Setup](#getting-started) · [Security](#security) · [Deployment](#deployment)
 
 </div>
 
 ---
 
-## What is QubitLab?
+## Overview
 
-Quantum computing is much easier to understand when you can **see what the math is doing**.
+QubitLab is a browser-based learning platform for exploring quantum computing through interaction rather than theory alone.
 
-QubitLab is a browser-based learning platform built around that idea. Instead of reading about a quantum gate and moving on, you can put the gate into a circuit, simulate it, inspect the resulting state, visualize it, and then test what you learned.
-
-The basic loop is simple:
+The idea is straightforward: learn a concept, build a small circuit, simulate it, inspect the result, and then use practice questions to check whether the concept actually makes sense.
 
 ```text
-        LEARN
-          ↓
-        BUILD
-          ↓
-       SIMULATE
-          ↓
-      VISUALIZE
-          ↓
-       PRACTICE
-          ↓
-        REPEAT
+LEARN → BUILD → SIMULATE → VISUALIZE → PRACTICE
+  ↑                                             ↓
+  └─────────────────────────────────────────────┘
 ```
 
-It is deliberately a small learning lab, not a replacement for real quantum hardware or large-scale simulation software.
+It is designed as a learning lab. It is not intended to replace real quantum hardware, production quantum SDKs, or large-scale scientific simulators.
+
+### Why QubitLab?
+
+Quantum computing becomes difficult for beginners when the connection between the math and the circuit is hard to see.
+
+QubitLab tries to make that connection visible:
+
+- change a gate and see the state change
+- inspect amplitudes and probabilities instead of only reading formulas
+- view the same state through different visualizations
+- experiment with common circuits and presets
+- practice the concepts immediately after exploring them
+
+The goal is not to hide the mathematics. It is to give the mathematics somewhere concrete to live.
 
 ---
 
-## Why was it built?
+## Features
 
-A lot of beginner quantum-computing material quickly turns into formulas, matrices, gates, probabilities, and notation. Those pieces make sense individually, but connecting them is where things get difficult.
-
-QubitLab tries to make that connection visible.
-
-Change a gate and the simulated state changes. Explore the result from more than one view. Then use the practice section to check whether the idea actually stuck.
-
-The goal is simple: **make quantum computing something you can interact with, not just something you read about.**
-
----
-
-# Features
-
-## Learn
+### Learn
 
 - Structured quantum-computing curriculum
 - Foundations, core concepts, gates and circuits, mathematics, and algorithms
 - Learning objectives for each topic
 - Topic difficulty, duration, and prerequisites
 
-## Build circuits
+### Build circuits
 
-The Circuit Composer is where the theory becomes hands-on.
+The Circuit Composer is the hands-on part of the project.
 
 - 1–5 configurable qubits
 - 4–12 configurable circuit steps
@@ -84,11 +76,11 @@ The Circuit Composer is where the theory becomes hands-on.
 - Step-by-step circuit scrubbing
 - Clear and reset controls
 
-## Simulate
+### Simulate
 
-The circuit is connected to a client-side state-vector simulator, so the circuit diagram is backed by an actual calculation rather than being only a visual mock-up.
+The Circuit Composer is backed by a client-side state-vector simulator. The displayed state is calculated from the circuit rather than being a visual-only mock-up.
 
-It supports:
+The engine handles:
 
 - Complex amplitudes
 - State-vector evolution
@@ -100,9 +92,9 @@ It supports:
 - Dirac notation
 - Entanglement-aware inspection
 
-## Visualize
+### Visualize
 
-The same result can be explored from several angles:
+Simulation results can be explored through:
 
 - State-vector amplitudes
 - Probabilities
@@ -112,7 +104,7 @@ The same result can be explored from several angles:
 - Bloch-sphere visualization
 - Interactive 3D views using Three.js/WebGL
 
-## Export
+### Export
 
 Circuits can be exported as educational code for:
 
@@ -121,9 +113,9 @@ Circuits can be exported as educational code for:
 - **Cirq**
 - **OpenQASM**
 
-Generated code is meant to help with learning and experimentation. It should still be checked against the SDK or compiler version you plan to use.
+The generated code is intended for learning and experimentation. Always check it against the SDK or compiler version you plan to use.
 
-## Practice and progress
+### Practice and progress
 
 - Module-based MCQs
 - Immediate feedback and explanations
@@ -134,47 +126,17 @@ Generated code is meant to help with learning and experimentation. It should sti
 
 ---
 
-# The Local Learning Guide
+## How It Works
 
-One of the changes made during debugging was moving the main tutor experience away from a required external AI service.
+### 1. Learn a concept
 
-The current guide is an **offline, deterministic knowledge system**. It uses the curriculum and quiz material bundled with the application, together with a compact technical knowledge base, to find relevant information and build a response.
+Pick a topic from the curriculum and start with the underlying idea. Topics include learning objectives, difficulty, duration, and prerequisites.
 
-```text
-curriculum.ts ──────┐
-                    ├──> localTutor.ts ──> Local Guide
-mockQuizzes.ts ─────┘
-```
-
-That means the main guide:
-
-- works without an API key
-- does not need a network request
-- responds quickly
-- behaves predictably
-- stays connected to the project's own learning material
-
-### What it is not
-
-It is **not a full generative LLM**. It has a finite knowledge base and cannot answer every possible question or provide current information from the web.
-
-That is intentional. The guide is designed to be useful and available offline rather than pretending to have unlimited knowledge.
-
-The repository still contains an optional server/API path for deployments that want model-backed responses, but the main tutor interface does not depend on it.
-
----
-
-# How it works
-
-## 1. Start with a concept
-
-Choose a topic from the curriculum. Each topic includes the material, learning objectives, difficulty, and prerequisites used by the learning flow.
-
-## 2. Build something
+### 2. Build a circuit
 
 Open the Circuit Composer and place gates on the qubit wires.
 
-A simple Bell-state circuit looks like this:
+For example, a Bell-state circuit can be represented as:
 
 ```text
 q₀ ── H ──●────
@@ -182,16 +144,16 @@ q₀ ── H ──●────
 q₁ ───────X────
 ```
 
-The composer keeps track of qubits, circuit steps, gate placement, and multi-qubit relationships.
+The composer tracks the qubits, circuit steps, gate parameters, and multi-qubit relationships.
 
-## 3. Simulate
+### 3. Simulate it
 
-Whenever the circuit changes, the current circuit is passed through the quantum engine.
+When the circuit changes, the current circuit is passed through the quantum engine.
 
 ```text
 Circuit
    ↓
-Check gate placement
+Validate gate placement
    ↓
 Initialize |00...0⟩
    ↓
@@ -206,23 +168,23 @@ Sample measurements
 SimulationResult
 ```
 
-The circuit and the displayed results therefore come from the same underlying state calculation.
+This keeps the circuit view and the result view tied to the same state calculation.
 
-## 4. Understand the result
+### 4. Inspect the result
 
-You can inspect the result through amplitudes, probabilities, measurement shots, Dirac notation, and Bloch-sphere information.
+The result can be explored through amplitudes, probabilities, phases, measurement shots, Dirac notation, and Bloch-sphere information.
 
-The idea is to make questions like these easier to answer:
+The useful questions are the simple ones:
 
 > What changed after the H gate?
 >
-> Why are the measurement probabilities different?
+> Why did the probabilities change?
 >
 > What did the CNOT do to the two-qubit state?
 
-## 5. Practice
+### 5. Practice
 
-Once the concept makes sense, return to the practice modules and check your understanding.
+After experimenting, move to the practice modules and check whether the concept stuck.
 
 ```mermaid
 flowchart LR
@@ -235,7 +197,7 @@ flowchart LR
 
 ---
 
-# Architecture
+## Architecture
 
 Most of QubitLab runs directly in the browser.
 
@@ -249,7 +211,7 @@ flowchart TB
     APP --> SANDBOX[Quantum Code Sandbox]
     APP --> QUIZ[Practice]
     APP --> DASH[Dashboard]
-    APP --> GUIDE[Local Guide]
+    APP --> GUIDE[Local Learning Guide]
 
     CUR --> CDATA[(curriculum.ts)]
     QUIZ --> QDATA[(mockQuizzes.ts)]
@@ -270,23 +232,23 @@ flowchart TB
     OPTIONAL[Optional API path] --> PROVIDER[External model provider]
 ```
 
-### What each part does
+### Main responsibilities
 
-| Location | Job |
+| Location | Responsibility |
 |---|---|
 | `src/components/` | UI and feature components |
 | `src/data/` | Curriculum and quiz content |
-| `src/types/` | Shared TypeScript types |
+| `src/types/` | Shared TypeScript domain types |
 | `src/utils/quantumEngine.ts` | State-vector simulation and quantum operations |
 | `src/utils/localTutor.ts` | Offline knowledge retrieval and responses |
-| `src/utils/progress.ts` | Session-based progress |
+| `src/utils/progress.ts` | Session-based progress handling |
 | `api/chat.ts` | Optional model-backed API endpoint |
 | `server/index.ts` | Optional Express/Vite runtime |
-| `vercel.json` | Vercel build and SPA routing |
+| `vercel.json` | Vercel build and SPA routing configuration |
 
 ---
 
-# Circuit Simulation
+## Circuit Simulation
 
 ```mermaid
 sequenceDiagram
@@ -312,7 +274,7 @@ The circuit diagram is not treated as a separate animation. The visual result is
 
 ---
 
-# Quantum Engine
+## Quantum Engine
 
 The simulation core lives in:
 
@@ -341,7 +303,37 @@ The engine also normalizes the state after numerical evolution to reduce floatin
 
 ---
 
-# Session Data
+## The Local Learning Guide
+
+The main tutor experience was changed during debugging so that it no longer requires an external AI service to work.
+
+The current guide is an **offline, deterministic knowledge system**. It uses the curriculum and quiz material bundled with the application, together with a compact technical knowledge base, to find relevant information and build a response.
+
+```text
+curriculum.ts ──────┐
+                    ├──> localTutor.ts ──> Local Learning Guide
+mockQuizzes.ts ─────┘
+```
+
+The main guide therefore:
+
+- works without credentials
+- does not require a network request
+- responds quickly
+- behaves predictably
+- stays connected to the project's own learning material
+
+### A clear limitation
+
+This is **not a full generative LLM**. The guide has a finite knowledge base, so it cannot answer every possible question or provide live information from the web.
+
+That limitation is intentional. The goal is to provide a dependable learning aid that works offline rather than pretending to have unlimited knowledge.
+
+The repository still contains an optional API path for deployments that want model-backed responses, but the main tutor interface does not depend on it.
+
+---
+
+## Session Data
 
 Learner progress is intentionally stored in `sessionStorage`.
 
@@ -355,17 +347,17 @@ flowchart LR
 
 | Situation | Behavior |
 |---|---|
-| Navigate around the app | Current progress stays available |
+| Navigate around the app | Current progress remains available |
 | Reload the page | Valid session state is restored |
 | New browser session | Starts with fresh session data |
 | Account login | Not implemented |
 | Cloud sync | Not implemented |
 
-This keeps the project simple and avoids pretending that it currently has a cloud account system.
+This keeps the current project simple and avoids presenting a local session system as a cloud account system.
 
 ---
 
-# Project Structure
+## Project Structure
 
 ```text
 Qubit_Lab/
@@ -391,7 +383,7 @@ Qubit_Lab/
 │   │   ├── layout/               # Shared layout/navigation
 │   │   ├── quiz/                 # Practice modules
 │   │   ├── sandbox/               # Quantum code exploration
-│   │   └── visualization/         # State/probability views
+│   │   └── visualization/        # State/probability views
 │   │
 │   ├── data/
 │   │   ├── curriculum.ts         # Learning content
@@ -421,9 +413,9 @@ Qubit_Lab/
 
 ---
 
-# Tech Stack
+## Tech Stack
 
-| Technology | Why it is here |
+| Technology | Role in the project |
 |---|---|
 | **React 19** | Interactive application UI |
 | **TypeScript 5.8** | Type-safe UI and simulation logic |
@@ -438,9 +430,9 @@ Qubit_Lab/
 
 ---
 
-# Getting Started
+## Getting Started
 
-## Requirements
+### Requirements
 
 - Node.js 18+
 - npm
@@ -452,20 +444,20 @@ node --version
 npm --version
 ```
 
-## Clone
+### Clone the repository
 
 ```bash
 git clone https://github.com/chamanvashishth/Qubit_Lab.git
 cd Qubit_Lab
 ```
 
-## Install
+### Install dependencies
 
 ```bash
 npm install
 ```
 
-## Run locally
+### Start the development server
 
 ```bash
 npm run dev
@@ -475,7 +467,7 @@ Vite will print the local development URL in the terminal.
 
 ---
 
-# Commands
+## Commands
 
 | Command | Purpose |
 |---|---|
@@ -486,24 +478,41 @@ Vite will print the local development URL in the terminal.
 | `npm run build:server` | Build the frontend and optional Express server bundle |
 | `npm run clean` | Remove the `dist/` directory |
 
-A useful baseline check before pushing a change is:
+A useful baseline before pushing a change is:
 
 ```bash
 npm run lint
 npm run build
 ```
 
-For changes to the circuit engine, also test a few small circuits manually. Quantum code can look perfectly reasonable while still producing the wrong state.
+For changes to the circuit engine, also test a few small circuits manually. Quantum code can look reasonable while still producing the wrong state, so small known-state checks are worth doing.
 
 ---
 
-# Deployment
+## Security
 
-## Vercel
+QubitLab does not need credentials for its main learning flow.
+
+The public README intentionally does **not** contain API keys, access tokens, passwords, secret values, deployment credentials, or provider-specific credential values.
+
+If the optional model-backed API is enabled:
+
+1. Keep credentials in environment variables managed by the deployment platform.
+2. For local development, use an untracked local environment file.
+3. Never paste a real credential into source code, README examples, screenshots, issues, or commit messages.
+4. If a credential has already been committed to a public repository, remove it from the repository **and rotate/revoke it**. Removing the text alone does not make an exposed credential safe.
+
+The main Local Learning Guide works without any external credential, so most users do not need to configure one at all.
+
+---
+
+## Deployment
+
+### Vercel
 
 **Vercel is the current deployment path for QubitLab.**
 
-The repository contains `vercel.json` with the Vite build and SPA fallback configuration.
+The repository includes `vercel.json` for the Vite build and SPA fallback configuration.
 
 ```mermaid
 flowchart LR
@@ -523,166 +532,119 @@ Build command:  npm run build
 Output:         dist
 ```
 
-The SPA rewrite sends normal application routes to `index.html` while keeping API routes available for server-side handling.
+Normal application routes are handled by the SPA fallback, while API routes remain available for server-side handling where configured.
 
 ### GitHub Pages
 
-GitHub Pages is **not** used for the current deployment. The old Pages workflow was removed because it did not match the current Vercel-based setup.
+GitHub Pages is **not** used for the current deployment. The previous Pages workflow was removed because it did not match the Vercel-based deployment setup.
 
 ---
 
-# Optional API Configuration
+## What Was Fixed During Debugging?
 
-The main local learning guide does not need any API credentials.
-
-If you intentionally enable the optional model-backed API path, configure the required provider credential through your deployment platform's **environment variables**.
-
-For local development, use an untracked environment file such as `.env.local` and never place the actual credential in source code, README files, screenshots, commit messages, or frontend JavaScript.
-
-**Never commit API keys, tokens, passwords, private URLs, or other secrets to Git.**
-
-The server-side API code keeps provider credentials on the server side and distinguishes different credential formats before sending requests to an external model provider.
-
----
-
-# Security Notes
-
-This README intentionally does not contain:
-
-- API keys or token values
-- passwords or private credentials
-- deployment secrets
-- private environment-variable values
-- personal contact information
-- private infrastructure details
-
-If you are contributing, check your diff before pushing:
-
-```bash
-git diff --check
-git status
-```
-
-Also make sure local environment files remain ignored and that secrets are configured through the hosting provider rather than committed to the repository.
-
----
-
-# What changed during debugging?
-
-The project went through a practical cleanup rather than only a visual rewrite.
+This section records the important engineering changes rather than pretending the project started in its current state.
 
 ### Quantum simulation
 
-- Fixed the `Rx(θ)` matrix implementation.
-- Added `Ry` and `Rz` rotations.
-- Added `S†` and `T†`.
-- Improved controlled-gate handling.
-- Added SWAP and Toffoli support.
-- Added state normalization after simulation.
-- Improved measurement sampling and state analysis.
+- Corrected the `Rx(θ)` implementation to use the standard half-angle form.
+- Added `Ry` and `Rz` rotation support.
+- Added inverse phase gates `S†` and `T†`.
+- Added controlled and multi-qubit operations including `CNOT`, `CZ`, `SWAP`, and `CCNOT`.
+- Added numerical state normalization to reduce floating-point drift.
+- Kept measurement sampling separate from the unitary state-evolution calculation.
 
 ### Circuit Composer
 
-- Made simulation update with circuit edits.
-- Added dynamic qubit and circuit-step sizing.
-- Added multi-qubit collision and placement checks.
-- Added live probability and measurement views.
-- Added Dirac notation and entanglement inspection.
-- Added circuit presets and step scrubbing.
-- Added exports for Qiskit, PennyLane, Cirq, and OpenQASM.
+- Reworked the composer around live simulation results.
+- Added dynamic qubit and step controls.
+- Added placement validation for multi-qubit gates.
+- Added presets for common teaching circuits.
+- Added step scrubbing, reset, clear, histogram, Dirac notation, Bloch views, and code export.
 
-### Learning experience
+### Learning and progress
 
-- Made curriculum and quiz data drive the learning flow.
-- Added session-based progress behavior.
-- Added a local tutor backed by the application's syllabus.
-- Removed the main tutor UI's dependency on the model API.
+- Moved the main tutor experience to a local deterministic guide so the core learning flow does not depend on an external model.
+- Changed learner progress to session-based storage rather than long-term browser persistence.
+- Connected dashboard and practice views to the same session state.
 
-### Deployment and API cleanup
+### Deployment and API
 
-- Removed the obsolete GitHub Pages deployment workflow.
-- Kept Vercel as the documented deployment target.
-- Hardened optional AI credential handling.
-- Avoided exposing credential details in the client application.
+- Switched the documented deployment path to Vercel.
+- Removed the old GitHub Pages workflow.
+- Kept the optional API path separate from the main offline tutor.
+- Made provider credential handling explicit and environment-based instead of exposing credentials in application code or documentation.
 
 ---
 
-# Known Limits
+## Known Limits
 
-A few limits are worth being clear about.
+QubitLab is intentionally scoped as a learning project.
 
-### Small simulations by design
+- The simulator is state-vector based and intended for small circuits.
+- The Local Learning Guide has a finite knowledge base.
+- There is no account system or cloud progress synchronization.
+- Exported code is educational and should be checked against the target SDK/compiler version.
+- The optional model-backed API requires separate provider configuration.
 
-State-vector simulation grows exponentially with the number of qubits. The interactive composer therefore stays within **1–5 qubits**.
-
-### The local guide has a finite knowledge base
-
-It can answer from the material bundled with QubitLab, but it cannot know new web information, private data, or every question a user might ask.
-
-### Progress is session-based
-
-There is no account system or cross-device synchronization yet.
-
-### Exported code needs validation
-
-Generated Qiskit, PennyLane, Cirq, and OpenQASM code is intended as educational/export material. Validate it against the version of the SDK or compiler you are actually using.
+These are current project boundaries, not features being hidden behind the documentation.
 
 ---
 
-# Roadmap
+## Roadmap
 
-The next useful improvements are mostly about making the existing learning loop better:
+Possible next steps include:
 
-- More curriculum modules and worked examples
-- More algorithm and circuit challenges
-- Stronger automated tests for the quantum engine
-- Component and integration tests
-- Better circuit-specific explanations in the local guide
-- Optional learner accounts
-- Cross-device progress synchronization
-- More SDK export coverage
-- More visualization modes
+- More quantum algorithms and guided experiments
+- More circuit presets and worked examples
+- Better local explanations for advanced topics
+- More detailed state-transition inspection
+- Additional export and interoperability options
+- Automated tests for quantum gate and circuit correctness
+- Optional persistent accounts and cloud progress
+
+The focus is to improve the learning experience without making the project unnecessarily complicated.
 
 ---
 
-# Contributing
+## Contributing
 
-Contributions are welcome. Keep changes focused so they are easy to understand and review.
+Contributions are welcome, especially around quantum correctness, educational content, visualization quality, accessibility, and developer experience.
 
-1. Fork the repository.
-2. Create a branch:
+A practical contribution flow is:
 
-```bash
-git checkout -b feature/your-change
+```text
+Fork → Branch → Change → Test → Commit → Pull Request
 ```
 
-3. Make your change.
-4. Run:
+Before opening a pull request, run:
 
 ```bash
 npm run lint
 npm run build
 ```
 
-5. If you changed an interactive feature, test it in the browser.
-6. If you changed the quantum engine, include a small circuit or mathematical case that demonstrates the expected result.
-7. Make sure no secrets were added.
-8. Open a pull request explaining what changed, why it changed, and how you tested it.
+For simulator changes, include small known-state examples or tests where possible.
 
 ---
 
-# License
+## Collaborators
 
-There is currently no `LICENSE` file in the repository.
+- [@chamanvashishth](https://github.com/chamanvashishth)
+- [@asharma975565-ship-it](https://github.com/asharma975565-ship-it)
+- [@hellovneet](https://github.com/hellovneet)
+- [@mehfa1](https://github.com/mehfa1)
+- [@narayankr03-gif](https://github.com/narayankr03-gif)
 
-If the project is going to be distributed as an open-source project, add an appropriate license before defining reuse or redistribution rights.
+---
+
+## License
+
+No `LICENSE` file is currently included in the repository. Add an explicit license before distributing or reusing the project under open-source terms.
 
 ---
 
 <div align="center">
 
-**Learn · Build · Simulate · Visualize · Practice**
-
-A small quantum lab for making the theory easier to see.
+**QubitLab — understand the circuit by seeing what it actually does.**
 
 </div>
