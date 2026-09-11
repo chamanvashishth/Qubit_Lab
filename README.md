@@ -25,9 +25,9 @@ Build a circuit. See what changes. Understand the result. Test yourself.
 
 Quantum computing is much easier to understand when you can **see what the math is doing**.
 
-QubitLab is a browser-based learning platform built around that idea. Instead of reading about a quantum gate and moving on, you can put the gate into a circuit, simulate the circuit, inspect the resulting state, visualize it, and then test what you learned.
+QubitLab is a browser-based learning platform built around that idea. Instead of reading about a quantum gate and moving on, you can put the gate into a circuit, simulate it, inspect the resulting state, visualize it, and then test what you learned.
 
-The learning loop is simple:
+The basic loop is simple:
 
 ```text
         LEARN
@@ -43,27 +43,19 @@ The learning loop is simple:
         REPEAT
 ```
 
-The project is intentionally focused on **small, understandable quantum systems**. It is a learning lab, not a replacement for large-scale quantum hardware or high-performance simulation software.
+It is deliberately a small learning lab, not a replacement for real quantum hardware or large-scale simulation software.
 
 ---
 
 ## Why was it built?
 
-Beginners often meet quantum computing as a collection of formulas:
+A lot of beginner quantum-computing material quickly turns into formulas, matrices, gates, probabilities, and notation. Those pieces make sense individually, but connecting them is where things get difficult.
 
-- `|ψ⟩`
-- matrices
-- gates
-- probabilities
-- measurement
-- entanglement
-- algorithms
+QubitLab tries to make that connection visible.
 
-The difficult part is connecting those pieces.
+Change a gate and the simulated state changes. Explore the result from more than one view. Then use the practice section to check whether the idea actually stuck.
 
-QubitLab tries to make that connection visible. If you change the circuit, the state changes with it. If you learn a concept, you can experiment with it. If you are unsure, the local learning guide can look through the material already included in the application.
-
-So the goal is not to make quantum computing look mysterious or overly complicated. The goal is to make it **something you can interact with**.
+The goal is simple: **make quantum computing something you can interact with, not just something you read about.**
 
 ---
 
@@ -94,7 +86,7 @@ The Circuit Composer is where the theory becomes hands-on.
 
 ## Simulate
 
-The circuit is connected to a client-side state-vector simulator rather than being only a visual mock-up.
+The circuit is connected to a client-side state-vector simulator, so the circuit diagram is backed by an actual calculation rather than being only a visual mock-up.
 
 It supports:
 
@@ -110,7 +102,7 @@ It supports:
 
 ## Visualize
 
-Simulation results are presented in several ways so the same state can be understood from different angles:
+The same result can be explored from several angles:
 
 - State-vector amplitudes
 - Probabilities
@@ -122,22 +114,19 @@ Simulation results are presented in several ways so the same state can be unders
 
 ## Export
 
-Circuits can be translated into educational code for:
+Circuits can be exported as educational code for:
 
 - **Qiskit**
 - **PennyLane**
 - **Cirq**
 - **OpenQASM**
 
-The exports are useful for learning and moving a circuit into another environment. They should still be checked against the target SDK/compiler version before production use.
+Generated code is meant to help with learning and experimentation. It should still be checked against the SDK or compiler version you plan to use.
 
 ## Practice and progress
 
-Learning does not stop after the circuit runs.
-
 - Module-based MCQs
-- Immediate feedback
-- Explanations
+- Immediate feedback and explanations
 - Score calculation
 - Best-score tracking for the current browser session
 - Session-based learner progress
@@ -147,9 +136,9 @@ Learning does not stop after the circuit runs.
 
 # The Local Learning Guide
 
-The built-in guide was changed during debugging so that the main learning experience does **not depend on an external AI API**.
+One of the changes made during debugging was moving the main tutor experience away from a required external AI service.
 
-The current tutor is an offline, deterministic knowledge system. It uses the application's own curriculum and quiz material, along with a compact set of general technical knowledge, to find relevant information and build a response.
+The current guide is an **offline, deterministic knowledge system**. It uses the curriculum and quiz material bundled with the application, together with a compact technical knowledge base, to find relevant information and build a response.
 
 ```text
 curriculum.ts ──────┐
@@ -157,21 +146,21 @@ curriculum.ts ──────┐
 mockQuizzes.ts ─────┘
 ```
 
-This gives the guide a few useful properties:
+That means the main guide:
 
-- It works without an API key.
-- It works without a network request.
-- It responds quickly.
-- It is predictable.
-- Its quantum explanations are connected to the project's own syllabus.
+- works without an API key
+- does not need a network request
+- responds quickly
+- behaves predictably
+- stays connected to the project's own learning material
 
 ### What it is not
 
-It is **not a full generative LLM** and it cannot honestly answer every possible question in the world.
+It is **not a full generative LLM**. It has a finite knowledge base and cannot answer every possible question or provide current information from the web.
 
-That distinction matters. The local guide is designed to be useful, reliable, and available offline rather than pretending to have unlimited knowledge.
+That is intentional. The guide is designed to be useful and available offline rather than pretending to have unlimited knowledge.
 
-The repository still contains an optional server/API path for deployments that want model-backed responses, but the current tutor interface does not depend on `/api/chat`.
+The repository still contains an optional server/API path for deployments that want model-backed responses, but the main tutor interface does not depend on it.
 
 ---
 
@@ -179,7 +168,7 @@ The repository still contains an optional server/API path for deployments that w
 
 ## 1. Start with a concept
 
-Choose a topic from the curriculum. Topics contain the material needed to understand the idea, along with learning objectives and prerequisites.
+Choose a topic from the curriculum. Each topic includes the material, learning objectives, difficulty, and prerequisites used by the learning flow.
 
 ## 2. Build something
 
@@ -197,7 +186,7 @@ The composer keeps track of qubits, circuit steps, gate placement, and multi-qub
 
 ## 3. Simulate
 
-The current circuit is sent to the quantum engine whenever it changes.
+Whenever the circuit changes, the current circuit is passed through the quantum engine.
 
 ```text
 Circuit
@@ -217,13 +206,13 @@ Sample measurements
 SimulationResult
 ```
 
-This means the circuit and the numbers shown beside it come from the same underlying state calculation.
+The circuit and the displayed results therefore come from the same underlying state calculation.
 
 ## 4. Understand the result
 
-The result can be inspected through amplitudes, probabilities, measurement shots, Dirac notation, and Bloch-sphere information.
+You can inspect the result through amplitudes, probabilities, measurement shots, Dirac notation, and Bloch-sphere information.
 
-The point is to let the learner answer questions such as:
+The idea is to make questions like these easier to answer:
 
 > What changed after the H gate?
 >
@@ -233,7 +222,7 @@ The point is to let the learner answer questions such as:
 
 ## 5. Practice
 
-Once the idea makes sense, the learner can return to the practice modules and check their understanding.
+Once the concept makes sense, return to the practice modules and check your understanding.
 
 ```mermaid
 flowchart LR
@@ -278,9 +267,7 @@ flowchart TB
     QUIZ --> SESSION
     DASH --> SESSION
 
-    OPTIONAL[Optional API path]
-    OPTIONAL --> GATEWAY[Vercel AI Gateway]
-    OPTIONAL --> GEMINI[Google Gemini]
+    OPTIONAL[Optional API path] --> PROVIDER[External model provider]
 ```
 
 ### What each part does
@@ -321,7 +308,7 @@ sequenceDiagram
     UI-->>User: Updated visualization
 ```
 
-The important design choice here is that the circuit diagram is not treated as a separate animation. The visual result is driven by the simulated state.
+The circuit diagram is not treated as a separate animation. The visual result is driven by the simulated state.
 
 ---
 
@@ -384,27 +371,27 @@ This keeps the project simple and avoids pretending that it currently has a clou
 Qubit_Lab/
 │
 ├── api/
-│   └── chat.ts                  # Optional model-backed API
+│   └── chat.ts                   # Optional model-backed API
 │
 ├── docs/
 │   └── assets/
-│       └── qubitlab-banner.svg  # README/project visual
+│       └── qubitlab-banner.svg   # README/project visual
 │
 ├── server/
-│   └── index.ts                 # Optional Express + Vite server
+│   └── index.ts                  # Optional Express + Vite server
 │
 ├── src/
 │   ├── components/
-│   │   ├── bloch/               # Bloch-sphere visualization
-│   │   ├── chat/                # Local learning guide
+│   │   ├── bloch/                # Bloch-sphere visualization
+│   │   ├── chat/                 # Local learning guide
 │   │   ├── circuit/              # Circuit composer
 │   │   ├── curriculum/           # Curriculum UI
 │   │   ├── dashboard/            # Learner dashboard
 │   │   ├── landing/              # Landing page
 │   │   ├── layout/               # Shared layout/navigation
 │   │   ├── quiz/                 # Practice modules
-│   │   ├── sandbox/              # Quantum code exploration
-│   │   └── visualization/        # State/probability views
+│   │   ├── sandbox/               # Quantum code exploration
+│   │   └── visualization/         # State/probability views
 │   │
 │   ├── data/
 │   │   ├── curriculum.ts         # Learning content
@@ -438,15 +425,15 @@ Qubit_Lab/
 
 | Technology | Why it is here |
 |---|---|
-| **React 19** | Builds the interactive application UI |
-| **TypeScript 5.8** | Keeps UI and simulation logic type-safe |
-| **Vite 6** | Fast development and production builds |
+| **React 19** | Interactive application UI |
+| **TypeScript 5.8** | Type-safe UI and simulation logic |
+| **Vite 6** | Development and production builds |
 | **Tailwind CSS 4** | Application styling |
 | **Motion** | UI animation and interaction |
 | **Three.js** | 3D quantum visualization |
 | **Lucide React** | Interface icons |
 | **Express** | Optional server runtime |
-| **Google GenAI** | Optional Gemini integration |
+| **Google GenAI** | Optional model integration |
 | **Vercel** | Current deployment target |
 
 ---
@@ -499,7 +486,7 @@ Vite will print the local development URL in the terminal.
 | `npm run build:server` | Build the frontend and optional Express server bundle |
 | `npm run clean` | Remove the `dist/` directory |
 
-Before pushing a change, the useful baseline check is:
+A useful baseline check before pushing a change is:
 
 ```bash
 npm run lint
@@ -520,7 +507,7 @@ The repository contains `vercel.json` with the Vite build and SPA fallback confi
 
 ```mermaid
 flowchart LR
-    GITHUB[GitHub] --> VERCEL[Vercel]
+    GITHUB[Git repository] --> VERCEL[Vercel]
     VERCEL --> INSTALL[npm install]
     INSTALL --> BUILD[npm run build]
     BUILD --> DIST[dist/]
@@ -536,41 +523,53 @@ Build command:  npm run build
 Output:         dist
 ```
 
-The SPA rewrite sends normal application routes to `index.html` while keeping `/api/*` available for API handling.
+The SPA rewrite sends normal application routes to `index.html` while keeping API routes available for server-side handling.
 
 ### GitHub Pages
 
-GitHub Pages is **not** used for the current deployment. The old GitHub Pages workflow was removed during debugging because it was unnecessary and did not match the Vercel-based deployment setup.
+GitHub Pages is **not** used for the current deployment. The old Pages workflow was removed because it did not match the current Vercel-based setup.
 
 ---
 
-# Optional AI Configuration
+# Optional API Configuration
 
-The main local learning guide does not need an API key.
+The main local learning guide does not need any API credentials.
 
-If a deployment intentionally uses the optional server/API path, it can use an AI Gateway credential:
+If you intentionally enable the optional model-backed API path, configure the required provider credential through your deployment platform's **environment variables**.
 
-```text
-AI_GATEWAY_API_KEY=...
-```
+For local development, use an untracked environment file such as `.env.local` and never place the actual credential in source code, README files, screenshots, commit messages, or frontend JavaScript.
 
-or a direct Gemini credential:
+**Never commit API keys, tokens, passwords, private URLs, or other secrets to Git.**
 
-```text
-GEMINI_API_KEY=...
-```
-
-Store these in your hosting provider's environment settings or in an untracked local environment file.
-
-**Never commit API keys, tokens, passwords, or other secrets to Git.**
-
-The API code also distinguishes Vercel AI Gateway credentials from direct Gemini credentials so a Gateway credential is not accidentally sent to Google's Gemini API.
+The server-side API code keeps provider credentials on the server side and distinguishes different credential formats before sending requests to an external model provider.
 
 ---
 
-# What was fixed during debugging?
+# Security Notes
 
-The project went through a fairly practical cleanup rather than just a visual rewrite.
+This README intentionally does not contain:
+
+- API keys or token values
+- passwords or private credentials
+- deployment secrets
+- private environment-variable values
+- personal contact information
+- private infrastructure details
+
+If you are contributing, check your diff before pushing:
+
+```bash
+git diff --check
+git status
+```
+
+Also make sure local environment files remain ignored and that secrets are configured through the hosting provider rather than committed to the repository.
+
+---
+
+# What changed during debugging?
+
+The project went through a practical cleanup rather than only a visual rewrite.
 
 ### Quantum simulation
 
@@ -586,7 +585,7 @@ The project went through a fairly practical cleanup rather than just a visual re
 
 - Made simulation update with circuit edits.
 - Added dynamic qubit and circuit-step sizing.
-- Added multi-qubit collision/placement checks.
+- Added multi-qubit collision and placement checks.
 - Added live probability and measurement views.
 - Added Dirac notation and entanglement inspection.
 - Added circuit presets and step scrubbing.
@@ -597,7 +596,7 @@ The project went through a fairly practical cleanup rather than just a visual re
 - Made curriculum and quiz data drive the learning flow.
 - Added session-based progress behavior.
 - Added a local tutor backed by the application's syllabus.
-- Removed the main tutor UI's dependency on `/api/chat`.
+- Removed the main tutor UI's dependency on the model API.
 
 ### Deployment and API cleanup
 
@@ -606,13 +605,11 @@ The project went through a fairly practical cleanup rather than just a visual re
 - Hardened optional AI credential handling.
 - Avoided exposing credential details in the client application.
 
-The README documents these changes because they affect how the project actually works today.
-
 ---
 
 # Known Limits
 
-A few limits are worth being explicit about.
+A few limits are worth being clear about.
 
 ### Small simulations by design
 
@@ -634,7 +631,7 @@ Generated Qiskit, PennyLane, Cirq, and OpenQASM code is intended as educational/
 
 # Roadmap
 
-The next useful improvements are less about adding random features and more about making the existing learning loop stronger:
+The next useful improvements are mostly about making the existing learning loop better:
 
 - More curriculum modules and worked examples
 - More algorithm and circuit challenges
@@ -671,16 +668,6 @@ npm run build
 6. If you changed the quantum engine, include a small circuit or mathematical case that demonstrates the expected result.
 7. Make sure no secrets were added.
 8. Open a pull request explaining what changed, why it changed, and how you tested it.
-
----
-
-# Contributors
-
-- [@chamanvashishth](https://github.com/chamanvashishth)
-- [@asharma975565-ship-it](https://github.com/asharma975565-ship-it)
-- [@hellovneet](https://github.com/hellovneet)
-- [@mehfa1](https://github.com/mehfa1)
-- [@narayankr03-gif](https://github.com/narayankr03-gif)
 
 ---
 
