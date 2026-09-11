@@ -2,204 +2,278 @@ import { CURRICULUM_TOPICS } from '../data/curriculum';
 import { QUIZ_MOCKS } from '../data/mockQuizzes';
 import { CircuitState } from '../types/quantum';
 
-type KnowledgeCard = { keywords: string[]; title: string; answer: string };
+type Intent =
+  | 'syllabus'
+  | 'simulator'
+  | 'curriculumTopic'
+  | 'quiz'
+  | 'circuit'
+  | 'code'
+  | 'debug'
+  | 'greeting'
+  | 'thanks'
+  | 'unknown';
 
-// Offline learning knowledge for the QubitLab syllabus.
+type KnowledgeCard = {
+  id: string;
+  title: string;
+  aliases: string[];
+  answer: string;
+  related?: string[];
+};
+
+// This tutor is deliberately grounded in the material that actually exists in QubitLab.
+// It is not an LLM and should never pretend to know a topic just because a keyword matched.
 const KNOWLEDGE: KnowledgeCard[] = [
-  { keywords: ['classical computing', 'classical computer'], title: 'Classical Computing', answer: 'Think of a normal computer as a system built around definite 0s and 1s. Bits are processed with logic gates, stored in memory, and combined to run programs.' },
-  { keywords: ['quantum computing', 'quantum computer'], title: 'Quantum Computing', answer: 'Quantum computers work with qubits. A qubit can use superposition, entanglement, and interference, which gives quantum algorithms a different way to process information. The advantage is problem-dependent, not “faster for everything.”' },
-  { keywords: ['bits vs qubits', 'bit vs qubit'], title: 'Bits vs Qubits', answer: 'A bit is either 0 or 1. A qubit can be in a state α|0⟩ + β|1⟩ before measurement. The important extra information is in the amplitudes and their relative phase, not simply “0 and 1 at the same time.”' },
-  { keywords: ['quantum information'], title: 'Quantum Information', answer: 'Quantum information is information encoded in quantum states. Qubits, gates, measurement, entanglement, and quantum channels are the main building blocks.' },
-  { keywords: ['bra ket', 'bra-ket', 'dirac notation', 'ket notation'], title: 'Bra-Ket Notation', answer: 'Bra-ket notation is a compact language for quantum states. A ket such as |ψ⟩ represents a state vector, while ⟨ψ| is its conjugate transpose. For example, |ψ⟩ = α|0⟩ + β|1⟩.' },
-  { keywords: ['qubit', 'quantum bit'], title: 'Qubit', answer: 'A qubit is the basic unit of quantum information. Its general single-qubit state is |ψ⟩ = α|0⟩ + β|1⟩, with |α|² + |β|² = 1.' },
-  { keywords: ['quantum state', 'quantum states'], title: 'Quantum States', answer: 'A quantum state describes everything needed to predict the outcomes of measurements on a quantum system. For n qubits, the statevector has 2ⁿ complex amplitudes.' },
-  { keywords: ['superposition'], title: 'Superposition', answer: 'Superposition means a quantum state can be a combination of basis states. For example, H|0⟩ = (|0⟩ + |1⟩)/√2. Measuring it gives 0 or 1 according to the corresponding probabilities.' },
-  { keywords: ['measurement', 'measure', 'born rule'], title: 'Measurement', answer: 'Measurement turns quantum information into a classical result. If |ψ⟩ = Σ αᵢ|i⟩, the probability of observing |i⟩ is |αᵢ|². After a projective measurement, the state is projected according to the observed outcome.' },
-  { keywords: ['probability amplitude', 'probability amplitudes'], title: 'Probability Amplitudes', answer: 'Amplitudes are usually complex numbers. Their squared magnitudes give measurement probabilities, while their phases affect interference.' },
-  { keywords: ['entanglement', 'entangled'], title: 'Entanglement', answer: 'Entanglement means the joint state of two or more systems cannot be separated into independent states for each part. This creates quantum correlations that are stronger than ordinary independent-state descriptions.' },
-  { keywords: ['x gate', 'pauli x'], title: 'X Gate', answer: 'X is the bit-flip gate: |0⟩ becomes |1⟩ and |1⟩ becomes |0⟩. Matrix: [[0,1],[1,0]].' },
-  { keywords: ['y gate', 'pauli y'], title: 'Y Gate', answer: 'Y rotates a qubit around the Bloch-sphere Y axis by π and adds phase factors. Matrix: [[0,-i],[i,0]].' },
-  { keywords: ['z gate', 'pauli z'], title: 'Z Gate', answer: 'Z is a phase-flip gate. It leaves |0⟩ unchanged and maps |1⟩ to -|1⟩. Matrix: [[1,0],[0,-1]].' },
-  { keywords: ['hadamard', 'hadamard gate', 'h gate'], title: 'Hadamard Gate', answer: 'H is a great “starter” gate because it creates equal superposition from |0⟩: H|0⟩ = (|0⟩ + |1⟩)/√2. Applying H again returns the original basis state.' },
-  { keywords: ['s gate'], title: 'S Gate', answer: 'S adds a π/2 phase to the |1⟩ component: |1⟩ → i|1⟩. It is a phase gate and is related to an RZ(π/2) rotation up to global phase convention.' },
-  { keywords: ['t gate'], title: 'T Gate', answer: 'T adds a π/4 phase to the |1⟩ component: |1⟩ → e^{iπ/4}|1⟩. It is a non-Clifford gate used in universal quantum computation.' },
-  { keywords: ['rx', 'rx gate', 'rotation x'], title: 'RX Gate', answer: 'RX(θ) rotates a qubit around the X axis by θ. In QubitLab, θ is represented in radians.' },
-  { keywords: ['ry', 'ry gate', 'rotation y'], title: 'RY Gate', answer: 'RY(θ) rotates a qubit around the Y axis by θ. It changes the amplitudes of |0⟩ and |1⟩ and is useful for preparing different probabilities.' },
-  { keywords: ['rz', 'rz gate', 'rotation z'], title: 'RZ Gate', answer: 'RZ(θ) rotates around the Z axis. It changes relative phase, so its effect may become visible in later interference even when immediate computational-basis probabilities do not change.' },
-  { keywords: ['cnot', 'controlled not', 'cx gate'], title: 'CNOT', answer: 'CNOT has a control and a target. If the control is |1⟩, the target is flipped; if the control is |0⟩, the target is left alone. H on one qubit followed by CNOT is the classic Bell-state example.' },
-  { keywords: ['cz', 'controlled z'], title: 'CZ', answer: 'CZ applies a Z phase conditionally. In the computational basis, |11⟩ gets a minus sign while the other basis states are unchanged.' },
-  { keywords: ['swap gate', 'swap'], title: 'SWAP', answer: 'SWAP exchanges two qubit states: |a⟩|b⟩ becomes |b⟩|a⟩. A SWAP can also be decomposed into three CNOT gates.' },
-  { keywords: ['controlled gate', 'controlled gates'], title: 'Controlled Gates', answer: 'A controlled gate applies an operation to a target only when its control condition is satisfied. CNOT and CZ are common examples; QubitLab also supports CCNOT.' },
-  { keywords: ['circuit design', 'quantum circuit'], title: 'Circuit Design', answer: 'Build a circuit by choosing qubits, applying gates in time order, checking the simulated state, and measuring when you want classical outcomes. For debugging, inspect one operation at a time instead of changing everything at once.' },
-  { keywords: ['vectors', 'vector'], title: 'Vectors', answer: 'A vector is an ordered list of values. In quantum computing, a statevector stores the amplitudes of the computational-basis states. One qubit has 2 amplitudes; n qubits have 2ⁿ.' },
-  { keywords: ['matrices', 'matrix'], title: 'Matrices', answer: 'Matrices represent linear transformations. Quantum gates are represented by matrices, and applying a gate means multiplying that matrix by the current statevector.' },
-  { keywords: ['complex numbers', 'complex number'], title: 'Complex Numbers', answer: 'A complex number has a real and imaginary part, a + bi. Quantum amplitudes use complex numbers because phase and interference matter.' },
-  { keywords: ['matrix multiplication'], title: 'Matrix Multiplication', answer: 'Matrix multiplication composes transformations. If A happens first and B happens second, the resulting state is B A |ψ⟩.' },
-  { keywords: ['unitary matrix', 'unitary matrices', 'unitary'], title: 'Unitary Matrices', answer: 'A unitary matrix satisfies U†U = I. Quantum gates use unitary transformations before measurement, which preserve the state norm.' },
-  { keywords: ['tensor product', 'tensor products'], title: 'Tensor Products', answer: 'Tensor products combine the state spaces of separate systems. Two qubits need 4 basis amplitudes: |00⟩, |01⟩, |10⟩, |11⟩.' },
-  { keywords: ['state vector', 'statevector'], title: 'State Vectors', answer: 'A statevector contains one complex amplitude for each computational-basis state. QubitLab uses the simulated statevector to calculate probabilities and display the current quantum state.' },
-  { keywords: ['probability distribution', 'probability distributions'], title: 'Probability Distributions', answer: 'A probability distribution tells you how likely each measurement outcome is. For a statevector, probability is the squared magnitude of each amplitude.' },
-  { keywords: ['histogram', 'histograms'], title: 'Measurement Histograms', answer: 'A histogram shows the outcomes of repeated simulated measurements. More shots usually make the observed frequencies look closer to the underlying probabilities.' },
-  { keywords: ['bloch sphere', 'bloch'], title: 'Bloch Sphere', answer: 'The Bloch sphere gives a geometric picture of a single-qubit pure state. |0⟩ and |1⟩ sit at opposite poles, while other points represent superpositions and relative phase.' },
-  { keywords: ['state evolution'], title: 'State Evolution', answer: 'State evolution is simply the state changing as gates are applied. QubitLab recomputes the state after circuit edits so you can see what each operation does.' },
-  { keywords: ['deutsch', 'deutsch algorithm'], title: 'Deutsch Algorithm', answer: 'Deutsch’s algorithm decides whether a promised one-bit Boolean function is constant or balanced with one oracle query. It is a compact example of superposition, phase kickback, interference, and measurement.' },
-  { keywords: ['deutsch jozsa', 'deutsch-jozsa'], title: 'Deutsch-Jozsa Algorithm', answer: 'Deutsch-Jozsa distinguishes a promised constant function from a balanced one using a single oracle query in the ideal quantum model. It demonstrates how interference can reveal a global property.' },
-  { keywords: ['bernstein vazirani', 'bernstein-vazirani'], title: 'Bernstein-Vazirani Algorithm', answer: 'Bernstein-Vazirani finds a hidden bit string encoded in a linear Boolean function using one oracle query in the ideal model.' },
-  { keywords: ['grover', 'grover algorithm'], title: 'Grover Algorithm', answer: 'Grover search uses an oracle and amplitude amplification to find a marked item in an unstructured space in about O(√N) queries, versus O(N) for straightforward exhaustive search.' },
-  { keywords: ['qft', 'quantum fourier transform'], title: 'Quantum Fourier Transform', answer: 'QFT is the quantum analogue of the discrete Fourier transform. It is a key subroutine in several quantum algorithms, including Shor’s algorithm.' },
-  { keywords: ['shor', 'shor algorithm'], title: 'Shor Algorithm', answer: 'Shor’s algorithm uses quantum period finding and the QFT to factor integers efficiently in the ideal fault-tolerant model. That is why it matters in cryptography discussions.' },
-  { keywords: ['vqe', 'variational quantum eigensolver'], title: 'VQE', answer: 'VQE is a hybrid quantum-classical method. A parameterized circuit prepares a trial state, the quantum side estimates an objective such as energy, and a classical optimizer updates the parameters.' },
-  { keywords: ['qaoa', 'quantum approximate optimization algorithm'], title: 'QAOA', answer: 'QAOA is a hybrid variational algorithm for combinatorial optimization. It alternates problem and mixing operations while a classical optimizer tunes the circuit parameters.' },
-  { keywords: ['qiskit'], title: 'Qiskit', answer: 'Qiskit is an open-source quantum software framework associated with IBM’s quantum platform. It supports circuit construction, transpilation, simulation, and execution workflows.' },
-  { keywords: ['qiskit aer', 'aer'], title: 'Qiskit Aer', answer: 'Qiskit Aer provides simulators for quantum circuits. It is useful for testing circuits and studying results before using quantum hardware.' },
-  { keywords: ['pennylane'], title: 'PennyLane', answer: 'PennyLane is a quantum-machine-learning and differentiable programming framework. It is especially useful for parameterized circuits and hybrid quantum-classical models.' },
-  { keywords: ['cirq'], title: 'Cirq', answer: 'Cirq is a Python framework for building, simulating, and experimenting with quantum circuits.' },
-  { keywords: ['qbraid', 'q-braid'], title: 'qBraid', answer: 'qBraid provides a quantum development environment and tooling that can connect workflows across different quantum software and execution backends.' },
-  { keywords: ['ai tutor'], title: 'AI Tutor', answer: 'An AI tutor adds a conversational layer to learning: it can explain ideas, answer questions, give hints, and guide practice. QubitLab keeps its core guide local and deterministic.' },
-  { keywords: ['ai code generation', 'code generation'], title: 'AI Code Generation', answer: 'AI code generation turns a natural-language request into starter code or translates a circuit into an SDK such as Qiskit, PennyLane, or Cirq. Generated code should always be reviewed and tested.' },
-  { keywords: ['ai debugging', 'debugging', 'debug quantum code'], title: 'AI Debugging', answer: 'AI-assisted debugging can inspect an error and code together, explain the likely cause, suggest a fix, and guide the learner through verification. It should be treated as a debugging assistant, not as a replacement for actually running tests.' },
-  { keywords: ['circuit explanation', 'explain circuit'], title: 'Circuit Explanation', answer: 'Circuit explanation translates a gate sequence into plain language: what each gate touches, what it changes, and how the final state or measurement should be interpreted.' },
-  { keywords: ['personalized learning', 'personalised learning'], title: 'Personalized Learning', answer: 'Personalized learning adapts explanations and practice to what the learner already understands. A beginner can get intuition first, while a stronger learner can move to matrices and derivations.' },
-  { keywords: ['adaptive difficulty', 'adaptive learning'], title: 'Adaptive Difficulty', answer: 'Adaptive difficulty changes the level of practice according to recent performance. Repeated mistakes can trigger easier explanations or prerequisites; consistent success can unlock harder problems.' },
-  { keywords: ['assessment', 'assessments'], title: 'Assessments', answer: 'Good assessments check understanding, not just memorization. Quantum practice can combine definitions, state reasoning, gate questions, and small circuit-building tasks.' },
-  { keywords: ['progress tracking', 'learning progress'], title: 'Progress Tracking', answer: 'Progress tracking records learning signals such as completed topics and quiz performance. QubitLab keeps this progress for the active browser session.' },
-  { keywords: ['normalization'], title: 'Normalization', answer: 'A valid quantum state has total probability 1. For n qubits, the probabilities of all 2ⁿ basis states must add to 1. Numerical simulation may renormalize tiny floating-point errors.' },
-  { keywords: ['phase', 'relative phase', 'global phase'], title: 'Quantum Phase', answer: 'Global phase does not change measurement probabilities. Relative phase can change interference, so it can affect later measurement outcomes.' },
-  { keywords: ['interference'], title: 'Interference', answer: 'Quantum amplitudes can reinforce or cancel. Quantum algorithms use this to increase useful outcomes and suppress unwanted ones.' },
-  { keywords: ['no cloning', 'no-cloning'], title: 'No-Cloning Theorem', answer: 'An arbitrary unknown quantum state cannot be copied perfectly. This is a basic consequence of the linearity of quantum mechanics.' },
-  { keywords: ['quantum teleportation', 'teleportation'], title: 'Quantum Teleportation', answer: 'Quantum teleportation transfers an unknown state using shared entanglement and two classical bits. It does not copy the state; the original quantum state is consumed by the protocol.' },
-  { keywords: ['python'], title: 'Python', answer: 'Python is widely used in scientific computing and quantum software. Qiskit, PennyLane, and Cirq all expose Python APIs.' },
-  { keywords: ['machine learning', 'ml'], title: 'Machine Learning', answer: 'Machine learning learns patterns from examples by adjusting model parameters. A simple workflow is prepare data → train → validate → evaluate.' },
-  { keywords: ['neural network', 'neural networks', 'deep learning'], title: 'Neural Networks', answer: 'A neural network learns parameters for a sequence of transformations. Training usually adjusts those parameters to reduce a loss using optimization and backpropagation.' },
+  { id: 'classical-vs-quantum', title: 'Classical vs Quantum Computing', aliases: ['classical computing', 'classical computer', 'classical vs quantum', 'quantum computing'], answer: 'A classical computer stores information as bits that are read as 0 or 1. QubitLab introduces quantum computing as a different computational model based on qubits, amplitudes, interference, entanglement, and measurement. Quantum computing is not simply a faster version of classical computing for every problem.', related: ['bits vs qubits', 'superposition'] },
+  { id: 'bits-vs-qubits', title: 'Bits vs Qubits', aliases: ['bits vs qubits', 'bit vs qubit', 'qubit vs bit'], answer: 'A bit is either 0 or 1. A qubit can be written as |ψ⟩ = α|0⟩ + β|1⟩, where |α|² + |β|² = 1. The amplitudes can be complex, and relative phase matters for interference.', related: ['bra-ket notation', 'complex numbers'] },
+  { id: 'bra-ket-notation', title: 'Bra-Ket (Dirac) Notation', aliases: ['bra ket', 'bra-ket', 'dirac notation', 'ket notation', 'bra notation'], answer: 'A ket |ψ⟩ represents a quantum state as a column vector. A bra ⟨ψ| is its conjugate-transpose row vector. The inner product ⟨φ|ψ⟩ gives an amplitude, while an outer product |ψ⟩⟨φ| forms an operator.', related: ['bits vs qubits', 'linear algebra'] },
+  { id: 'superposition', title: 'Quantum Superposition', aliases: ['superposition', 'quantum superposition'], answer: 'Superposition means a quantum state can be a linear combination of basis states. For example, H|0⟩ = (|0⟩ + |1⟩)/√2. Measurement then gives a classical outcome according to the squared magnitudes of the amplitudes.', related: ['measurement', 'hadamard'] },
+  { id: 'measurement', title: 'Quantum Measurement & the Born Rule', aliases: ['measurement', 'quantum measurement', 'wavefunction collapse', 'born rule', 'measure'], answer: 'For |ψ⟩ = Σ αᵢ|i⟩, the Born rule gives P(i) = |αᵢ|². A projective measurement produces a classical basis outcome and, in the usual model, projects the quantum state onto the observed outcome.', related: ['superposition', 'probability amplitudes'] },
+  { id: 'entanglement', title: 'Quantum Entanglement & Bell States', aliases: ['entanglement', 'entangled', 'bell state', 'bell states'], answer: 'Entanglement means the joint quantum state cannot be written as a product of independent states for the individual qubits. QubitLab uses Bell and GHZ presets to make this idea visible in the simulator.', related: ['cnot', 'bloch sphere'] },
+  { id: 'probability-amplitudes', title: 'Probability Amplitudes', aliases: ['probability amplitude', 'probability amplitudes', 'amplitudes'], answer: 'Quantum amplitudes are generally complex. Their squared magnitudes give measurement probabilities, while their relative phases can change later interference.', related: ['complex numbers', 'measurement'] },
+  { id: 'x', title: 'Pauli-X Gate', aliases: ['x gate', 'pauli x', 'pauli-x'], answer: 'X is the quantum bit-flip gate. X|0⟩ = |1⟩ and X|1⟩ = |0⟩. Its matrix is [[0,1],[1,0]]. QubitLab applies X directly to the simulated statevector.', related: ['single-qubit gates'] },
+  { id: 'y', title: 'Pauli-Y Gate', aliases: ['y gate', 'pauli y', 'pauli-y'], answer: 'Y is a single-qubit Pauli gate with matrix [[0,-i],[i,0]]. It combines a bit flip with phase factors and corresponds to a π rotation about the Bloch-sphere Y axis.', related: ['single-qubit gates'] },
+  { id: 'z', title: 'Pauli-Z Gate', aliases: ['z gate', 'pauli z', 'pauli-z', 'phase flip'], answer: 'Z is the phase-flip gate. It leaves |0⟩ unchanged and maps |1⟩ to -|1⟩. Its matrix is [[1,0],[0,-1]].', related: ['phase', 'single-qubit gates'] },
+  { id: 'h', title: 'Hadamard Gate', aliases: ['hadamard', 'hadamard gate', 'h gate'], answer: 'The Hadamard gate creates and recombines superpositions. Starting from |0⟩, H produces (|0⟩ + |1⟩)/√2. Applying H twice returns the original basis state.', related: ['superposition', 'interference'] },
+  { id: 's', title: 'S Gate', aliases: ['s gate', 'phase s'], answer: 'S applies a π/2 phase to the |1⟩ component: |1⟩ → i|1⟩. QubitLab includes S as a simulator gate.', related: ['phase', 'single-qubit gates'] },
+  { id: 't', title: 'T Gate', aliases: ['t gate', 'phase t'], answer: 'T applies a π/4 phase to |1⟩: |1⟩ → e^(iπ/4)|1⟩. QubitLab includes T as a simulator gate.', related: ['phase', 'single-qubit gates'] },
+  { id: 'rx', title: 'RX Rotation', aliases: ['rx', 'rx gate', 'rotation x'], answer: 'RX(θ) rotates a qubit about the X axis. QubitLab uses the standard unitary Rx(θ) = cos(θ/2)I − i sin(θ/2)X, and the circuit angle is interpreted in radians.', related: ['bloch sphere', 'single-qubit gates'] },
+  { id: 'ry', title: 'RY Rotation', aliases: ['ry', 'ry gate', 'rotation y'], answer: 'RY(θ) rotates a qubit about the Y axis. It changes the amplitudes and therefore can change computational-basis probabilities.', related: ['bloch sphere', 'single-qubit gates'] },
+  { id: 'rz', title: 'RZ Rotation', aliases: ['rz', 'rz gate', 'rotation z'], answer: 'RZ(θ) rotates around the Z axis and changes relative phase. Its effect can become visible in later interference even when immediate computational-basis probabilities are unchanged.', related: ['phase', 'bloch sphere'] },
+  { id: 'cnot', title: 'CNOT Gate', aliases: ['cnot', 'controlled not', 'cx', 'cx gate', 'controlled-x'], answer: 'CNOT has a control and a target. If the control is 1, X is applied to the target; if the control is 0, the target is unchanged. H followed by CNOT is the standard Bell-state construction used in QubitLab.', related: ['entanglement', 'multi-qubit gates'] },
+  { id: 'cz', title: 'CZ Gate', aliases: ['cz', 'controlled z', 'controlled-z'], answer: 'CZ applies a Z operation conditionally. In the computational basis it changes the sign of |11⟩ while leaving |00⟩, |01⟩ and |10⟩ unchanged.', related: ['phase', 'multi-qubit gates'] },
+  { id: 'swap', title: 'SWAP Gate', aliases: ['swap', 'swap gate'], answer: 'SWAP exchanges the states of two qubits. QubitLab implements SWAP directly in the statevector engine and exports it to supported code formats.', related: ['multi-qubit gates'] },
+  { id: 'ccnot', title: 'CCNOT / Toffoli Gate', aliases: ['ccnot', 'ccx', 'toffoli', 'toffoli gate'], answer: 'CCNOT has two control qubits and one target. The target flips only when both controls are 1. QubitLab supports CCNOT in the circuit simulator.', related: ['multi-qubit gates'] },
+  { id: 'complex', title: 'Complex Numbers & Argand Plane', aliases: ['complex numbers', 'complex number', 'argand', 'argand plane', 'euler formula'], answer: 'A complex number has the form a + bi. QubitLab uses complex numbers for quantum amplitudes. The curriculum covers magnitude, phase, conjugation, Euler’s formula, and the difference between global and relative phase.', related: ['probability amplitudes', 'linear algebra'] },
+  { id: 'linear-algebra', title: 'Linear Algebra & Unitary Matrices', aliases: ['linear algebra', 'matrices', 'matrix', 'unitary', 'unitary matrix', 'tensor product', 'kronecker'], answer: 'Quantum gates are linear transformations represented by matrices. The curriculum covers matrix multiplication, conjugate transpose, the unitary condition U†U = I, tensor products, eigenvalues, and eigenvectors. QubitLab applies these transformations directly to its statevector simulator.', related: ['complex numbers', 'statevector'] },
+  { id: 'bloch', title: 'Bloch Sphere', aliases: ['bloch sphere', 'bloch', 'bloch vector'], answer: 'The Bloch sphere is a geometric representation of a single-qubit state. QubitLab computes a Bloch vector for each qubit from the simulated state and displays p0, p1, x, y, z, theta, phi, and a purity value.', related: ['single-qubit gates', 'entanglement'] },
+  { id: 'statevector', title: 'Statevector Simulation', aliases: ['state vector', 'statevector', 'state vector simulation', 'simulation'], answer: 'QubitLab starts the circuit in |0...0⟩, applies the placed gates in step order, normalizes the resulting complex statevector to remove small floating-point drift, then derives probabilities, a Dirac-notation string, Bloch vectors, density matrices, an entanglement indicator, and sampled measurement counts.', related: ['circuit simulation', 'measurement'] },
+  { id: 'histogram', title: 'Measurement Histogram', aliases: ['histogram', 'measurement histogram', 'shots', 'shot'], answer: 'The simulator converts statevector probabilities into repeated sampled outcomes. The number of shots is configurable; more shots generally makes the histogram closer to the underlying probability distribution.', related: ['measurement', 'probability amplitudes'] },
+  { id: 'phase', title: 'Quantum Phase', aliases: ['phase', 'relative phase', 'global phase'], answer: 'Global phase does not change measurement probabilities. Relative phase can change interference and therefore can affect later measurement results. This distinction is part of QubitLab’s quantum foundations and complex-number material.', related: ['interference', 'rz'] },
+  { id: 'interference', title: 'Quantum Interference', aliases: ['interference', 'constructive interference', 'destructive interference'], answer: 'Quantum amplitudes can add constructively or destructively. QubitLab’s algorithm lessons use interference to explain why algorithms such as Deutsch-Jozsa and Grover can amplify useful outcomes.', related: ['superposition', 'grover'] },
+  { id: 'deutsch-jozsa', title: 'Deutsch-Jozsa Algorithm', aliases: ['deutsch-jozsa', 'deutsch jozsa', 'deutsch jozsa algorithm'], answer: 'Deutsch-Jozsa solves a promised problem: determine whether an oracle is constant or balanced. The curriculum focuses on phase kickback, constructive/destructive interference, and the complete Hadamard-oracle circuit. The Circuit Composer has a Deutsch preset, but it is an educational circuit preset rather than a general oracle implementation.', related: ['interference', 'cnot'] },
+  { id: 'grover', title: "Grover's Search Algorithm", aliases: ['grover', 'grover search', 'grover algorithm'], answer: 'Grover search uses an oracle and amplitude amplification to find a marked item in an unstructured search space in roughly O(√N) oracle queries. The curriculum covers the geometric 2D picture, diffusion operator, optimal iterations, and overcooking. QubitLab provides a small educational Grover preset; it is not a general arbitrary-size Grover compiler.', related: ['interference', 'statevector'] },
+  { id: 'qft', title: 'Quantum Fourier Transform', aliases: ['qft', 'quantum fourier transform'], answer: 'The curriculum teaches QFT as the quantum analogue of the discrete Fourier transform, including phase encoding and controlled-phase circuit structure. QubitLab does not have a dedicated QFT gate or a full general QFT builder in the Circuit Composer; QFT is currently a curriculum topic, not a complete simulator feature.', related: ['shor', 'linear algebra'] },
+  { id: 'shor', title: "Shor's Factoring Algorithm", aliases: ['shor', 'shor algorithm', 'factoring algorithm'], answer: 'The curriculum explains Shor’s reduction of factoring to order finding and the role of QFT. It also describes a small N=15 learning example. QubitLab does not implement a general Shor factoring engine in the Circuit Composer.', related: ['qft', 'deutsch-jozsa'] },
+  { id: 'vqe-qaoa', title: 'VQE & QAOA', aliases: ['vqe', 'qaoa', 'variational quantum algorithms', 'variational quantum algorithm'], answer: 'The curriculum introduces VQE and QAOA as hybrid quantum-classical algorithms. VQE uses a parameterized ansatz and an objective such as energy; QAOA alternates problem and mixing operations. The current Circuit Composer does not provide a full optimizer, Hamiltonian evaluator, or VQE/QAOA training loop.', related: ['rx', 'ry'] },
+  { id: 'qiskit', title: 'Qiskit', aliases: ['qiskit', 'qiskit aer', 'aer'], answer: 'Qiskit is included in the sandbox material and in the circuit export path. QubitLab can generate Qiskit code from the circuit. The browser simulator itself is QubitLab’s TypeScript statevector engine; it is not running Qiskit in the browser.', related: ['quantum sandbox'] },
+  { id: 'pennylane', title: 'PennyLane', aliases: ['pennylane', 'pennylane code'], answer: 'PennyLane is included in the sandbox and export path. QubitLab generates representative PennyLane code, while the browser simulation is performed by the local TypeScript quantum engine rather than the PennyLane SDK.', related: ['quantum sandbox'] },
+  { id: 'cirq', title: 'Cirq', aliases: ['cirq', 'cirq code'], answer: 'Cirq is included in the sandbox and export path. QubitLab generates representative Cirq code; it does not execute the Cirq SDK inside the browser simulator.', related: ['quantum sandbox'] },
+  { id: 'quantum-sandbox', title: 'Quantum Code Examples', aliases: ['quantum sandbox', 'sandbox', 'code examples', 'quantum code'], answer: 'The Quantum Code Examples topic compares Qiskit, PennyLane, and Cirq. The curriculum explicitly describes these as browser-based examples with representative outputs; the SDKs are not executed directly in the browser.', related: ['qiskit', 'pennylane', 'cirq'] },
+  { id: 'ai-tutor', title: 'QubitLab Tutor', aliases: ['ai tutor', 'tutor', 'bot', 'chatbot', 'guide'], answer: 'The current QubitLab tutor is a local deterministic learning guide. It uses the project curriculum, quiz data, explicit concept mappings, circuit context, and code/debug heuristics. It does not claim unlimited LLM knowledge. The repository also contains an optional model-backed API path, but the main tutor does not depend on it.', related: ['personalized learning', 'assessment'] },
+  { id: 'personalized-learning', title: 'Personalized Learning', aliases: ['personalized learning', 'personalised learning'], answer: 'The project describes personalized learning as adapting explanations and practice to the learner’s level. In the current implementation, the strongest concrete support is session progress, curriculum/quiz context, and the local tutor’s grounded explanations; it is not a full adaptive ML recommendation engine.', related: ['progress tracking', 'adaptive difficulty'] },
+  { id: 'progress', title: 'Progress Tracking', aliases: ['progress tracking', 'learning progress', 'progress'], answer: 'QubitLab tracks completed topics and quiz-related progress for the active browser session. The current implementation uses session-scoped storage, so it is intentionally not a permanent account database.', related: ['assessment'] },
+  { id: 'normalization', title: 'Normalization', aliases: ['normalization', 'normalize', 'normalized'], answer: 'A valid quantum state has total probability 1. QubitLab checks the state norm after applying the circuit and renormalizes the vector to reduce small floating-point drift without changing the physical probability ratios.', related: ['statevector', 'linear algebra'] },
+  { id: 'no-cloning', title: 'No-Cloning Theorem', aliases: ['no cloning', 'no-cloning'], answer: 'The no-cloning theorem says an arbitrary unknown quantum state cannot be copied perfectly. It follows from the linearity of quantum mechanics.', related: ['entanglement'] },
+  { id: 'teleportation', title: 'Quantum Teleportation', aliases: ['teleportation', 'quantum teleportation'], answer: 'Quantum teleportation transfers an unknown quantum state using shared entanglement plus classical communication. It does not copy the state; the original state is consumed by the protocol. QubitLab includes a small educational teleportation preset.', related: ['entanglement', 'cnot'] },
 ];
 
-const STOP_WORDS = new Set(['what','why','how','does','do','is','are','the','a','an','of','to','for','in','on','and','or','can','i','you','me','explain','tell','about','please','could','would','give','show']);
-const tokenize = (text: string) => text.toLowerCase().replace(/[^a-z0-9+\-*/^|⟩⟨]/g, ' ').split(/\s+/).filter((token) => token.length > 1 && !STOP_WORDS.has(token));
-const scoreText = (query: string, text: string) => tokenize(query).reduce((score, token) => score + (text.toLowerCase().includes(token) ? (token.length > 5 ? 2 : 1) : 0), 0);
-const searchSyllabus = (query: string) => CURRICULUM_TOPICS.map((topic) => ({ topic, score: scoreText(query, `${topic.title} ${topic.tagline} ${topic.description} ${topic.learningObjectives.join(' ')} ${topic.prerequisites.join(' ')}`) })).filter(({ score }) => score > 0).sort((a, b) => b.score - a.score).slice(0, 1);
-const searchQuizKnowledge = (query: string) => QUIZ_MOCKS.flatMap((quiz) => quiz.questions.map((question) => ({ quiz, question }))).map((item) => ({ ...item, score: scoreText(query, `${item.question.question} ${item.question.options.join(' ')} ${item.question.explanation}`) })).filter((item) => item.score > 1).sort((a, b) => b.score - a.score).slice(0, 1);
+const normalize = (text: string) => text
+  .toLowerCase()
+  .replace(/[’']/g, "'")
+  .replace(/[^a-z0-9+.#|⟩⟨_\-\s]/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim();
 
-const tryMath = (query: string): string | null => {
-  const expression = query.toLowerCase().replace(/what is|calculate|solve|evaluate|equals|=/g, ' ').replace(/times/g, '*').replace(/divided by/g, '/').replace(/plus/g, '+').replace(/minus/g, '-').replace(/to the power of/g, '^').replace(/[^0-9+\-*/().^%\s]/g, '').trim();
-  if (!expression || !/[+\-*/^%]/.test(expression) || !/^[-+*/%0-9().\s^]+$/.test(expression)) return null;
-  try {
-    const safeExpression = expression.replace(/(\d+(?:\.\d+)?)\s*\^\s*(\d+(?:\.\d+)?)/g, 'Math.pow($1,$2)');
-    const value = Function(`"use strict"; return (${safeExpression})`)();
-    if (typeof value !== 'number' || !Number.isFinite(value)) return null;
-    return `Here’s the result: ${Number.isInteger(value) ? value : Number(value.toFixed(8))}.`;
-  } catch { return null; }
-};
+const tokenSet = (text: string) => new Set(normalize(text).split(' ').filter((token) => token.length > 1));
 
-const extractCode = (query: string): string | null => {
-  const fenced = query.match(/```(?:[a-zA-Z0-9_+-]+)?\s*([\s\S]*?)```/);
-  if (fenced?.[1]?.trim()) return fenced[1].trim();
-  const inline = query.match(/`([^`]+)`/);
-  if (inline?.[1]?.trim()) return inline[1].trim();
-  const lines = query.split('\n').map((line) => line.trim()).filter(Boolean);
-  const codeLike = lines.filter((line) => /[{};]|=>|def |import |from |const |let |function |return |print\(|console\.|qiskit|pennylane|cirq|numpy|QuantumCircuit|qml\./i.test(line));
-  return codeLike.length >= 2 ? codeLike.join('\n') : null;
-};
+const hasPhrase = (text: string, phrase: string) => normalize(text).includes(normalize(phrase));
 
-const detectQuantumCodeIssues = (code: string): string[] => {
-  const issues: string[] = [];
-  const lower = code.toLowerCase();
-  const quantum = /qiskit|quantumcircuit|pennylane|qml\.|cirq/i.test(code);
-  if (!quantum) return issues;
+const topicById = new Map(CURRICULUM_TOPICS.map((topic) => [topic.id, topic]));
 
-  if (/QuantumCircuit\(\s*0\s*\)/i.test(code)) issues.push('The circuit is created with 0 qubits, so a gate cannot be applied to a qubit index.');
-  if (/QuantumCircuit\(\s*1\s*\)/i.test(code) && /\.(?:cx|cnot|cz|swap)\s*\(\s*0\s*,\s*1\s*\)/i.test(code)) issues.push('The circuit appears to have only 1 qubit but a two-qubit operation uses qubit 1.');
-  if (/\.cx\s*\(\s*(\d+)\s*,\s*\1\s*\)/i.test(code)) issues.push('CNOT uses the same qubit as control and target. A qubit cannot fill both roles in one CNOT.');
-  if (/\.cz\s*\(\s*(\d+)\s*,\s*\1\s*\)/i.test(code)) issues.push('CZ uses the same qubit as both control and target. Use two different qubits.');
-  if (/\.swap\s*\(\s*(\d+)\s*,\s*\1\s*\)/i.test(code)) issues.push('SWAP is being asked to swap a qubit with itself. Use two different qubit indices.');
-  if (/\.(?:rx|ry|rz)\s*\(\s*([0-9.]+)\s*\)/i.test(code) && /degree|degrees/i.test(code)) issues.push('The rotation gate API expects radians in the usual quantum SDK convention. Convert degrees to radians when needed.');
-  if (/measure_all\s*\(\s*\)/i.test(code) && /Statevector|statevector/i.test(code)) issues.push('Be careful when interpreting a statevector after measurement: measurement changes the quantum state, while a pre-measurement statevector describes the state before collapse.');
-  if (/\b(qc|circuit)\.measure\s*\(\s*([^,]+)\s*,\s*\2\s*\)/i.test(code)) issues.push('The same index is used for a qubit and classical bit in this measurement call. That is legal in some APIs, but verify that this is intentional.');
-  if (/\b(qc|circuit)\.h\s*\(\s*(\d+)\s*\)/i.test(code) && /QuantumCircuit\(\s*(\d+)\s*\)/i.test(code)) {
-    const q = Number(code.match(/\.h\s*\(\s*(\d+)\s*\)/i)?.[1]);
-    const n = Number(code.match(/QuantumCircuit\(\s*(\d+)\s*\)/i)?.[1]);
-    if (Number.isFinite(q) && Number.isFinite(n) && q >= n) issues.push(`The H gate targets q[${q}], but the circuit appears to contain only ${n} qubit${n === 1 ? '' : 's'}.`);
+function findCurriculumTopic(query: string) {
+  const normalized = normalize(query);
+  let best = { topic: null as (typeof CURRICULUM_TOPICS)[number] | null, score: 0 };
+  for (const topic of CURRICULUM_TOPICS) {
+    const candidates = [topic.title, topic.id, topic.tagline, ...topic.prerequisites];
+    let score = 0;
+    for (const candidate of candidates) {
+      const c = normalize(candidate);
+      if (normalized.includes(c)) score += c.length > 8 ? 8 : 4;
+      const overlap = [...tokenSet(candidate)].filter((token) => tokenSet(query).has(token)).length;
+      score += overlap * 1.5;
+    }
+    if (score > best.score) best = { topic, score };
   }
-  if (/QuantumCircuit\(\s*(\d+)\s*\)/i.test(code)) {
-    const n = Number(code.match(/QuantumCircuit\(\s*(\d+)\s*\)/i)?.[1]);
-    const indices = [...code.matchAll(/\.(?:h|x|y|z|s|t|rx|ry|rz|measure|cx|cnot|cz|swap)\s*\(([^)]*)\)/gi)].flatMap((m) => [...m[1].matchAll(/\b\d+\b/g)].map((x) => Number(x[0])));
-    if (Number.isFinite(n) && indices.some((index) => index >= n)) issues.push(`At least one operation uses a qubit index outside 0–${n - 1}.`);
-  }
-  if (/import\s+qiskit/i.test(code) && /QuantumCircuit/i.test(code) && !/from\s+qiskit\s+import\s+QuantumCircuit/i.test(code) && !/qiskit\.QuantumCircuit/i.test(code)) issues.push('Check the Qiskit import. If you use QuantumCircuit directly, the common form is `from qiskit import QuantumCircuit`.');
-  if (/qml\.qnode/i.test(code) && /qml\.device/i.test(code) && !/return\s+/i.test(code)) issues.push('A PennyLane QNode normally returns a measurement or expectation value. Check that the quantum function has a return statement.');
-  if (/cirq\.Circuit/i.test(code) && /measure/i.test(lower) && !/cirq\.measure/i.test(code)) issues.push('For Cirq, verify that measurement is added as a Cirq operation such as `cirq.measure(...)`, rather than using a Qiskit-style measurement API.');
-  return issues;
-};
-
-const explainCode = (query: string): string | null => {
-  const code = extractCode(query);
-  if (!code) return null;
-  const issues = detectQuantumCodeIssues(code);
-  const lines = code.split('\n').filter((line) => line.trim());
-  const notes: string[] = [];
-  if (/^\s*import\s+|^\s*from\s+.*\s+import\s+/m.test(code)) notes.push('Imports load the libraries or functions the program needs.');
-  if (/QuantumCircuit\s*\(/i.test(code)) notes.push('`QuantumCircuit(...)` creates the circuit and defines how many qubits and, when specified, classical bits it contains.');
-  if (/def\s+\w+\s*\(/.test(code)) notes.push('`def` creates a Python function; the indented block runs when that function is called.');
-  if (/function\s+\w+\s*\(|=>/.test(code)) notes.push('This defines a JavaScript/TypeScript function for reusable logic.');
-  if (/\.h\(|\.x\(|\.y\(|\.z\(|\.s\(|\.t\(|\.rx\(|\.ry\(|\.rz\(/i.test(code)) notes.push('These calls apply single-qubit gates. The argument identifies the target qubit, and rotation gates also take an angle.');
-  if (/\.cx\(|\.cnot\(|\.cz\(|\.swap\(/i.test(code)) notes.push('These are multi-qubit operations. Pay attention to which qubit is the control and which is the target.');
-  if (/measure|measurement/i.test(code)) notes.push('Measurement converts the quantum state into classical data. Repeated shots can then show a distribution of bitstrings.');
-  if (/statevector|aer|backend|sampler|simulate/i.test(code)) notes.push('This part is concerned with simulation or execution and collecting the circuit result.');
-  if (/for\s+|while\s*\(/.test(code)) notes.push('The loop repeats a block of classical code.');
-  if (/if\s*\(|if\s+/.test(code)) notes.push('The conditional chooses a path based on a condition.');
-  if (/return\b/.test(code)) notes.push('`return` sends a value back to the caller.');
-  if (/print\(|console\.log/.test(code)) notes.push('The output statement lets you inspect a result while the program runs.');
-
-  const issueBlock = issues.length
-    ? `Potential issues I noticed\n${issues.map((issue, index) => `${index + 1}. ${issue}`).join('\n')}\n\nThese are pattern-based checks, so run the code and confirm the exact error message.`
-    : 'I do not see an obvious issue from the patterns I can check locally. That does not prove the program is correct; the safest next step is to run it and inspect the exact error/output.';
-  const explanation = notes.length ? notes.map((note) => `• ${note}`).join('\n') : '• I can read the snippet, but I do not recognize enough structure to explain it reliably.';
-  return `Let’s go through it step by step.\n\nWhat the code is doing\n${explanation}\n\n${issueBlock}\n\nHow I would debug it\n1. Run the smallest version of the circuit.\n2. Check the qubit count and every qubit index.\n3. Verify control/target ordering for multi-qubit gates.\n4. Check the SDK API and parameter units.\n5. Compare the actual error with the circuit state and measurement result.\n\nCode preview\n${lines.slice(0, 6).join('\n')}${lines.length > 6 ? '\n…' : ''}`;
-};
-
-const circuitExplanation = (circuit?: CircuitState, diracNotation?: string) => {
-  if (!circuit) return null;
-  const gates = [...circuit.gates].sort((a, b) => a.step - b.step);
-  if (!gates.length) return `You have ${circuit.numQubits} qubits, but no gates yet. Start from |${'0'.repeat(circuit.numQubits)}⟩ and add a gate to see how the state changes.`;
-  const gateText = gates.map((gate) => {
-    const controls = [gate.controlQubit, gate.controlQubit2].filter((v): v is number => v !== undefined).map((v) => `q[${v}]`).join(', ');
-    return `${gate.gate} on q[${gate.targetQubit}]${controls ? ` with control ${controls}` : ''}`;
-  }).join(' → ');
-  return `Here’s what your circuit is doing: ${gateText}. ${diracNotation ? `The current simulated state is |ψ⟩ = ${diracNotation}.` : ''}`;
-};
-
-export function answerLocally(query: string): string {
-  const clean = query.trim();
-  if (!clean) return 'Ask me about a quantum concept, a QubitLab topic, or paste some code you want to understand or debug.';
-  const lower = clean.toLowerCase();
-  if (/^(hi|hello|hey|yo|good morning|good evening)\b/.test(lower)) return 'Hey! What are you working on? Ask me a quantum question, or paste your code and I’ll help you understand or debug it.';
-  if (/^(thanks|thank you|thx)\b/.test(lower)) return 'You’re welcome. Keep experimenting — quantum circuits make much more sense once you can see the state change.';
-  if (/^(bye|goodbye|see you)\b/.test(lower)) return 'See you. Keep building and testing those circuits.';
-  if (/(who are you|what are you|your name)/.test(lower)) return 'I’m the QubitLab Guide. I help with the quantum-computing syllabus, circuit reasoning, code explanations, and common debugging checks.';
-
-  const codeAnswer = explainCode(clean);
-  if (codeAnswer) return codeAnswer;
-  const math = tryMath(clean);
-  if (math) return math;
-
-  const knowledgeHits = KNOWLEDGE.map((card) => ({ card, score: scoreText(clean, `${card.title} ${card.keywords.join(' ')}`) })).filter(({ score }) => score > 0).sort((a, b) => b.score - a.score);
-  if (knowledgeHits.length) {
-    const best = knowledgeHits[0].card;
-    return `${best.title}\n\n${best.answer}\n\nWant to go one step deeper? I can show a simple example, the maths behind it, or how it looks in Qiskit/PennyLane/Cirq.`;
-  }
-
-  const syllabusHits = searchSyllabus(clean);
-  if (syllabusHits.length) {
-    const top = syllabusHits[0].topic;
-    const objectives = top.learningObjectives.slice(0, 3).map((item) => `• ${item}`).join('\n');
-    return `${top.title}\n\n${top.description}\n\nWhat to focus on\n${objectives}\n\nIf you’re new to this, ask me to explain it with a simple example first.`;
-  }
-
-  const quizHits = searchQuizKnowledge(clean);
-  if (quizHits.length) return `Quick check\n\n${quizHits[0].question.question}\n\n${quizHits[0].question.explanation}`;
-  if (/(circuit|statevector|gate|bloch|qubit|quantum|qiskit|pennylane|cirq|qbraid|qft|vqe|qaoa|deutsch|shor)/.test(lower)) return 'I’m not sure which part you mean yet. Try something specific like “Explain CNOT”, “Debug this Qiskit code”, “Why is my statevector wrong?”, or “Explain Grover step by step.”';
-  return 'I don’t have that in my current local knowledge base. Try a QubitLab syllabus topic, a quantum circuit question, or paste code and I’ll check the parts I recognize.';
+  return best.score >= 4 ? best.topic : null;
 }
 
-export function explainCircuitLocally(circuit: CircuitState, diracNotation: string): string {
-  return circuitExplanation(circuit, diracNotation) || 'No circuit context is available.';
+function findKnowledge(query: string) {
+  const normalized = normalize(query);
+  const queryTokens = tokenSet(query);
+  let best: { card: KnowledgeCard | null; score: number } = { card: null, score: 0 };
+
+  for (const card of KNOWLEDGE) {
+    let score = 0;
+    for (const alias of card.aliases) {
+      const a = normalize(alias);
+      if (normalized === a) score += 30;
+      else if (normalized.includes(a)) score += a.length >= 6 ? 16 : 8;
+      else {
+        const overlap = [...tokenSet(alias)].filter((token) => queryTokens.has(token)).length;
+        score += overlap * 3;
+      }
+    }
+    // Penalize broad one-word matches so "what is phase?" does not accidentally beat a more exact topic.
+    if (card.aliases.some((alias) => normalize(alias).split(' ').length === 1)) score -= 1;
+    if (score > best.score) best = { card, score };
+  }
+  return best.score >= 7 ? best.card : null;
+}
+
+function detectIntent(query: string): Intent {
+  const q = normalize(query);
+  if (/^(hi|hello|hey|hey there|good morning|good afternoon|good evening)$/.test(q)) return 'greeting';
+  if (/^(thanks|thank you|thx|ty|thankyou)$/.test(q)) return 'thanks';
+  if (/(what is|what's|what are|which|list|show|tell me).*(syllabus|curriculum|topics|modules|chapters)/.test(q) || hasPhrase(q, 'what does this project teach')) return 'syllabus';
+  if (/(what.*(gate|gates)|which.*(gate|gates)|supported.*gate|gate.*supported|used.*circuit|circuit.*use|simulator.*support|simulation.*support)/.test(q)) return 'simulator';
+  if (/(debug|bug|error|exception|not working|fix|wrong output|issue|problem)/.test(q) && looksLikeCode(q)) return 'debug';
+  if (/(explain|walk through|what does|what is wrong with|why.*code|code.*mean|understand.*code)/.test(q) && looksLikeCode(q)) return 'code';
+  if (/(circuit|gate sequence|statevector|dirac|bloch|histogram)/.test(q) && /(explain|what|why|how|current|this)/.test(q)) return 'circuit';
+  if (/(quiz|question|test me|practice)/.test(q)) return 'quiz';
+  if (findCurriculumTopic(q)) return 'curriculumTopic';
+  return 'unknown';
+}
+
+function looksLikeCode(text: string) {
+  return /```|(^|\n)\s*(import|from|def|class|const|let|var|function)\b|QuantumCircuit|qiskit|pennylane|qml\.|cirq|\.h\(|\.cx\(|\.measure\(|\.rx\(|\.ry\(|\.rz\(/i.test(text);
+}
+
+function extractCode(text: string) {
+  const fenced = text.match(/```(?:[a-zA-Z0-9_+-]+)?\s*([\s\S]*?)```/);
+  if (fenced?.[1]?.trim()) return fenced[1].trim();
+  const inline = text.match(/`([^`]+)`/);
+  if (inline?.[1]?.trim()) return inline[1].trim();
+  return text;
+}
+
+function syllabusAnswer() {
+  const groups = new Map<string, typeof CURRICULUM_TOPICS>();
+  for (const topic of CURRICULUM_TOPICS) {
+    const list = groups.get(topic.category) ?? [];
+    list.push(topic);
+    groups.set(topic.category, list);
+  }
+  const labels: Record<string, string> = {
+    foundations: 'Foundations', concepts: 'Core Concepts', gates: 'Gates & Circuits', math: 'Mathematics', visuals: 'Visuals & Bloch Sphere', algorithms: 'Quantum Algorithms', sandbox: 'Programming Sandbox',
+  };
+  const sections = [...groups.entries()].map(([category, topics]) => `${labels[category]}\n${topics.map((topic) => `• ${topic.title} — ${topic.difficulty}, ${topic.durationMin} min`).join('\n')}`).join('\n\n');
+  return `Here is the syllabus currently defined in QubitLab:\n\n${sections}\n\nThe important distinction is that this is the learning syllabus, not a list of features that are all fully implemented in the simulator. Some algorithm topics are taught conceptually while the Circuit Composer currently focuses on small statevector circuits.`;
+}
+
+function simulatorAnswer() {
+  return `The current Circuit Composer supports these gates:\n\n• H — Hadamard\n• X, Y, Z — Pauli gates\n• S, T — phase gates\n• RX, RY, RZ — parameterized rotations (radians)\n• CNOT / CX — controlled-X\n• CZ — controlled-Z\n• SWAP\n• CCNOT / Toffoli\n• MEASURE — a measurement marker in the circuit UI\n\nSimulation details:\n• 1–5 qubits\n• 4–12 circuit steps\n• starts from |0...0⟩\n• applies gates in step order using the local TypeScript statevector engine\n• computes amplitudes, probabilities, Dirac notation, Bloch vectors, single-qubit density matrices, an entanglement indicator, and sampled shot histograms\n• exports Qiskit, PennyLane, Cirq, and OpenQASM code\n\nImportant limitation: the MEASURE marker does not currently collapse the simulated state during gate evolution; the final histogram is sampled from the final pre-measurement statevector. Also, QFT, Shor, VQE, and QAOA are syllabus topics, not full dedicated simulator implementations.`;
+}
+
+function topicAnswer(topic: (typeof CURRICULUM_TOPICS)[number]) {
+  return `${topic.title}\n\n${topic.description}\n\nWhat you should learn:\n${topic.learningObjectives.map((item) => `• ${item}`).join('\n')}\n\nLevel: ${topic.difficulty} · ${topic.durationMin} min\nPrerequisites: ${topic.prerequisites.length ? topic.prerequisites.join(', ') : 'None listed'}`;
+}
+
+function quizAnswer(query: string) {
+  const topic = findCurriculumTopic(query);
+  const pool = topic ? QUIZ_MOCKS[topic.id] : Object.values(QUIZ_MOCKS).flat();
+  if (!pool?.length) return 'I could not find quiz data for that topic in the current project data.';
+  const question = pool[0];
+  const answerIndex = question.correctIndex ?? question.correctAnswer;
+  const correct = answerIndex !== undefined ? question.options[answerIndex] : 'the marked correct option';
+  return `Practice question${topic ? ` from ${topic.title}` : ''}:\n\n${question.question}\n\n${question.options.map((option, index) => `${String.fromCharCode(65 + index)}. ${option}`).join('\n')}\n\nAnswer: ${correct}\nWhy: ${question.explanation}`;
+}
+
+function explainCode(text: string) {
+  const code = extractCode(text);
+  const notes: string[] = [];
+  if (/from\s+.*\s+import|^\s*import\s+/m.test(code)) notes.push('The import lines load the libraries used by the program.');
+  if (/QuantumCircuit/i.test(code)) notes.push('QuantumCircuit creates the circuit/register structure in Qiskit.');
+  if (/qml\./i.test(code)) notes.push('The qml calls are PennyLane operations or circuit constructs.');
+  if (/cirq/i.test(code)) notes.push('The Cirq calls construct or simulate a quantum circuit using Cirq objects.');
+  if (/\.h\(|hadamard/i.test(code)) notes.push('Hadamard creates or recombines superposition.');
+  if (/\.x\(/i.test(code)) notes.push('X flips the computational-basis state of its target qubit.');
+  if (/\.y\(/i.test(code)) notes.push('Y applies the Pauli-Y transformation.');
+  if (/\.z\(/i.test(code)) notes.push('Z changes the phase of the |1⟩ component.');
+  if (/\.cx\(|\.cnot\(/i.test(code)) notes.push('CNOT conditionally flips a target according to a control qubit.');
+  if (/\.cz\(/i.test(code)) notes.push('CZ conditionally applies a Z phase.');
+  if (/\.swap\(/i.test(code)) notes.push('SWAP exchanges two qubit states.');
+  if (/\.rx\(|\.ry\(|\.rz\(/i.test(code)) notes.push('A rotation gate changes the qubit state by the supplied angle; these APIs normally use radians.');
+  if (/measure/i.test(code)) notes.push('Measurement converts the quantum result into classical information.');
+  if (/statevector|aer|simulate|backend|sampler/i.test(code)) notes.push('This section is concerned with simulation or execution and retrieving results.');
+  if (/def\s+\w+\s*\(/.test(code)) notes.push('The def statement creates a reusable Python function.');
+  if (/for\s+|while\s*\(/.test(code)) notes.push('The loop repeats a block of instructions.');
+  if (!notes.length) notes.push('I can see code, but I do not recognize enough of its structure to explain it reliably from the local guide.');
+  return `Let’s read it in execution order:\n\n${notes.map((note, i) => `${i + 1}. ${note}`).join('\n')}\n\nIf you want a line-by-line explanation, send the complete snippet and I’ll keep the explanation tied to the actual lines rather than guessing.`;
+}
+
+function debugCode(text: string) {
+  const code = extractCode(text);
+  const findings: string[] = [];
+  if (/QuantumCircuit\(\s*0\s*\)/i.test(code)) findings.push('The circuit is created with 0 qubits. Use a positive number of qubits.');
+  const circuitMatch = code.match(/QuantumCircuit\(\s*(\d+)/i);
+  if (circuitMatch) {
+    const count = Number(circuitMatch[1]);
+    const indices = [...code.matchAll(/\.(?:h|x|y|z|s|t|rx|ry|rz|measure)\(\s*(\d+)/gi)].map((m) => Number(m[1]));
+    const pairs = [...code.matchAll(/\.(?:cx|cnot|cz|swap)\(\s*(\d+)\s*,\s*(\d+)/gi)].flatMap((m) => [Number(m[1]), Number(m[2])]);
+    const maxIndex = Math.max(-1, ...indices, ...pairs);
+    if (maxIndex >= count) findings.push(`The circuit declares ${count} qubits, but q[${maxIndex}] is referenced. Valid indices are 0 through ${count - 1}.`);
+  }
+  const pairs = [...code.matchAll(/\.(?:cx|cnot|cz|swap)\(\s*(\d+)\s*,\s*(\d+)/gi)];
+  if (pairs.some((m) => m[1] === m[2])) findings.push('A two-qubit operation uses the same qubit twice. Control/source and target must be different.');
+  if (/qml\.|pennylane/i.test(code) && /QuantumCircuit|from qiskit/i.test(code)) findings.push('The snippet mixes PennyLane and Qiskit APIs. That is possible in an integration, but objects cannot usually be passed between the frameworks without an explicit conversion.');
+  if (/cirq/i.test(code) && /QuantumCircuit|qiskit/i.test(code)) findings.push('The snippet mixes Cirq and Qiskit APIs. Check that each gate is being applied to the correct framework object.');
+  if (/rx\(|ry\(|rz\(/i.test(code) && /(degrees|degree|°)/i.test(text)) findings.push('The code appears to use degree values with a rotation API. Most quantum SDK rotation APIs expect radians, so convert degrees when required.');
+  const parens = (code.match(/\(/g) || []).length - (code.match(/\)/g) || []).length;
+  if (parens !== 0) findings.push('Parentheses are unbalanced in the supplied snippet.');
+  if (!findings.length) findings.push('No obvious structural problem was detected by the local checks. That is not proof that the program is correct; the exact runtime error and expected output are still needed for a reliable diagnosis.');
+  return `Debug check:\n\n${findings.map((finding) => `• ${finding}`).join('\n')}\n\nNext checks:\n1. Read the exact error message.\n2. Check the line number it reports.\n3. Compare expected and actual state/probabilities.\n4. Reduce the circuit to the smallest failing example.\n5. Run again after changing one thing at a time.`;
+}
+
+export function explainCircuitLocally(circuit: CircuitState, diracNotation: string) {
+  const ordered = [...circuit.gates].sort((a, b) => a.step - b.step);
+  if (!ordered.length) return 'The circuit is empty. Add a gate and I can explain the resulting state and operation sequence.';
+  const steps = ordered.map((gate) => {
+    const target = `q${gate.targetQubit}`;
+    if (gate.gate === 'CNOT' || gate.gate === 'CZ') return `${gate.gate} control q${gate.controlQubit} → target ${target}`;
+    if (gate.gate === 'SWAP') return `SWAP ${target} ↔ q${gate.secondTarget}`;
+    if (gate.gate === 'CCNOT') return `CCNOT controls q${gate.controlQubit}, q${gate.controlQubit2} → target ${target}`;
+    if (gate.gate === 'RX' || gate.gate === 'RY' || gate.gate === 'RZ') return `${gate.gate}(${(gate.param ?? 0).toFixed(3)} rad) on ${target}`;
+    return `${gate.gate} on ${target}`;
+  });
+  return `Circuit explanation\n\nQubits: ${circuit.numQubits} · Steps: ${circuit.numSteps}\n\nGate sequence:\n${steps.map((step, i) => `${i + 1}. ${step}`).join('\n')}\n\nCurrent state:\n${diracNotation}\n\nThe simulator applies these gates to the initial |${'0'.repeat(circuit.numQubits)}⟩ state, then derives probabilities and visualization data from the resulting statevector.`;
+}
+
+export function answerLocally(query: string): string {
+  const q = query.trim();
+  if (!q) return 'Ask me a quantum question, ask about the QubitLab syllabus, or paste code/error text.';
+
+  const intent = detectIntent(q);
+  if (intent === 'greeting') return 'Hey! Ask me about the QubitLab syllabus, a quantum concept, a gate, an algorithm, the simulator, or some quantum code.';
+  if (intent === 'thanks') return 'You’re welcome. Send the next question when you’re ready.';
+  if (intent === 'syllabus') return syllabusAnswer();
+  if (intent === 'simulator') return simulatorAnswer();
+  if (intent === 'quiz') return quizAnswer(q);
+  if (intent === 'debug') return debugCode(q);
+  if (intent === 'code') return explainCode(q);
+
+  const curriculumTopic = findCurriculumTopic(q);
+  if (intent === 'curriculumTopic' && curriculumTopic) return topicAnswer(curriculumTopic);
+
+  const card = findKnowledge(q);
+  if (card) {
+    const deeper = card.related?.length ? `\n\nRelated in QubitLab: ${card.related.join(', ')}.` : '';
+    return `${card.title}\n\n${card.answer}${deeper}`;
+  }
+
+  if (/(what can you do|help|commands|ask you)/i.test(q)) {
+    return 'I can help with four things: (1) explain the QubitLab syllabus and individual topics, (2) explain gates and simulator behavior, (3) explain or debug quantum code, and (4) explain the current circuit when circuit context is provided. I will say when something is only a curriculum topic and not a fully implemented simulator feature.';
+  }
+
+  return `I don’t have a reliable grounded answer for that question in the current QubitLab learning data. I don’t want to invent an answer.\n\nTry asking about a specific syllabus topic, gate, algorithm, simulator feature, Qiskit/PennyLane/Cirq example, or paste the code/error you want checked.`;
+}
+
+export function getTutorContext() {
+  return {
+    curriculumTopicCount: CURRICULUM_TOPICS.length,
+    curriculumTopics: CURRICULUM_TOPICS.map((topic) => ({ id: topic.id, title: topic.title, category: topic.category })),
+    quizTopicCount: Object.keys(QUIZ_MOCKS).length,
+    supportedSimulatorGates: ['H', 'X', 'Y', 'Z', 'S', 'T', 'RX', 'RY', 'RZ', 'CNOT', 'CZ', 'SWAP', 'CCNOT', 'MEASURE'],
+  };
 }
