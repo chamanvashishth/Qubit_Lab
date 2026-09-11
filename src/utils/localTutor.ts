@@ -40,7 +40,7 @@ const tryMath = (query: string): string | null => {
     const safeExpression = expression.replace(/(\d+(?:\.\d+)?)\s*\^\s*(\d+(?:\.\d+)?)/g, 'Math.pow($1,$2)');
     const value = Function(`"use strict"; return (${safeExpression})`)();
     if (typeof value !== 'number' || !Number.isFinite(value)) return null;
-    return `The answer is **${Number.isInteger(value) ? value : Number(value.toFixed(8))}**.`;
+    return `The answer is ${Number.isInteger(value) ? value : Number(value.toFixed(8))}.`;
   } catch { return null; }
 };
 
@@ -72,22 +72,18 @@ export function answerLocally(query: string): string {
     .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score);
 
-  // Prefer a direct concept answer. Do not append unrelated syllabus or related-topic blocks.
-  if (knowledgeHits.length) {
-    const primary = knowledgeHits[0].card;
-    return `### ${primary.title}\n${primary.answer}`;
-  }
+  if (knowledgeHits.length) return `${knowledgeHits[0].card.title}\n\n${knowledgeHits[0].card.answer}`;
 
   const syllabusHits = searchSyllabus(clean);
   if (syllabusHits.length) {
     const top = syllabusHits[0].topic;
-    const objectives = top.learningObjectives.slice(0, 3).map((item) => `- ${item}`).join('\n');
-    return `### ${top.title}\n${top.description}\n\n**Key points**\n${objectives}`;
+    const objectives = top.learningObjectives.slice(0, 3).map((item) => `• ${item}`).join('\n');
+    return `${top.title}\n\n${top.description}\n\nKey points\n${objectives}`;
   }
 
   const quizHits = searchQuizKnowledge(clean);
   if (quizHits.length) {
-    return `### Quick check\n${quizHits[0].question.question}\n\n${quizHits[0].question.explanation}`;
+    return `Quick check\n\n${quizHits[0].question.question}\n\n${quizHits[0].question.explanation}`;
   }
 
   if (/(circuit|statevector|gate|bloch|qubit|quantum)/.test(lower)) {
