@@ -2,28 +2,8 @@ import { CURRICULUM_TOPICS } from '../data/curriculum';
 import { QUIZ_MOCKS } from '../data/mockQuizzes';
 import { CircuitState } from '../types/quantum';
 
-type Intent =
-  | 'syllabus'
-  | 'simulator'
-  | 'curriculumTopic'
-  | 'quiz'
-  | 'circuit'
-  | 'code'
-  | 'debug'
-  | 'greeting'
-  | 'thanks'
-  | 'unknown';
+type KnowledgeCard = { id: string; title: string; aliases: string[]; answer: string; related?: string[] };
 
-type KnowledgeCard = {
-  id: string;
-  title: string;
-  aliases: string[];
-  answer: string;
-  related?: string[];
-};
-
-// This tutor is deliberately grounded in the material that actually exists in QubitLab.
-// It is not an LLM and should never pretend to know a topic just because a keyword matched.
 const KNOWLEDGE: KnowledgeCard[] = [
   { id: 'classical-vs-quantum', title: 'Classical vs Quantum Computing', aliases: ['classical computing', 'classical computer', 'classical vs quantum', 'quantum computing'], answer: 'A classical computer stores information as bits that are read as 0 or 1. QubitLab introduces quantum computing as a different computational model based on qubits, amplitudes, interference, entanglement, and measurement. Quantum computing is not simply a faster version of classical computing for every problem.', related: ['bits vs qubits', 'superposition'] },
   { id: 'bits-vs-qubits', title: 'Bits vs Qubits', aliases: ['bits vs qubits', 'bit vs qubit', 'qubit vs bit'], answer: 'A bit is either 0 or 1. A qubit can be written as |ψ⟩ = α|0⟩ + β|1⟩, where |α|² + |β|² = 1. The amplitudes can be complex, and relative phase matters for interference.', related: ['bra-ket notation', 'complex numbers'] },
@@ -69,65 +49,55 @@ const KNOWLEDGE: KnowledgeCard[] = [
   { id: 'teleportation', title: 'Quantum Teleportation', aliases: ['teleportation', 'quantum teleportation'], answer: 'Quantum teleportation transfers an unknown quantum state using shared entanglement plus classical communication. It does not copy the state; the original state is consumed by the protocol. QubitLab includes a small educational teleportation preset.', related: ['entanglement', 'cnot'] },
 ];
 
-const normalize = (text: string) => text
-  .toLowerCase()
-  .replace(/[’']/g, "'")
-  .replace(/[^a-z0-9+.#|⟩⟨_\-\s]/g, ' ')
-  .replace(/\s+/g, ' ')
-  .trim();
-
+const normalize = (text: string) => text.toLowerCase().replace(/[’']/g, "'").replace(/[^a-z0-9+.#|⟩⟨_\-\s]/g, ' ').replace(/\s+/g, ' ').trim();
 const tokenSet = (text: string) => new Set(normalize(text).split(' ').filter((token) => token.length > 1));
-
 const hasPhrase = (text: string, phrase: string) => normalize(text).includes(normalize(phrase));
-
 const topicById = new Map(CURRICULUM_TOPICS.map((topic) => [topic.id, topic]));
 
 function findCurriculumTopic(query: string) {
   const normalized = normalize(query);
+  const queryTokens = tokenSet(query);
   let best = { topic: null as (typeof CURRICULUM_TOPICS)[number] | null, score: 0 };
   for (const topic of CURRICULUM_TOPICS) {
-    const candidates = [topic.title, topic.id, topic.tagline, ...topic.prerequisites];
     let score = 0;
-    for (const candidate of candidates) {
+    for (const candidate of [topic.title, topic.id, topic.tagline]) {
       const c = normalize(candidate);
-      if (normalized.includes(c)) score += c.length > 8 ? 8 : 4;
-      const overlap = [...tokenSet(candidate)].filter((token) => tokenSet(query).has(token)).length;
-      score += overlap * 1.5;
+      if (normalized.includes(c)) score += c.length > 8 ? 10 : 5;
+      score += [...tokenSet(candidate)].filter((token) => queryTokens.has(token)).length * 1.5;
     }
     if (score > best.score) best = { topic, score };
   }
-  return best.score >= 4 ? best.topic : null;
+  return best.score >= 5 ? best.topic : null;
 }
 
 function findKnowledge(query: string) {
   const normalized = normalize(query);
   const queryTokens = tokenSet(query);
   let best: { card: KnowledgeCard | null; score: number } = { card: null, score: 0 };
-
   for (const card of KNOWLEDGE) {
     let score = 0;
     for (const alias of card.aliases) {
       const a = normalize(alias);
-      if (normalized === a) score += 30;
-      else if (normalized.includes(a)) score += a.length >= 6 ? 16 : 8;
-      else {
-        const overlap = [...tokenSet(alias)].filter((token) => queryTokens.has(token)).length;
-        score += overlap * 3;
-      }
+      if (normalized === a) score += 40;
+      else if (normalized.includes(a)) score += a.length >= 6 ? 18 : 9;
+      else score += [...tokenSet(alias)].filter((token) => queryTokens.has(token)).length * 3;
     }
-    // Penalize broad one-word matches so "what is phase?" does not accidentally beat a more exact topic.
-    if (card.aliases.some((alias) => normalize(alias).split(' ').length === 1)) score -= 1;
     if (score > best.score) best = { card, score };
   }
   return best.score >= 7 ? best.card : null;
 }
 
-function detectIntent(query: string): Intent {
+function looksLikeCode(text: string) {
+  return /```|(^|\n)\s*(import|from|def|class|const|let|var|function)\b|QuantumCircuit|qiskit|pennylane|qml\.|cirq|\.h\(|\.cx\(|\.measure\(|\.rx\(|\.ry\(|\.rz\(/i.test(text);
+}
+
+function detectIntent(query: string) {
   const q = normalize(query);
   if (/^(hi|hello|hey|hey there|good morning|good afternoon|good evening)$/.test(q)) return 'greeting';
   if (/^(thanks|thank you|thx|ty|thankyou)$/.test(q)) return 'thanks';
   if (/(what is|what's|what are|which|list|show|tell me).*(syllabus|curriculum|topics|modules|chapters)/.test(q) || hasPhrase(q, 'what does this project teach')) return 'syllabus';
   if (/(what.*(gate|gates)|which.*(gate|gates)|supported.*gate|gate.*supported|used.*circuit|circuit.*use|simulator.*support|simulation.*support)/.test(q)) return 'simulator';
+  if (/i am reviewing this quantum quiz question|quiz question:/.test(q)) return 'quizHelp';
   if (/(debug|bug|error|exception|not working|fix|wrong output|issue|problem)/.test(q) && looksLikeCode(q)) return 'debug';
   if (/(explain|walk through|what does|what is wrong with|why.*code|code.*mean|understand.*code)/.test(q) && looksLikeCode(q)) return 'code';
   if (/(circuit|gate sequence|statevector|dirac|bloch|histogram)/.test(q) && /(explain|what|why|how|current|this)/.test(q)) return 'circuit';
@@ -136,38 +106,40 @@ function detectIntent(query: string): Intent {
   return 'unknown';
 }
 
-function looksLikeCode(text: string) {
-  return /```|(^|\n)\s*(import|from|def|class|const|let|var|function)\b|QuantumCircuit|qiskit|pennylane|qml\.|cirq|\.h\(|\.cx\(|\.measure\(|\.rx\(|\.ry\(|\.rz\(/i.test(text);
-}
-
-function extractCode(text: string) {
-  const fenced = text.match(/```(?:[a-zA-Z0-9_+-]+)?\s*([\s\S]*?)```/);
-  if (fenced?.[1]?.trim()) return fenced[1].trim();
-  const inline = text.match(/`([^`]+)`/);
-  if (inline?.[1]?.trim()) return inline[1].trim();
-  return text;
-}
-
 function syllabusAnswer() {
   const groups = new Map<string, typeof CURRICULUM_TOPICS>();
-  for (const topic of CURRICULUM_TOPICS) {
-    const list = groups.get(topic.category) ?? [];
-    list.push(topic);
-    groups.set(topic.category, list);
-  }
-  const labels: Record<string, string> = {
-    foundations: 'Foundations', concepts: 'Core Concepts', gates: 'Gates & Circuits', math: 'Mathematics', visuals: 'Visuals & Bloch Sphere', algorithms: 'Quantum Algorithms', sandbox: 'Programming Sandbox',
-  };
+  for (const topic of CURRICULUM_TOPICS) groups.set(topic.category, [...(groups.get(topic.category) ?? []), topic]);
+  const labels: Record<string, string> = { foundations: 'Foundations', concepts: 'Core Concepts', gates: 'Gates & Circuits', math: 'Mathematics', visuals: 'Visuals & Bloch Sphere', algorithms: 'Quantum Algorithms', sandbox: 'Programming Sandbox' };
   const sections = [...groups.entries()].map(([category, topics]) => `${labels[category]}\n${topics.map((topic) => `• ${topic.title} — ${topic.difficulty}, ${topic.durationMin} min`).join('\n')}`).join('\n\n');
-  return `Here is the syllabus currently defined in QubitLab:\n\n${sections}\n\nThe important distinction is that this is the learning syllabus, not a list of features that are all fully implemented in the simulator. Some algorithm topics are taught conceptually while the Circuit Composer currently focuses on small statevector circuits.`;
+  return `Here is the syllabus currently defined in QubitLab:\n\n${sections}\n\nThis is the learning syllabus. It is not a promise that every topic is a complete simulator feature.`;
 }
 
 function simulatorAnswer() {
-  return `The current Circuit Composer supports these gates:\n\n• H — Hadamard\n• X, Y, Z — Pauli gates\n• S, T — phase gates\n• RX, RY, RZ — parameterized rotations (radians)\n• CNOT / CX — controlled-X\n• CZ — controlled-Z\n• SWAP\n• CCNOT / Toffoli\n• MEASURE — a measurement marker in the circuit UI\n\nSimulation details:\n• 1–5 qubits\n• 4–12 circuit steps\n• starts from |0...0⟩\n• applies gates in step order using the local TypeScript statevector engine\n• computes amplitudes, probabilities, Dirac notation, Bloch vectors, single-qubit density matrices, an entanglement indicator, and sampled shot histograms\n• exports Qiskit, PennyLane, Cirq, and OpenQASM code\n\nImportant limitation: the MEASURE marker does not currently collapse the simulated state during gate evolution; the final histogram is sampled from the final pre-measurement statevector. Also, QFT, Shor, VQE, and QAOA are syllabus topics, not full dedicated simulator implementations.`;
+  return `The current Circuit Composer supports:\n\n• H, X, Y, Z\n• S, T\n• RX, RY, RZ (radians)\n• CNOT / CX\n• CZ\n• SWAP\n• CCNOT / Toffoli\n• MEASURE marker\n\nThe simulator is a local TypeScript statevector engine. It supports 1–5 qubits and 4–12 steps, starts at |0...0⟩, applies gates in step order, normalizes the state, and derives amplitudes, probabilities, Dirac notation, Bloch vectors, density matrices, an entanglement indicator, and sampled shot histograms.\n\nIt can export circuits as Qiskit, PennyLane, Cirq, and OpenQASM code.\n\nImportant implementation detail: MEASURE is currently a circuit marker; it does not collapse the evolving statevector. The final histogram is sampled from the final pre-measurement state. QFT, Shor, VQE, and QAOA are syllabus topics, not full dedicated simulator implementations.`;
 }
 
 function topicAnswer(topic: (typeof CURRICULUM_TOPICS)[number]) {
   return `${topic.title}\n\n${topic.description}\n\nWhat you should learn:\n${topic.learningObjectives.map((item) => `• ${item}`).join('\n')}\n\nLevel: ${topic.difficulty} · ${topic.durationMin} min\nPrerequisites: ${topic.prerequisites.length ? topic.prerequisites.join(', ') : 'None listed'}`;
+}
+
+function findQuizQuestion(query: string) {
+  const all = Object.values(QUIZ_MOCKS).flat();
+  const normalized = normalize(query);
+  let best = { question: null as (typeof all)[number] | null, score: 0 };
+  for (const question of all) {
+    const q = normalize(question.question);
+    let score = normalized.includes(q) ? 100 : 0;
+    score += [...tokenSet(question.question)].filter((token) => normalized.includes(token)).length;
+    if (score > best.score) best = { question, score };
+  }
+  return best.score >= 5 ? best.question : null;
+}
+
+function quizHelpAnswer(query: string) {
+  const question = findQuizQuestion(query);
+  if (!question) return 'I can see that this is a quiz-help request, but I could not match the exact question to the current quiz data. Send the quiz question text directly and I will explain the concept instead of guessing.';
+  const index = question.correctIndex ?? question.correctAnswer ?? 0;
+  return `Let’s solve the exact quiz question:\n\n${question.question}\n\nCorrect answer: ${question.options[index]}\n\nWhy: ${question.explanation}`;
 }
 
 function quizAnswer(query: string) {
@@ -175,9 +147,15 @@ function quizAnswer(query: string) {
   const pool = topic ? QUIZ_MOCKS[topic.id] : Object.values(QUIZ_MOCKS).flat();
   if (!pool?.length) return 'I could not find quiz data for that topic in the current project data.';
   const question = pool[0];
-  const answerIndex = question.correctIndex ?? question.correctAnswer;
-  const correct = answerIndex !== undefined ? question.options[answerIndex] : 'the marked correct option';
-  return `Practice question${topic ? ` from ${topic.title}` : ''}:\n\n${question.question}\n\n${question.options.map((option, index) => `${String.fromCharCode(65 + index)}. ${option}`).join('\n')}\n\nAnswer: ${correct}\nWhy: ${question.explanation}`;
+  const index = question.correctIndex ?? question.correctAnswer ?? 0;
+  return `Practice question${topic ? ` from ${topic.title}` : ''}:\n\n${question.question}\n\n${question.options.map((option, i) => `${String.fromCharCode(65 + i)}. ${option}`).join('\n')}\n\nAnswer: ${question.options[index]}\nWhy: ${question.explanation}`;
+}
+
+function extractCode(text: string) {
+  const fenced = text.match(/```(?:[a-zA-Z0-9_+-]+)?\s*([\s\S]*?)```/);
+  if (fenced?.[1]?.trim()) return fenced[1].trim();
+  const inline = text.match(/`([^`]+)`/);
+  return inline?.[1]?.trim() || text;
 }
 
 function explainCode(text: string) {
@@ -199,8 +177,7 @@ function explainCode(text: string) {
   if (/statevector|aer|simulate|backend|sampler/i.test(code)) notes.push('This section is concerned with simulation or execution and retrieving results.');
   if (/def\s+\w+\s*\(/.test(code)) notes.push('The def statement creates a reusable Python function.');
   if (/for\s+|while\s*\(/.test(code)) notes.push('The loop repeats a block of instructions.');
-  if (!notes.length) notes.push('I can see code, but I do not recognize enough of its structure to explain it reliably from the local guide.');
-  return `Let’s read it in execution order:\n\n${notes.map((note, i) => `${i + 1}. ${note}`).join('\n')}\n\nIf you want a line-by-line explanation, send the complete snippet and I’ll keep the explanation tied to the actual lines rather than guessing.`;
+  return `Let’s read it in execution order:\n\n${(notes.length ? notes : ['I can see code, but I do not recognize enough of its structure to explain it reliably from the local guide.']).map((note, i) => `${i + 1}. ${note}`).join('\n')}\n\nFor a line-by-line explanation, send the complete snippet and I will keep the explanation tied to the actual lines.`;
 }
 
 function debugCode(text: string) {
@@ -217,13 +194,12 @@ function debugCode(text: string) {
   }
   const pairs = [...code.matchAll(/\.(?:cx|cnot|cz|swap)\(\s*(\d+)\s*,\s*(\d+)/gi)];
   if (pairs.some((m) => m[1] === m[2])) findings.push('A two-qubit operation uses the same qubit twice. Control/source and target must be different.');
-  if (/qml\.|pennylane/i.test(code) && /QuantumCircuit|from qiskit/i.test(code)) findings.push('The snippet mixes PennyLane and Qiskit APIs. That is possible in an integration, but objects cannot usually be passed between the frameworks without an explicit conversion.');
-  if (/cirq/i.test(code) && /QuantumCircuit|qiskit/i.test(code)) findings.push('The snippet mixes Cirq and Qiskit APIs. Check that each gate is being applied to the correct framework object.');
-  if (/rx\(|ry\(|rz\(/i.test(code) && /(degrees|degree|°)/i.test(text)) findings.push('The code appears to use degree values with a rotation API. Most quantum SDK rotation APIs expect radians, so convert degrees when required.');
+  if (/qml\.|pennylane/i.test(code) && /QuantumCircuit|from qiskit/i.test(code)) findings.push('The snippet mixes PennyLane and Qiskit APIs. That can work in an integration, but objects normally need explicit conversion between frameworks.');
+  if (/cirq/i.test(code) && /QuantumCircuit|qiskit/i.test(code)) findings.push('The snippet mixes Cirq and Qiskit APIs. Check that each operation is applied to the correct framework object.');
+  if (/rx\(|ry\(|rz\(/i.test(code) && /(degrees|degree|°)/i.test(text)) findings.push('The code appears to use degrees with a rotation API. Most quantum SDK rotation APIs expect radians.');
   const parens = (code.match(/\(/g) || []).length - (code.match(/\)/g) || []).length;
   if (parens !== 0) findings.push('Parentheses are unbalanced in the supplied snippet.');
-  if (!findings.length) findings.push('No obvious structural problem was detected by the local checks. That is not proof that the program is correct; the exact runtime error and expected output are still needed for a reliable diagnosis.');
-  return `Debug check:\n\n${findings.map((finding) => `• ${finding}`).join('\n')}\n\nNext checks:\n1. Read the exact error message.\n2. Check the line number it reports.\n3. Compare expected and actual state/probabilities.\n4. Reduce the circuit to the smallest failing example.\n5. Run again after changing one thing at a time.`;
+  return `Debug check:\n\n${(findings.length ? findings : ['No obvious structural problem was detected by the local checks. That is not proof that the program is correct; the exact runtime error and expected output are still needed.']).map((finding) => `• ${finding}`).join('\n')}\n\nNext checks:\n1. Read the exact error message.\n2. Check its line number.\n3. Compare expected and actual state/probabilities.\n4. Reduce the circuit to the smallest failing example.\n5. Change one thing at a time and run again.`;
 }
 
 export function explainCircuitLocally(circuit: CircuitState, diracNotation: string) {
@@ -240,40 +216,37 @@ export function explainCircuitLocally(circuit: CircuitState, diracNotation: stri
   return `Circuit explanation\n\nQubits: ${circuit.numQubits} · Steps: ${circuit.numSteps}\n\nGate sequence:\n${steps.map((step, i) => `${i + 1}. ${step}`).join('\n')}\n\nCurrent state:\n${diracNotation}\n\nThe simulator applies these gates to the initial |${'0'.repeat(circuit.numQubits)}⟩ state, then derives probabilities and visualization data from the resulting statevector.`;
 }
 
+function circuitPromptAnswer(prompt: string) {
+  const qubits = Number(prompt.match(/Number of qubits:\s*(\d+)/i)?.[1] ?? 0);
+  const state = prompt.match(/Dirac notation:\s*\|?ψ⟩?\s*=\s*([^\n]+)/i)?.[1]?.trim();
+  const gatesText = prompt.match(/Gates applied:\s*([^\n]+)/i)?.[1]?.trim() ?? '';
+  if (!qubits || !gatesText) return null;
+  const gates = gatesText.split(',').map((item) => item.trim()).filter(Boolean);
+  const hasEntanglingGate = gates.some((gate) => /CNOT|CZ|SWAP|CCNOT/i.test(gate));
+  return `Circuit analysis\n\nThis is a ${qubits}-qubit circuit. It contains ${gates.length} listed operations.\n\nStep-by-step:\n${gates.map((gate, index) => `${index + 1}. ${gate}`).join('\n')}\n\nWhat that means:\n• Single-qubit gates change amplitudes or phase on one qubit.\n• ${hasEntanglingGate ? 'The circuit contains a multi-qubit operation, so correlations/entanglement may be generated depending on the input state.' : 'No multi-qubit gate is listed, so the circuit does not create entanglement from an initially separable |0...0⟩ state.'}\n• Interference depends on how the amplitudes and relative phases combine across the sequence.\n\nResulting statevector:\n${state || 'Not supplied'}\n\nThis explanation is derived from the actual circuit data passed by QubitLab, not from a guessed gate sequence.`;
+}
+
 export function answerLocally(query: string): string {
   const q = query.trim();
   if (!q) return 'Ask me a quantum question, ask about the QubitLab syllabus, or paste code/error text.';
-
   const intent = detectIntent(q);
   if (intent === 'greeting') return 'Hey! Ask me about the QubitLab syllabus, a quantum concept, a gate, an algorithm, the simulator, or some quantum code.';
   if (intent === 'thanks') return 'You’re welcome. Send the next question when you’re ready.';
   if (intent === 'syllabus') return syllabusAnswer();
   if (intent === 'simulator') return simulatorAnswer();
+  if (intent === 'quizHelp') return quizHelpAnswer(q);
   if (intent === 'quiz') return quizAnswer(q);
   if (intent === 'debug') return debugCode(q);
   if (intent === 'code') return explainCode(q);
-
+  if (intent === 'circuit') return circuitPromptAnswer(q) ?? 'I can explain a circuit when the circuit data is included. Use the Composer’s “Explain locally” action or provide the qubit count, gate sequence, and current state.';
   const curriculumTopic = findCurriculumTopic(q);
   if (intent === 'curriculumTopic' && curriculumTopic) return topicAnswer(curriculumTopic);
-
   const card = findKnowledge(q);
-  if (card) {
-    const deeper = card.related?.length ? `\n\nRelated in QubitLab: ${card.related.join(', ')}.` : '';
-    return `${card.title}\n\n${card.answer}${deeper}`;
-  }
-
-  if (/(what can you do|help|commands|ask you)/i.test(q)) {
-    return 'I can help with four things: (1) explain the QubitLab syllabus and individual topics, (2) explain gates and simulator behavior, (3) explain or debug quantum code, and (4) explain the current circuit when circuit context is provided. I will say when something is only a curriculum topic and not a fully implemented simulator feature.';
-  }
-
+  if (card) return `${card.title}\n\n${card.answer}${card.related?.length ? `\n\nRelated in QubitLab: ${card.related.join(', ')}.` : ''}`;
+  if (/(what can you do|help|commands|ask you)/i.test(q)) return 'I can explain the QubitLab syllabus, teach its quantum concepts and gates, describe exactly what the simulator supports, explain or debug Qiskit/PennyLane/Cirq code, answer quiz questions from the project data, and explain the current circuit when circuit context is provided. I will say when a topic is only taught in the curriculum and is not a complete simulator feature.';
   return `I don’t have a reliable grounded answer for that question in the current QubitLab learning data. I don’t want to invent an answer.\n\nTry asking about a specific syllabus topic, gate, algorithm, simulator feature, Qiskit/PennyLane/Cirq example, or paste the code/error you want checked.`;
 }
 
 export function getTutorContext() {
-  return {
-    curriculumTopicCount: CURRICULUM_TOPICS.length,
-    curriculumTopics: CURRICULUM_TOPICS.map((topic) => ({ id: topic.id, title: topic.title, category: topic.category })),
-    quizTopicCount: Object.keys(QUIZ_MOCKS).length,
-    supportedSimulatorGates: ['H', 'X', 'Y', 'Z', 'S', 'T', 'RX', 'RY', 'RZ', 'CNOT', 'CZ', 'SWAP', 'CCNOT', 'MEASURE'],
-  };
+  return { curriculumTopicCount: CURRICULUM_TOPICS.length, curriculumTopics: CURRICULUM_TOPICS.map((topic) => ({ id: topic.id, title: topic.title, category: topic.category })), quizTopicCount: Object.keys(QUIZ_MOCKS).length, supportedSimulatorGates: ['H', 'X', 'Y', 'Z', 'S', 'T', 'RX', 'RY', 'RZ', 'CNOT', 'CZ', 'SWAP', 'CCNOT', 'MEASURE'] };
 }
