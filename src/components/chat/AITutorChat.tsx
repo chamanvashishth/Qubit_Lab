@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Sparkles, Send, Bot, User, X, RefreshCw, Check, Copy, BookOpen, Cpu } from 'lucide-react';
+import { Sparkles, Send, Bot, User, X, RefreshCw, Check, Copy } from 'lucide-react';
 import { ChatMessage } from '../../types/quantum';
 import { answerLocally } from '../../utils/localTutor';
 
@@ -11,11 +11,11 @@ interface AITutorChatProps {
 }
 
 const DEFAULT_SUGGESTIONS = [
-  'Explain why Hadamard creates equal superposition',
-  'What is the physical meaning of the No-Cloning Theorem?',
-  'How does phase kickback work?',
-  'Does entanglement allow faster-than-light communication?',
-  'Explain Grover amplitude amplification step-by-step',
+  'Why does Hadamard create superposition?',
+  'What does CNOT do?',
+  'What is quantum entanglement?',
+  'Explain the Bloch sphere',
+  'How does Grover search work?',
 ];
 
 export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen, onClose, externalPrompt }) => {
@@ -23,7 +23,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
     {
       id: 'welcome',
       role: 'assistant',
-      content: 'Hi. I’m the local QubitLab Guide. I work offline from the built-in syllabus and knowledge base, so I do not need an API key or network request.',
+      content: 'Hey! What would you like to learn?',
       timestamp: Date.now(),
     },
   ]);
@@ -53,7 +53,6 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
     setInput('');
     setIsLoading(true);
 
-    // Keep the UI responsive while still doing all reasoning locally.
     await new Promise<void>((resolve) => window.setTimeout(resolve, 120));
     const reply = answerLocally(text);
     setMessages((prev) => [...prev, { id: `assistant-${Date.now()}`, role: 'assistant', content: reply, timestamp: Date.now() }]);
@@ -80,23 +79,15 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
             <Sparkles className="w-5 h-5" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm font-bold text-zinc-100 flex items-center gap-2 font-mono">
-              QUBITLAB LOCAL GUIDE
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full border border-emerald-400/30 text-emerald-300 bg-emerald-400/10">OFFLINE</span>
-            </h3>
+            <h3 className="text-sm font-bold text-zinc-100 font-mono">QUBITLAB GUIDE</h3>
             <p className="text-[11px] text-zinc-400 truncate max-w-[330px]">
-              {currentContext || 'Syllabus + local knowledge + circuit context'}
+              {currentContext || 'Ask a question about what you are learning.'}
             </p>
           </div>
         </div>
-        <button onClick={onClose} className="p-1.5 rounded-lg bg-white/[.05] hover:bg-white/[.1] text-zinc-400 hover:text-zinc-200 border border-white/10">
+        <button onClick={onClose} aria-label="Close guide" className="p-1.5 rounded-lg bg-white/[.05] hover:bg-white/[.1] text-zinc-400 hover:text-zinc-200 border border-white/10">
           <X className="w-5 h-5" />
         </button>
-      </div>
-
-      <div className="px-3 py-2 border-b border-white/10 bg-black/40 flex gap-2 text-[10px] font-mono text-zinc-400">
-        <span className="inline-flex items-center gap-1"><BookOpen className="w-3 h-3" /> syllabus retrieval</span>
-        <span className="inline-flex items-center gap-1"><Cpu className="w-3 h-3" /> deterministic answers</span>
       </div>
 
       <div className="flex-1 p-4 overflow-y-auto space-y-4">
@@ -117,7 +108,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
             {msg.role === 'user' && <div className="w-7 h-7 rounded-lg bg-white/[.08] border border-white/15 text-zinc-300 flex items-center justify-center shrink-0 mt-0.5"><User className="w-4 h-4" /></div>}
           </div>
         ))}
-        {isLoading && <div className="flex gap-3 items-center text-xs text-[#e9ff8a] font-mono"><div className="w-7 h-7 rounded-lg bg-[#dfff3f]/20 border border-[#dfff3f]/40 flex items-center justify-center animate-spin"><RefreshCw className="w-4 h-4" /></div><span>Searching local knowledge...</span></div>}
+        {isLoading && <div className="flex gap-3 items-center text-xs text-[#e9ff8a] font-mono"><div className="w-7 h-7 rounded-lg bg-[#dfff3f]/20 border border-[#dfff3f]/40 flex items-center justify-center animate-spin"><RefreshCw className="w-4 h-4" /></div><span>Thinking...</span></div>}
         <div ref={messagesEndRef} />
       </div>
 
@@ -127,8 +118,8 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
 
       <div className="p-3 bg-black/70 border-t border-white/10">
         <form onSubmit={(event) => { event.preventDefault(); void sendMessage(input); }} className="flex items-center gap-2">
-          <input type="text" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Ask the local guide..." className="flex-1 px-3.5 py-2.5 rounded-xl bg-black/45 border border-white/15 text-xs text-zinc-200 placeholder-slate-500 focus:outline-none focus:border-[#dfff3f] font-mono" />
-          <button type="submit" disabled={!input.trim() || isLoading} className="p-2.5 rounded-xl bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] text-slate-950 disabled:opacity-40"><Send className="w-4 h-4" /></button>
+          <input type="text" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Ask a question..." aria-label="Ask a question" className="flex-1 px-3.5 py-2.5 rounded-xl bg-black/45 border border-white/15 text-xs text-zinc-200 placeholder-slate-500 focus:outline-none focus:border-[#dfff3f] font-mono" />
+          <button type="submit" disabled={!input.trim() || isLoading} aria-label="Send question" className="p-2.5 rounded-xl bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] text-slate-950 disabled:opacity-40"><Send className="w-4 h-4" /></button>
         </form>
       </div>
     </div>
