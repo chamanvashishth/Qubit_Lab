@@ -1,163 +1,24 @@
-import React, { useMemo } from 'react';
-import {
-  Award, CheckCircle2, Circle, TrendingUp, Sliders,
-  Terminal, BookOpen, Zap, ArrowRight, Sparkles
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-import { INITIAL_CURRICULUM } from '../../data/curriculum';
+import React from 'react';
+import { ArrowRight, Beaker, BookOpen, CheckCircle2, Circle, Code2, Layers, Sparkles, Target, TrendingUp } from 'lucide-react';
+import { CONCEPT_NODES, GOAL_LABELS } from '../../data/adaptiveLearning';
+import { AdaptiveState, getNextConcept, getMasteryAverage } from '../../utils/adaptive';
 import { UserProgress } from '../../types/quantum';
 
 type AppTab = 'dashboard' | 'curriculum' | 'composer' | 'bloch' | 'sandbox' | 'quiz';
+interface Props { progress: UserProgress; adaptive: AdaptiveState; onNavigate: (tab: AppTab) => void; onOpenTopic: (topicId: string) => void; }
 
-interface LearnerDashboardProps {
-  progress: UserProgress;
-  onNavigate: (tab: AppTab) => void;
-  onOpenTopic: (topicId: string) => void;
-}
-
-const QUICK_ACTIONS: { tab: Exclude<AppTab, 'dashboard' | 'curriculum'>; icon: LucideIcon; title: string; description: string; color: string }[] = [
-  { tab: 'composer', icon: Sliders, title: 'Circuit Composer', description: 'Build and simulate circuits', color: 'text-[#dfff3f]' },
-  { tab: 'bloch', icon: Award, title: 'Bloch Sphere', description: 'Explore single-qubit states', color: 'text-indigo-400' },
-  { tab: 'sandbox', icon: Terminal, title: 'Code Examples', description: 'Compare quantum SDK syntax', color: 'text-purple-400' },
-  { tab: 'quiz', icon: BookOpen, title: 'Quiz', description: 'Check your understanding', color: 'text-amber-400' },
-];
-
-export const LearnerDashboard: React.FC<LearnerDashboardProps> = ({ progress, onNavigate, onOpenTopic }) => {
-  const nodes = useMemo(
-    () => INITIAL_CURRICULUM.flatMap((module) =>
-      module.submodules.map((topic) => ({
-        id: topic.id,
-        title: topic.title,
-        category: module.title,
-        completed: progress.completedTopics.includes(topic.id),
-      }))
-    ),
-    [progress.completedTopics]
-  );
-
-  const completedCount = nodes.filter((node) => node.completed).length;
-  const totalCount = nodes.length;
-  const progressPercent = totalCount ? Math.round((completedCount / totalCount) * 100) : 0;
-  const nextId = nodes.find((node) => !node.completed)?.id;
-  const quizScores = Object.values(progress.quizScores);
-  const bestQuiz = quizScores.length ? Math.max(...quizScores) : 0;
-
-  return (
-    <div className="space-y-8">
-      <div className="bg-gradient-to-r from-[#09132c] via-[#0d1c44] to-[#121638] border border-[#dfff3f]/30 rounded-3xl p-6 lg:p-8 shadow-2xl shadow-black/60 relative overflow-hidden">
-        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-cyan-500/10 to-transparent pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#dfff3f]/15 border border-[#dfff3f]/30 text-[#e9ff8a] text-xs font-mono font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-[#dfff3f]" />
-              Your Progress
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">Your Place to Learn</h2>
-            <p className="text-xs sm:text-sm text-zinc-300 max-w-xl">
-              Your progress is saved in this browser. Complete topics, take quizzes, and the dashboard updates automatically.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-4 bg-black/55/80 border border-[#dfff3f]/30 p-4 rounded-2xl">
-            <div className="relative w-16 h-16 flex items-center justify-center">
-              <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36" aria-label={`${progressPercent}% curriculum complete`}>
-                <path className="text-slate-800" strokeWidth="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <path className="text-[#dfff3f]" strokeDasharray={`${progressPercent}, 100`} strokeWidth="3.5" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              </svg>
-              <span className="absolute text-sm font-bold font-mono text-[#e9ff8a]">{progressPercent}%</span>
-            </div>
-            <div>
-              <div className="text-xs font-mono text-zinc-400">Curriculum</div>
-              <div className="text-sm font-bold text-zinc-100">{completedCount} of {totalCount} complete</div>
-              <div className="text-[10px] text-emerald-400 font-mono">{nextId ? 'Next topic is ready' : 'Learning path complete'}</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 pt-6 border-t border-[#dfff3f]/15 grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-black/55/60 p-3 rounded-xl border border-white/10">
-            <span className="text-[11px] font-mono text-zinc-400 block">Topics completed</span>
-            <span className="text-xl font-bold font-mono text-[#dfff3f]">{completedCount}</span>
-          </div>
-          <div className="bg-black/55/60 p-3 rounded-xl border border-white/10">
-            <span className="text-[11px] font-mono text-zinc-400 block">Quiz best</span>
-            <span className="text-xl font-bold font-mono text-indigo-400">{bestQuiz}%</span>
-          </div>
-          <div className="bg-black/55/60 p-3 rounded-xl border border-white/10">
-            <span className="text-[11px] font-mono text-zinc-400 block">XP</span>
-            <span className="text-xl font-bold font-mono text-purple-400">{progress.xp}</span>
-          </div>
-          <div className="bg-black/55/60 p-3 rounded-xl border border-white/10">
-            <span className="text-[11px] font-mono text-zinc-400 block">Current level</span>
-            <span className="text-sm font-bold text-amber-400">{progress.currentLevel}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8 bg-[#080d1e] border border-[#dfff3f]/20 rounded-2xl p-6 shadow-xl shadow-black/40 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#dfff3f]/15">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-[#dfff3f]" />
-              <h3 className="text-base font-bold text-zinc-100">Quantum Learning Path</h3>
-            </div>
-            <span className="text-xs text-zinc-400 font-mono">{completedCount}/{totalCount}</span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
-            {nodes.map((node) => {
-              const isNext = node.id === nextId;
-              return (
-                <button
-                  key={node.id}
-                  onClick={() => onOpenTopic(node.id)}
-                  className={`p-3.5 rounded-xl border flex items-center justify-between text-left transition-all ${
-                    node.completed
-                      ? 'bg-emerald-950/20 border-emerald-500/40 text-zinc-200'
-                      : isNext
-                      ? 'bg-cyan-950/30 border-[#e9ff8a] text-[#f0ffc0]'
-                      : 'bg-black/55/40 border-white/10 text-zinc-400'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    {node.completed ? <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> : <Circle className={`w-4 h-4 shrink-0 ${isNext ? 'text-[#dfff3f]' : 'text-slate-600'}`} />}
-                    <div>
-                      <h4 className="text-xs font-bold text-zinc-200">{node.title}</h4>
-                      <span className="text-[10px] font-mono text-zinc-400">{node.category}</span>
-                    </div>
-                  </div>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded ${
-                    node.completed ? 'bg-emerald-500/15 text-emerald-400' : isNext ? 'bg-[#dfff3f]/15 text-[#e9ff8a]' : 'bg-white/[.05] text-zinc-500'
-                  }`}>
-                    {node.completed ? 'done' : isNext ? 'next' : 'available'}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="lg:col-span-4 space-y-6">
-          <div className="bg-[#080d1e] border border-[#dfff3f]/20 rounded-2xl p-5 shadow-xl shadow-black/40 space-y-4">
-            <h3 className="text-sm font-bold text-zinc-100 flex items-center gap-2"><Zap className="w-4 h-4 text-[#dfff3f]" /> Start exploring</h3>
-            <div className="space-y-2.5">
-              {QUICK_ACTIONS.map((action) => {
-                const Icon = action.icon;
-                return (
-                  <button key={action.tab} onClick={() => onNavigate(action.tab)} className="w-full p-3 rounded-xl bg-black/55 hover:bg-white/[.05] border border-white/10 hover:border-[#dfff3f]/40 text-left transition-all flex items-center justify-between group">
-                    <div className="flex items-center gap-2.5">
-                      <Icon className={`w-4 h-4 ${action.color}`} />
-                      <div><div className="text-xs font-bold text-zinc-200">{action.title}</div><div className="text-[10px] text-zinc-400">{action.description}</div></div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-zinc-500 group-hover:translate-x-1 transition-transform" />
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+export const LearnerDashboard: React.FC<Props> = ({ progress, adaptive, onNavigate, onOpenTopic }) => {
+  const next = getNextConcept(adaptive);
+  const average = getMasteryAverage(adaptive);
+  const completed = CONCEPT_NODES.filter((node) => (adaptive.mastery[node.id] ?? 0) >= 80).length;
+  const bestQuiz = Object.values(progress.quizScores).reduce((best, score) => Math.max(best, Number.isFinite(score) ? score : 0), 0);
+  return <div className="space-y-6 py-5">
+    <section className="glass-panel rounded-2xl p-6 sm:p-8"><div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6"><div><div className="text-[10px] uppercase tracking-[.2em] text-zinc-500">My learning system</div><h1 className="text-3xl sm:text-4xl font-semibold text-zinc-100 mt-2">Learn from evidence, not completion.</h1><p className="text-sm text-zinc-500 mt-2">Goal: <span className="text-zinc-300">{adaptive.profile ? GOAL_LABELS[adaptive.profile.goal] : 'Explore quantum computing'}</span></p></div><div className="min-w-[220px]"><div className="flex justify-between text-xs"><span className="text-zinc-500">Overall mastery</span><span className="font-mono text-[#dfff3f]">{average}%</span></div><div className="h-2 bg-white/5 rounded-full mt-2 overflow-hidden"><div className="h-full bg-[#dfff3f]" style={{ width: `${average}%` }} /></div></div></div><div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-7"><Stat label="Mastery" value={`${average}%`} /><Stat label="Concepts mastered" value={`${completed}/${CONCEPT_NODES.length}`} /><Stat label="Predictions" value={`${adaptive.predictionAccuracy}%`} /><Stat label="Lab runs" value={`${adaptive.journalCount}`} /><Stat label="XP" value={`${progress.xp}`} /></div></section>
+    <div className="grid lg:grid-cols-[1.25fr_.75fr] gap-6"><section className="glass-section rounded-2xl p-6"><div className="flex items-center gap-2"><Target className="w-5 h-5 text-[#dfff3f]" /><h2 className="font-semibold text-zinc-100">Recommended next</h2></div><div className="mt-5 rounded-xl border border-[#dfff3f]/20 bg-[#dfff3f]/5 p-5"><div className="flex items-start justify-between"><div><div className="text-[10px] font-mono text-[#dfff3f] uppercase">{next.category}</div><h3 className="text-xl font-semibold text-zinc-100 mt-1">{next.title}</h3></div><span className="text-[10px] font-mono text-zinc-500">{next.duration} MIN</span></div><p className="text-sm leading-6 text-zinc-400 mt-3">{next.objective}</p><button onClick={() => onOpenTopic(next.id)} className="template-button px-4 py-2.5 rounded-lg text-xs font-semibold mt-5 inline-flex items-center gap-2">Open mission <ArrowRight className="w-3.5 h-3.5" /></button></div></section><section className="glass-section rounded-2xl p-6"><div className="flex items-center gap-2"><TrendingUp className="w-5 h-5 text-indigo-300" /><h2 className="font-semibold text-zinc-100">Signals</h2></div><div className="space-y-3 mt-5"><Signal label="Prediction accuracy" value={`${adaptive.predictionAccuracy}%`} /><Signal label="Saved lab observations" value={`${adaptive.journalCount}`} /><Signal label="Quiz best" value={`${bestQuiz}%`} /></div></section></div>
+    <section className="glass-section rounded-2xl p-6"><div className="flex items-center justify-between"><div><div className="text-[10px] uppercase tracking-[.2em] text-zinc-500">Concept map</div><h2 className="text-xl font-semibold text-zinc-100 mt-1">Where you stand</h2></div><span className="text-[10px] font-mono text-zinc-500">{completed} mastered</span></div><div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3 mt-5">{CONCEPT_NODES.map((node) => { const mastery = adaptive.mastery[node.id] ?? 0; const locked = node.prerequisites.some((id) => (adaptive.mastery[id] ?? 0) < 55); return <button key={node.id} disabled={locked} onClick={() => onOpenTopic(node.id)} className={`text-left p-4 rounded-xl border transition-all ${locked ? 'border-white/5 bg-black/15 opacity-45 cursor-not-allowed' : 'border-white/10 bg-black/25 hover:border-white/25'}`}><div className="flex items-center justify-between"><div className="flex items-center gap-2">{mastery >= 80 ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : locked ? <Circle className="w-4 h-4 text-zinc-700" /> : <Beaker className="w-4 h-4 text-[#dfff3f]" />}<span className="text-sm text-zinc-200">{node.title}</span></div><span className="text-[10px] font-mono text-zinc-500">{mastery}%</span></div><div className="h-1 bg-white/5 rounded-full mt-3"><div className="h-full bg-[#dfff3f]" style={{ width: `${mastery}%` }} /></div></button>; })}</div></section>
+    <section className="grid sm:grid-cols-3 gap-3"><Quick icon={BookOpen} title="Learn" text="Read and visualize" onClick={() => onNavigate('curriculum')} /><Quick icon={Layers} title="Experiment" text="Build a circuit" onClick={() => onNavigate('composer')} /><Quick icon={Code2} title="Code" text="Translate concepts into Python" onClick={() => onNavigate('sandbox')} /></section><div className="text-[10px] font-mono text-zinc-600 flex items-center gap-2"><Sparkles className="w-3 h-3" /> Recommendations are based on your current mastery and learning signals.</div>
+  </div>;
 };
+function Stat({ label, value }: { label: string; value: string }) { return <div className="rounded-xl border border-white/10 bg-black/25 p-3"><div className="text-[10px] text-zinc-600">{label}</div><div className="text-sm font-mono text-zinc-200 mt-1">{value}</div></div>; }
+function Signal({ label, value }: { label: string; value: string }) { return <div className="flex justify-between rounded-xl border border-white/5 bg-black/20 px-4 py-3 text-xs"><span className="text-zinc-500">{label}</span><span className="font-mono text-zinc-200">{value}</span></div>; }
+function Quick({ icon: Icon, title, text, onClick }: { icon: React.ElementType; title: string; text: string; onClick: () => void }) { return <button onClick={onClick} className="glass-card rounded-xl p-4 text-left flex items-center gap-3"><Icon className="w-5 h-5 text-[#dfff3f]" /><div><div className="text-sm font-semibold text-zinc-100">{title}</div><div className="text-xs text-zinc-500">{text}</div></div></button>; }
