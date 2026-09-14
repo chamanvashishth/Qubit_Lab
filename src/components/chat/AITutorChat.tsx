@@ -1,18 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Sparkles, Send, User, X, RefreshCw, Check, Copy, Brain, Lightbulb } from 'lucide-react';
+import { Send, User, X, RefreshCw, Check, Copy, Brain, Lightbulb } from 'lucide-react';
 import { ChatMessage } from '../../types/quantum';
 import { answerLocally } from '../../utils/localTutor';
 import { GuideAvatar } from './GuideAvatar';
 
 interface AITutorChatProps { currentContext?: string; isOpen: boolean; onClose: () => void; externalPrompt?: string; }
-
 type Mood = 'idle' | 'listening' | 'thinking' | 'speaking' | 'happy' | 'concerned' | 'explain';
 
 const DEFAULT_SUGGESTIONS = ['Explain superposition like I am a beginner', 'What does a CNOT gate actually do?', 'What gates does the simulator support?', 'How does Grover search work?', 'What is the QubitLab syllabus?'];
 const isFollowUp = (text: string) => /^(why|how|what about that|what about it|explain more|tell me more|can you explain|why is that|what does that mean|and why\??|and how\??|okay why\??|then what\??)[?.! ]*$/.test(text.trim().toLowerCase()) || /^(why|how|then what|what next|more|explain|details|why\?)$/.test(text.trim().toLowerCase());
 
-function moodFor(question: string, loading: boolean, lastReply: string): Mood {
-  if (loading) return 'thinking';
+function moodFor(question: string, lastReply: string): Mood {
   const q = question.toLowerCase();
   if (/error|bug|wrong|not work|broken|fail/.test(q)) return 'concerned';
   if (/why|how|explain|difference|derive|calculate/.test(q)) return 'explain';
@@ -29,15 +27,11 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastExternalPrompt = useRef('');
 
-  useEffect(() => {
-    if (externalPrompt && externalPrompt !== lastExternalPrompt.current) { lastExternalPrompt.current = externalPrompt; void sendMessage(externalPrompt); }
-  }, [externalPrompt]);
+  useEffect(() => { if (externalPrompt && externalPrompt !== lastExternalPrompt.current) { lastExternalPrompt.current = externalPrompt; void sendMessage(externalPrompt); } }, [externalPrompt]);
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, isLoading]);
   useEffect(() => { if (!isOpen) setMood('idle'); }, [isOpen]);
 
   const lastUser = useMemo(() => [...messages].reverse().find((m) => m.role === 'user')?.content ?? '', [messages]);
-  const lastAssistant = useMemo(() => [...messages].reverse().find((m) => m.role === 'assistant')?.content ?? '', [messages]);
-
   const getReply = async (question: string): Promise<string> => {
     const resolvedQuestion = lastUser && isFollowUp(question) ? `${question}\n\nFollow-up to the user's previous question: ${lastUser}` : question;
     const groundedQuestion = currentContext ? `${resolvedQuestion}\n\nCurrent QubitLab context:\n${currentContext}` : resolvedQuestion;
@@ -53,27 +47,25 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
     await new Promise((resolve) => window.setTimeout(resolve, 180));
     const reply = await getReply(text);
     setMessages((prev) => [...prev, { id: `assistant-${Date.now()}`, role: 'assistant', content: reply, timestamp: Date.now() }]);
-    setMood(moodFor(text, false, reply)); setIsLoading(false);
+    setMood(moodFor(text, reply)); setIsLoading(false);
   };
 
   const copyMessage = async (id: string, text: string) => { try { await navigator.clipboard.writeText(text); setCopiedId(id); window.setTimeout(() => setCopiedId(null), 1600); } catch { /* optional */ } };
   const resetChat = () => { setMessages([{ id: `welcome-${Date.now()}`, role: 'assistant', content: 'Fresh start. What quantum concept should we work through?', timestamp: Date.now() }]); setMood('idle'); setInput(''); };
+  const displayMood: Mood = isLoading ? 'thinking' : input.trim() ? 'listening' : mood;
 
   if (!isOpen) return null;
   return <div className="fixed inset-0 z-[70] pointer-events-none">
     <div className="absolute inset-0 bg-black/35 backdrop-blur-[2px] pointer-events-auto" onClick={onClose} />
     <section className="pointer-events-auto absolute right-3 sm:right-6 top-20 bottom-3 w-[calc(100%-1.5rem)] sm:w-[440px] max-w-[440px] glass-panel rounded-2xl overflow-hidden flex flex-col shadow-2xl border border-white/10" role="dialog" aria-modal="true" aria-label="QubitLab virtual guide">
       <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0"><div className="w-12 h-12 shrink-0"><GuideAvatar mood={mood} size="md" showStatus /></div><div className="min-w-0"><div className="flex items-center gap-2"><span className="text-sm font-semibold text-zinc-100">QubitLab Guide</span><span className="w-1.5 h-1.5 rounded-full bg-[#dfff3f] shadow-[0_0_8px_rgba(223,255,63,.8)]" /></div><div className="text-[10px] text-zinc-500 truncate">{mood === 'thinking' ? 'Working through it…' : mood === 'concerned' ? 'Let’s debug it together.' : mood === 'explain' ? 'Breaking it down step by step.' : 'Interactive quantum tutor'}</div></div></div>
+        <div className="flex items-center gap-3 min-w-0"><div className="w-12 h-12 shrink-0"><GuideAvatar mood={displayMood} size="md" showStatus /></div><div className="min-w-0"><div className="flex items-center gap-2"><span className="text-sm font-semibold text-zinc-100">QubitLab Guide</span><span className="w-1.5 h-1.5 rounded-full bg-[#dfff3f] shadow-[0_0_8px_rgba(223,255,63,.8)] /></div><div className="text-[10px] text-zinc-500 truncate">{displayMood === 'thinking' ? 'Working through it…' : displayMood === 'concerned' ? 'Let’s debug it together.' : displayMood === 'explain' ? 'Breaking it down step by step.' : displayMood === 'listening' ? 'I’m listening.' : 'Interactive quantum tutor'}</div></div></div>
         <div className="flex items-center gap-1"><button onClick={resetChat} className="p-2 rounded-lg hover:bg-white/5 text-zinc-500 hover:text-zinc-200" aria-label="Reset conversation"><RefreshCw className="w-4 h-4" /></button><button onClick={onClose} className="p-2 rounded-lg hover:bg-white/5 text-zinc-500 hover:text-zinc-200" aria-label="Close guide"><X className="w-4 h-4" /></button></div>
       </div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => <div key={message.id} className={`flex gap-2.5 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
           {message.role === 'assistant' && <div className="w-7 h-7 shrink-0 mt-1"><GuideAvatar mood="speaking" size="sm" /></div>}
-          <div className={`max-w-[86%] rounded-xl px-3.5 py-3 text-sm leading-6 ${message.role === 'user' ? 'bg-[#dfff3f]/10 border border-[#dfff3f]/20 text-zinc-200' : 'bg-white/[.035] border border-white/10 text-zinc-300'}`}>
-            <div className="whitespace-pre-wrap">{message.content}</div>
-            {message.role === 'assistant' && <div className="flex justify-end mt-2"><button onClick={() => copyMessage(message.id, message.content)} className="text-zinc-600 hover:text-zinc-300" aria-label="Copy response">{copiedId === message.id ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}</button></div>}
-          </div>
+          <div className={`max-w-[86%] rounded-xl px-3.5 py-3 text-sm leading-6 ${message.role === 'user' ? 'bg-[#dfff3f]/10 border border-[#dfff3f]/20 text-zinc-200' : 'bg-white/[.035] border border-white/10 text-zinc-300'}`}><div className="whitespace-pre-wrap">{message.content}</div>{message.role === 'assistant' && <div className="flex justify-end mt-2"><button onClick={() => copyMessage(message.id, message.content)} className="text-zinc-600 hover:text-zinc-300" aria-label="Copy response">{copiedId === message.id ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}</button></div>}</div>
           {message.role === 'user' && <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-1"><User className="w-3.5 h-3.5 text-zinc-500" /></div>}
         </div>)}
         {isLoading && <div className="flex items-center gap-2.5"><div className="w-7 h-7"><GuideAvatar mood="thinking" size="sm" /></div><div className="rounded-xl bg-white/[.035] border border-white/10 px-3.5 py-3 text-xs text-zinc-500 flex items-center gap-2"><Brain className="w-3.5 h-3.5 text-[#dfff3f]" /><span>Thinking through the question</span><span className="flex gap-1"><i className="w-1 h-1 rounded-full bg-zinc-500 animate-pulse" /><i className="w-1 h-1 rounded-full bg-zinc-500 animate-pulse [animation-delay:150ms]" /><i className="w-1 h-1 rounded-full bg-zinc-500 animate-pulse [animation-delay:300ms]" /></span></div></div>}
