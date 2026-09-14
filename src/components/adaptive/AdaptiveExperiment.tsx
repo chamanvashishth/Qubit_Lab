@@ -20,11 +20,16 @@ export const AdaptiveExperiment: React.FC<Props> = ({ concept, onComplete, onAsk
   const mission = missions[concept.id] ?? missions.qubit;
   const [selected, setSelected] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [hasScored, setHasScored] = useState(false);
   const simulation = useMemo(() => simulateCircuit({ numQubits: mission.qubits, numSteps: 4, gates: mission.gates }, 1024), [mission]);
   const probabilities = simulation.probabilities ?? {};
   const correct = submitted && selected === mission.correct;
   const reset = () => { setSelected(null); setSubmitted(false); };
-  const submit = () => { if (selected === null || submitted) return; setSubmitted(true); onComplete(selected === mission.correct); };
+  const submit = () => {
+    if (selected === null || submitted) return;
+    setSubmitted(true);
+    if (!hasScored) { setHasScored(true); onComplete(selected === mission.correct); }
+  };
   const evidence = Object.entries(probabilities).slice(0, Math.min(Object.keys(probabilities).length, 8));
 
   return <section className="glass-section rounded-2xl p-6 space-y-5">
