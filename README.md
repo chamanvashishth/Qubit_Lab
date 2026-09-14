@@ -13,7 +13,7 @@ Build a circuit. Run it. See the state change. Understand why. Test yourself.
 [![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
 [![Three.js](https://img.shields.io/badge/Three.js-0.185-000000?logo=three.js&logoColor=white)](https://threejs.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Deployment](https://img.shields.io/badge/deployment-Vercel-black?logo=vercel&logoColor=white)](https://vercel.com/)
+[![Deployment](https://img.shields.io/badge/deployment-Cloudflare%20Pages-F38020?logo=cloudflare&logoColor=white)](https://pages.cloudflare.com/)
 
 [Overview](#overview) · [Features](#features) · [How it works](#how-it-works) · [Architecture](#architecture) · [Setup](#getting-started) · [Security](#security) · [Deployment](#deployment)
 
@@ -61,8 +61,6 @@ The goal is not to hide the mathematics. It is to give the mathematics somewhere
 - Topic difficulty, duration, and prerequisites
 
 ### Build circuits
-
-The Circuit Composer is the hands-on part of the project.
 
 - 1–5 configurable qubits
 - 4–12 configurable circuit steps
@@ -229,7 +227,8 @@ flowchart TB
     QUIZ --> SESSION
     DASH --> SESSION
 
-    OPTIONAL[Optional API path] --> PROVIDER[External model provider]
+    OPTIONAL[Optional AI API] --> CF[Cloudflare Pages Function]
+    CF --> AIG[Cloudflare AI Gateway]
 ```
 
 ### Main responsibilities
@@ -237,14 +236,15 @@ flowchart TB
 | Location | Responsibility |
 |---|---|
 | `src/components/` | UI and feature components |
-| `src/data/` | Curriculum and quiz content |
+| `src/data/` | Curriculum, quiz, and adaptive-learning content |
 | `src/types/` | Shared TypeScript domain types |
 | `src/utils/quantumEngine.ts` | State-vector simulation and quantum operations |
 | `src/utils/localTutor.ts` | Offline knowledge retrieval and responses |
 | `src/utils/progress.ts` | Session-based progress handling |
-| `api/chat.ts` | Optional model-backed API endpoint |
-| `server/index.ts` | Optional Express/Vite runtime |
-| `vercel.json` | Vercel build and SPA routing configuration |
+| `src/utils/adaptive.ts` | Explainable adaptive-learning state and recommendations |
+| `functions/api/chat.ts` | Optional Cloudflare Pages AI endpoint |
+| `public/_headers` | Cloudflare Pages security and asset-cache headers |
+| `wrangler.toml` | Cloudflare Pages local/deployment configuration |
 
 ---
 
@@ -323,13 +323,41 @@ The main guide therefore:
 - behaves predictably
 - stays connected to the project's own learning material
 
+### Optional AI path
+
+QubitLab also contains an optional `/api/chat` path implemented as a Cloudflare Pages Function. The core guide does not depend on it.
+
+When enabled, the function calls Cloudflare's AI REST endpoint and keeps the provider credential on the server side. The browser never receives the Cloudflare API token.
+
 ### A clear limitation
 
-This is **not a full generative LLM**. The guide has a finite knowledge base, so it cannot answer every possible question or provide live information from the web.
+The local guide is **not a full generative LLM**. It has a finite knowledge base, so it cannot answer every possible question or provide live information from the web.
 
 That limitation is intentional. The goal is to provide a dependable learning aid that works offline rather than pretending to have unlimited knowledge.
 
-The repository still contains an optional API path for deployments that want model-backed responses, but the main tutor interface does not depend on it.
+---
+
+## Adaptive Learning
+
+QubitLab includes an explainable adaptive-learning MVP.
+
+The engine combines learner goals, prerequisites, mastery, quiz performance, misconceptions, and experiment predictions to recommend the next learning activity.
+
+```text
+Onboarding
+    ↓
+Learner profile
+    ↓
+Concept graph + prerequisites
+    ↓
+Mastery / quiz / prediction signals
+    ↓
+Next-concept recommendation
+    ↓
+Experiment → feedback → updated mastery
+```
+
+This is currently a **rule-based adaptive system**, not a trained machine-learning model. The design keeps the recommendation logic inspectable and makes it possible to evaluate learner interaction data before introducing a statistical model.
 
 ---
 
@@ -362,19 +390,21 @@ This keeps the current project simple and avoids presenting a local session syst
 ```text
 Qubit_Lab/
 │
-├── api/
-│   └── chat.ts                   # Optional model-backed API
+├── functions/
+│   └── api/
+│       └── chat.ts              # Optional Cloudflare Pages AI function
 │
 ├── docs/
 │   └── assets/
-│       └── qubitlab-banner.svg   # README/project visual
+│       └── qubitlab-banner.svg  # README/project visual
 │
-├── server/
-│   └── index.ts                  # Optional Express + Vite server
+├── public/
+│   └── _headers                 # Cloudflare Pages response headers
 │
 ├── src/
 │   ├── components/
-│   │   ├── bloch/                # Bloch-sphere visualization
+│   │   ├── adaptive/            # Adaptive learning flow
+│   │   ├── bloch/               # Bloch-sphere visualization
 │   │   ├── chat/                 # Local learning guide
 │   │   ├── circuit/              # Circuit composer
 │   │   ├── curriculum/           # Curriculum UI
@@ -382,10 +412,11 @@ Qubit_Lab/
 │   │   ├── landing/              # Landing page
 │   │   ├── layout/               # Shared layout/navigation
 │   │   ├── quiz/                 # Practice modules
-│   │   ├── sandbox/               # Quantum code exploration
+│   │   ├── sandbox/              # Quantum code exploration
 │   │   └── visualization/        # State/probability views
 │   │
 │   ├── data/
+│   │   ├── adaptiveLearning.ts   # Adaptive concept graph
 │   │   ├── curriculum.ts         # Learning content
 │   │   └── mockQuizzes.ts        # Quiz content
 │   │
@@ -393,7 +424,8 @@ Qubit_Lab/
 │   │   └── quantum.ts            # Domain types
 │   │
 │   ├── utils/
-│   │   ├── localTutor.ts         # Offline tutor logic
+│   │   ├── adaptive.ts           # Adaptive state and recommendations
+│   │   ├── localTutor.ts          # Offline tutor logic
 │   │   ├── progress.ts            # Session progress
 │   │   └── quantumEngine.ts       # Simulation core
 │   │
@@ -404,9 +436,8 @@ Qubit_Lab/
 ├── index.html
 ├── metadata.json
 ├── package.json
-├── bun.lock
 ├── tsconfig.json
-├── vercel.json
+├── wrangler.toml
 ├── vite.config.ts
 └── README.md
 ```
@@ -424,9 +455,9 @@ Qubit_Lab/
 | **Motion** | UI animation and interaction |
 | **Three.js** | 3D quantum visualization |
 | **Lucide React** | Interface icons |
-| **Express** | Optional server runtime |
-| **Google GenAI** | Optional model integration |
-| **Vercel** | Current deployment target |
+| **Cloudflare Pages** | Static frontend hosting and Git deployments |
+| **Cloudflare Pages Functions** | Optional server-side API endpoint |
+| **Cloudflare AI Gateway** | Optional model-backed tutor path |
 
 ---
 
@@ -465,6 +496,16 @@ npm run dev
 
 Vite will print the local development URL in the terminal.
 
+### Preview with Cloudflare Pages locally
+
+After building the project:
+
+```bash
+npm run preview:cloudflare
+```
+
+This uses Wrangler to preview the Pages output and Functions locally.
+
 ---
 
 ## Commands
@@ -472,10 +513,11 @@ Vite will print the local development URL in the terminal.
 | Command | Purpose |
 |---|---|
 | `npm run dev` | Start the Vite development server |
-| `npm run lint` | Type-check the project with TypeScript |
+| `npm run lint` | Type-check the frontend and Pages Function source |
 | `npm run build` | Build the frontend into `dist/` |
 | `npm run start` | Preview the built frontend with Vite |
-| `npm run build:server` | Build the frontend and optional Express server bundle |
+| `npm run preview:cloudflare` | Build and preview through Wrangler Pages |
+| `npm run deploy:cloudflare` | Build and deploy `dist/` to Cloudflare Pages |
 | `npm run clean` | Remove the `dist/` directory |
 
 A useful baseline before pushing a change is:
@@ -485,7 +527,7 @@ npm run lint
 npm run build
 ```
 
-For changes to the circuit engine, also test a few small circuits manually. Quantum code can look reasonable while still producing the wrong state, so small known-state checks are worth doing.
+For simulator changes, also test a few small circuits manually. Quantum code can look reasonable while still producing the wrong state, so small known-state checks are worth doing.
 
 ---
 
@@ -495,48 +537,75 @@ QubitLab does not need credentials for its main learning flow.
 
 The public README intentionally does **not** contain API keys, access tokens, passwords, secret values, deployment credentials, or provider-specific credential values.
 
-If the optional model-backed API is enabled:
+If the optional Cloudflare AI function is enabled:
 
-1. Keep credentials in environment variables managed by the deployment platform.
-2. For local development, use an untracked local environment file.
-3. Never paste a real credential into source code, README examples, screenshots, issues, or commit messages.
-4. If a credential has already been committed to a public repository, remove it from the repository **and rotate/revoke it**. Removing the text alone does not make an exposed credential safe.
+1. Configure `CLOUDFLARE_ACCOUNT_ID` as a Pages environment variable.
+2. Configure `CLOUDFLARE_API_TOKEN` as an encrypted Pages secret with the permissions required to run the AI REST API.
+3. Optionally configure `CLOUDFLARE_AI_MODEL` to select another supported model.
+4. Never commit tokens or local secret files.
+5. Rotate a credential immediately if it is exposed in source control.
 
-The main Local Learning Guide works without any external credential, so most users do not need to configure one at all.
+The browser only calls `/api/chat`; the Cloudflare token remains server-side in the Pages Function.
 
 ---
 
 ## Deployment
 
-### Vercel
+### Cloudflare Pages
 
-**Vercel is the current deployment path for QubitLab.**
+**Cloudflare Pages is the deployment target for QubitLab.** Cloudflare's React/Vite guidance uses `npm run build` with `dist` as the build directory. Pages also supports GitHub integration, automatic deployments, and preview deployments. urlCloudflare React + Vite deployment guidehttps://developers.cloudflare.com/pages/framework-guides/deploy-a-react-site/
 
-The repository includes `vercel.json` for the Vite build and SPA fallback configuration.
+#### GitHub integration
 
-```mermaid
-flowchart LR
-    GITHUB[Git repository] --> VERCEL[Vercel]
-    VERCEL --> INSTALL[npm install]
-    INSTALL --> BUILD[npm run build]
-    BUILD --> DIST[dist/]
-    DIST --> APP[QubitLab]
-    APP --> USER[Browser]
-```
+In Cloudflare:
 
-Current build settings:
+1. Open **Workers & Pages**.
+2. Create a **Pages** application.
+3. Import the `chamanvashishth/Qubit_Lab` GitHub repository.
+4. Set the production branch to `main`.
+5. Use:
 
 ```text
-Framework:      Vite
-Build command:  npm run build
-Output:         dist
+Build command:    npm run build
+Build directory:  dist
 ```
 
-Normal application routes are handled by the SPA fallback, while API routes remain available for server-side handling where configured.
+These are the documented React/Vite Pages settings. urlCloudflare Pages build configurationhttps://developers.cloudflare.com/pages/configuration/build-configuration/
+
+Every pushed commit can then trigger a new deployment and pull requests can receive preview deployments through the Git integration. urlCloudflare Pages Git integrationhttps://developers.cloudflare.com/pages/configuration/git-integration/github-integration/
+
+#### Local Wrangler deployment
+
+The repository includes `wrangler.toml` and Wrangler scripts for Cloudflare-native local preview and deployment.
+
+```bash
+npm run preview:cloudflare
+npm run deploy:cloudflare
+```
+
+The Wrangler configuration points Cloudflare Pages at `dist/` as the build output.
+
+#### Optional AI function
+
+The optional `/api/chat` endpoint is implemented under `functions/api/chat.ts` using the Cloudflare Pages Functions runtime. Pages Functions are the Cloudflare-native way to add server-side behavior without maintaining an Express server. urlCloudflare Pages Functions documentationhttps://developers.cloudflare.com/pages/functions/
+
+The function uses Cloudflare's AI REST API rather than a Vercel-specific gateway or an Express server. Cloudflare documents the OpenAI-compatible `/ai/v1/chat/completions` endpoint for model-backed applications. urlCloudflare AI Gateway REST APIhttps://developers.cloudflare.com/ai-gateway/usage/rest-api/
+
+#### Cloudflare environment configuration
+
+For the optional AI endpoint, configure these values in **Workers & Pages → Settings → Variables and Secrets**:
+
+```text
+CLOUDFLARE_ACCOUNT_ID  = your Cloudflare account ID
+CLOUDFLARE_API_TOKEN   = encrypted API token
+CLOUDFLARE_AI_MODEL    = google-ai-studio/gemini-2.5-flash   # optional
+```
+
+Cloudflare Pages Functions access environment variables and secrets through the function runtime rather than exposing them to the browser. urlCloudflare Pages bindings and secretshttps://developers.cloudflare.com/pages/functions/bindings/
 
 ### GitHub Pages
 
-GitHub Pages is **not** used for the current deployment. The previous Pages workflow was removed because it did not match the Vercel-based deployment setup.
+GitHub Pages is **not** used for the current deployment. The old GitHub Pages workflow was removed because QubitLab is now structured for Cloudflare Pages.
 
 ---
 
@@ -566,13 +635,17 @@ This section records the important engineering changes rather than pretending th
 - Moved the main tutor experience to a local deterministic guide so the core learning flow does not depend on an external model.
 - Changed learner progress to session-based storage rather than long-term browser persistence.
 - Connected dashboard and practice views to the same session state.
+- Added an explainable adaptive-learning MVP using goals, prerequisites, mastery, quiz results, misconceptions, and experiment predictions.
 
-### Deployment and API
+### Deployment
 
-- Switched the documented deployment path to Vercel.
-- Removed the old GitHub Pages workflow.
-- Kept the optional API path separate from the main offline tutor.
-- Made provider credential handling explicit and environment-based instead of exposing credentials in application code or documentation.
+- Removed the Vercel-specific API function.
+- Removed the optional Express/Vite production server from the repository deployment path.
+- Removed the Vercel deployment configuration.
+- Set the Vite base path to `/`, matching a domain-root Cloudflare Pages deployment.
+- Added Wrangler configuration for Cloudflare Pages.
+- Added Cloudflare Pages security headers and immutable caching for Vite fingerprinted assets.
+- Added a Cloudflare Pages Function for the optional model-backed API path.
 
 ---
 
@@ -584,7 +657,8 @@ QubitLab is intentionally scoped as a learning project.
 - The Local Learning Guide has a finite knowledge base.
 - There is no account system or cloud progress synchronization.
 - Exported code is educational and should be checked against the target SDK/compiler version.
-- The optional model-backed API requires separate provider configuration.
+- The optional AI function requires Cloudflare account configuration and AI API permissions.
+- The adaptive-learning engine is rule-based; it is not a trained machine-learning model.
 
 These are current project boundaries, not features being hidden behind the documentation.
 
@@ -601,6 +675,7 @@ Possible next steps include:
 - Additional export and interoperability options
 - Automated tests for quantum gate and circuit correctness
 - Optional persistent accounts and cloud progress
+- Evaluation data for future statistical adaptive-learning models
 
 The focus is to improve the learning experience without making the project unnecessarily complicated.
 
