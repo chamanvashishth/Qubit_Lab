@@ -13,19 +13,33 @@ import { loadProgress, recordQuizScore, toggleTopic } from './utils/progress';
 import { AdaptiveState, loadAdaptiveState, saveLearnerProfile, recordQuizResult } from './utils/adaptive';
 import { LearnerProfile } from './data/adaptiveLearning';
 
+const NAV_TABS: NavTab[] = ['home', 'dashboard', 'curriculum', 'composer', 'bloch', 'sandbox', 'quiz'];
+const readSession = (key: string) => {
+  if (typeof window === 'undefined') return null;
+  try { return window.sessionStorage.getItem(key); } catch { return null; }
+};
+const writeSession = (key: string, value: string | null) => {
+  if (typeof window === 'undefined') return;
+  try { if (value) window.sessionStorage.setItem(key, value); else window.sessionStorage.removeItem(key); } catch { /* Session storage is optional. */ }
+};
+const readNavTab = (): NavTab => {
+  const value = readSession('qubitlab-active-tab');
+  return value && NAV_TABS.includes(value as NavTab) ? value as NavTab : 'home';
+};
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<NavTab>(() => typeof window === 'undefined' ? 'home' : (window.sessionStorage.getItem('qubitlab-active-tab') as NavTab | null) || 'home');
+  const [activeTab, setActiveTab] = useState<NavTab>(() => readNavTab());
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [aiChatContext, setAiChatContext] = useState('');
   const [externalPrompt, setExternalPrompt] = useState('');
   const [progress, setProgress] = useState<UserProgress>(() => loadProgress());
   const [adaptive, setAdaptive] = useState<AdaptiveState>(() => loadAdaptiveState());
-  const [curriculumTopicId, setCurriculumTopicId] = useState<string | undefined>(() => typeof window === 'undefined' ? undefined : window.sessionStorage.getItem('qubitlab-curriculum-topic') || undefined);
-  const [selectedQuizId, setSelectedQuizId] = useState<string | undefined>(() => typeof window === 'undefined' ? undefined : window.sessionStorage.getItem('qubitlab-selected-quiz') || undefined);
+  const [curriculumTopicId, setCurriculumTopicId] = useState<string | undefined>(() => readSession('qubitlab-curriculum-topic') || undefined);
+  const [selectedQuizId, setSelectedQuizId] = useState<string | undefined>(() => readSession('qubitlab-selected-quiz') || undefined);
 
-  useEffect(() => { window.sessionStorage.setItem('qubitlab-active-tab', activeTab); }, [activeTab]);
-  useEffect(() => { if (curriculumTopicId) window.sessionStorage.setItem('qubitlab-curriculum-topic', curriculumTopicId); else window.sessionStorage.removeItem('qubitlab-curriculum-topic'); }, [curriculumTopicId]);
-  useEffect(() => { if (selectedQuizId) window.sessionStorage.setItem('qubitlab-selected-quiz', selectedQuizId); else window.sessionStorage.removeItem('qubitlab-selected-quiz'); }, [selectedQuizId]);
+  useEffect(() => { writeSession('qubitlab-active-tab', activeTab); }, [activeTab]);
+  useEffect(() => { writeSession('qubitlab-curriculum-topic', curriculumTopicId ?? null); }, [curriculumTopicId]);
+  useEffect(() => { writeSession('qubitlab-selected-quiz', selectedQuizId ?? null); }, [selectedQuizId]);
 
   const openAIChatWithPrompt = (prompt: string, contextDescription: string) => { setAiChatContext(contextDescription); setExternalPrompt(prompt); setIsAIChatOpen(true); };
   const handleCircuitAIExplain = (circuit: CircuitState, diracNotation: string) => {
