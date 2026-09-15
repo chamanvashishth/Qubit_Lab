@@ -47,14 +47,14 @@ Use these values for the Git-connected Pages project:
 
 - Root directory: `/`
 - Production branch: `main`
-- Build command: `npm run build`
+- Build command: `bash build.sh`
 - Build output directory: `dist`
 - Node.js: `22.16.0` (the repository pins this with `.node-version`)
 - Build variable: `SKIP_DEPENDENCY_INSTALL=1`
 
-With `SKIP_DEPENDENCY_INSTALL=1`, Cloudflare skips its automatic dependency install and `build.sh` can be used as the explicit install/build fallback when needed. Cloudflare documents this variable as the supported way to disable automatic dependency installation.
+Cloudflare documents `SKIP_DEPENDENCY_INSTALL=1` as the supported way to disable its automatic dependency installation. The repository's `build.sh` then performs a deterministic npm install without creating a lockfile and runs the Vite production build.
 
-If you do not use `build.sh`, `npm run build` is still the correct React/Vite build command and `dist` is the correct output directory.
+If you prefer Cloudflare's normal automatic dependency installation, remove `SKIP_DEPENDENCY_INSTALL` and use the standard React/Vite command `npm run build`; the expected output directory remains `dist`.
 
 ## 5. AI tutor environment variables
 
