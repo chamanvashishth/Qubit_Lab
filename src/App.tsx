@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Navbar, NavTab } from './components/layout/Navbar';
 import { AdaptiveHome } from './components/adaptive/AdaptiveHome';
 import { CurriculumExplorer } from './components/curriculum/CurriculumExplorer';
@@ -15,6 +15,7 @@ import { AdaptiveState, loadAdaptiveState, saveLearnerProfile, recordQuizResult 
 import { LearnerProfile } from './data/adaptiveLearning';
 import { AuthUser, getCurrentUser } from './utils/auth';
 import { supabase } from './lib/supabase';
+import { loadLearningState, saveLearningState } from './utils/cloudSync';
 
 const NAV_TABS: NavTab[] = ['home', 'dashboard', 'curriculum', 'composer', 'bloch', 'sandbox', 'quiz', 'user'];
 const readSession = (key: string) => {
@@ -38,6 +39,8 @@ export default function App() {
   const [progress, setProgress] = useState<UserProgress>(() => loadProgress());
   const [adaptive, setAdaptive] = useState<AdaptiveState>(() => loadAdaptiveState());
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [cloudReady, setCloudReady] = useState(false);
+  const cloudSaveTimer = useRef<number | null>(null);
   const [curriculumTopicId, setCurriculumTopicId] = useState<string | undefined>(() => readSession('qubitlab-curriculum-topic') || undefined);
   const [selectedQuizId, setSelectedQuizId] = useState<string | undefined>(() => readSession('qubitlab-selected-quiz') || undefined);
 
@@ -50,10 +53,7 @@ export default function App() {
     void getCurrentUser().then((currentUser) => { if (mounted) setUser(currentUser); });
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
-      if (!session?.user) {
-        setUser(null);
-        return;
-      }
+      if (!session?.user) { setUser(null); setCloudReady(false); return; }
       const metadata = session.user.user_metadata || {};
       setUser({
         id: session.user.id,
@@ -64,6 +64,34 @@ export default function App() {
     });
     return () => { mounted = false; data.subscription.unsubscribe(); };
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    setCloudReady(false);
+    if (!user) return () => { active = false; };
+
+    void loadLearningState(user.id).then((remote) => {
+      if (!active) return;
+      if (remote?.progress) setProgress(remote.progress);
+      if (remote?.adaptive) setAdaptive(remote.adaptive);
+      setCloudReady(true);
+    }).catch(() => {
+      if (active) setCloudReady(true);
+    });
+
+    return () => { active = false; };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!user?.id || !cloudReady) return;
+    if (cloudSaveTimer.current !== null) window.clearTimeout(cloudSaveTimer.current);
+    cloudSaveTimer.current = window.setTimeout(() => {
+      void saveLearningState(user.id, progress, adaptive).catch(() => undefined);
+    }, 700);
+    return () => {
+      if (cloudSaveTimer.current !== null) window.clearTimeout(cloudSaveTimer.current);
+    };
+  }, [user?.id, cloudReady, progress, adaptive]);
 
   const openAIChatWithPrompt = (prompt: string, contextDescription: string) => { setAiChatContext(contextDescription); setExternalPrompt(prompt); setIsAIChatOpen(true); };
   const handleCircuitAIExplain = (circuit: CircuitState, diracNotation: string) => {
@@ -85,7 +113,7 @@ export default function App() {
       {activeTab === 'sandbox' && <QuantumCodeSandbox onAskAIExplain={handleCodeAIExplain} onAskAIDebug={handleCodeAIDebug} />}
       {activeTab === 'quiz' && <QuantumQuiz quizId={selectedQuizId} onSelectQuiz={setSelectedQuizId} onBackToMocks={() => setSelectedQuizId(undefined)} onAskAIForHelp={handleQuizAIHelp} onCompleteQuiz={(score, total, quizId) => { const percentage = total > 0 ? (score / total) * 100 : 0; setProgress((current) => recordQuizScore(current, quizId, percentage)); setAdaptive((current) => recordQuizResult(current, quizId, percentage)); }} />}
       {activeTab === 'dashboard' && <LearnerDashboard progress={progress} adaptive={adaptive} onNavigate={(tab) => setActiveTab(tab)} onOpenTopic={(topicId) => { setCurriculumTopicId(topicId); setActiveTab('curriculum'); }} />}
-      {activeTab === 'user' && <UserPage user={user} onAuthenticated={(authenticatedUser) => { setUser(authenticatedUser); setActiveTab('dashboard'); }} onLoggedOut={() => { setUser(null); setActiveTab('home'); }} />}
+      {activeTab === 'user' && <UserPage user={user} onAuthenticated={(authenticatedUser) => { setUser(authenticatedUser); setActiveTab('dashboard'); }} onLoggedOut={() => { setUser(null); setCloudReady(false); setActiveTab('home'); }} />}
     </main>
     <AITutorChat isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} currentContext={aiChatContext} externalPrompt={externalPrompt} />
     <footer className="w-full mt-16 py-8 relative z-10 border-t border-white/10 bg-black/45 backdrop-blur-xl"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500 font-mono"><div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#dfff3f] shadow-[0_0_12px_rgba(223,255,63,.75)]" /><span className="text-zinc-200 font-bold">QUBITLAB</span></div><div className="flex items-center gap-6"><button onClick={() => setActiveTab('composer')} className="hover:text-[#dfff3f] transition-colors">Composer</button><button onClick={() => setActiveTab('bloch')} className="hover:text-[#dfff3f] transition-colors">3D Bloch</button><button onClick={() => setActiveTab('sandbox')} className="hover:text-[#dfff3f] transition-colors">Sandbox</button><button onClick={() => setActiveTab('curriculum')} className="hover:text-[#dfff3f] transition-colors">Curriculum</button></div></div></footer>
