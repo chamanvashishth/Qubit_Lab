@@ -1,80 +1,61 @@
 # QubitLab Authentication
 
-QubitLab uses a Cloudflare Pages Function at `/api/auth` and Cloudflare D1 for account storage.
+QubitLab uses **Supabase Auth** for learner accounts and sessions. The Vite frontend connects to Supabase with the publishable browser key; no QubitLab password-hashing or session-cookie implementation is required.
 
-## 1. Create the D1 database
+## 1. Configure Supabase
+
+Create a Supabase project and copy the Project URL and publishable key from the Supabase Connect/API settings.
+
+Set these variables locally and in Vercel:
+
+```text
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_PUBLISHABLE_KEY=...
+```
+
+These are browser configuration values. Never expose a Supabase service-role key through `VITE_*` variables.
+
+## 2. Authentication
+
+The account page uses Supabase Auth directly:
+
+- Sign up with name, email and password.
+- The name is stored in Supabase Auth user metadata.
+- Sign in uses Supabase password authentication.
+- Supabase manages the authenticated session and token refresh.
+- Sign out calls `supabase.auth.signOut()`.
+
+QubitLab maps the Supabase user into its small `AuthUser` UI model in `src/utils/auth.ts`.
+
+## 3. Learning-state persistence
 
 Run:
 
-```bash
-npx wrangler d1 create qubit-lab-db
+```text
+supabase/migrations/0001_learning_state.sql
 ```
 
-Keep the database ID returned by Wrangler.
+The migration creates `public.learning_state` with:
 
-## 2. Bind D1 to the Pages project
+- `progress` — curriculum completion, quiz scores and XP.
+- `adaptive` — learner profile, mastery, misconceptions and experiment signals.
+- `updated_at` — last cloud-sync timestamp.
 
-In Cloudflare:
+Row Level Security is enabled. A learner can only read, insert or update the row where `user_id = auth.uid()`.
 
-`Workers & Pages → QubitLab project → Settings → Bindings → Add → D1 database`
+## 4. Vercel
 
-Use the database `qubit-lab-db` and set the binding variable to:
+Vercel only needs the Supabase environment variables for account functionality. The optional model-backed endpoint also accepts:
 
 ```text
-DB
+AI_GATEWAY_API_KEY=...
+AI_GATEWAY_MODEL=google/gemini-2.5-flash
 ```
 
-The authentication function will return a configuration error until this binding exists.
+The AI gateway credential must remain server-side. Do not prefix it with `VITE_`.
 
-**Important:** `wrangler.toml` is intentionally kept without `pages_build_output_dir`. That makes the file local-development configuration instead of making it the production source of truth, so the Cloudflare Pages dashboard can remain authoritative for the D1 binding and build settings. If you later choose to manage production bindings entirely through Wrangler, run `npx wrangler pages download config qubit-lab` and review the generated configuration before deploying.
+## 5. Production considerations
 
-## 3. Apply the schema
+Before opening the application to a large public audience, configure Supabase email confirmation, password reset/recovery, appropriate Auth rate limits, redirect URLs and any required provider protections in the Supabase dashboard.
 
-From the repository root:
-
-```bash
-npx wrangler d1 migrations apply qubit-lab-db --remote
-```
-
-The migration creates:
-
-- `users` — learner account records and password hashes/salts.
-- `sessions` — hashed, expiring HttpOnly login sessions.
-
-## 4. Cloudflare Pages build settings
-
-Use these values for the Git-connected Pages project:
-
-- Root directory: `/`
-- Production branch: `main`
-- Build command: `bash build.sh`
-- Build output directory: `dist`
-- Node.js: `22.16.0` (the repository pins this with `.node-version`)
-- Build variable: `SKIP_DEPENDENCY_INSTALL=1`
-
-Cloudflare documents `SKIP_DEPENDENCY_INSTALL=1` as the supported way to disable its automatic dependency installation. The repository's `build.sh` then performs a deterministic npm install without creating a lockfile and runs the Vite production build.
-
-If you prefer Cloudflare's normal automatic dependency installation, remove `SKIP_DEPENDENCY_INSTALL` and use the standard React/Vite command `npm run build`; the expected output directory remains `dist`.
-
-## 5. AI tutor environment variables
-
-For the `/api/chat` Pages Function, configure these as Cloudflare environment variables/secrets:
-
-```text
-CLOUDFLARE_ACCOUNT_ID
-CLOUDFLARE_API_TOKEN
-CLOUDFLARE_AI_MODEL=google-ai-studio/gemini-2.5-flash
-```
-
-Do not put the API token in source control or expose it as a `VITE_*` variable.
-
-## 6. Authentication behavior
-
-- Signup requires a name, valid email, and password of 8–128 characters.
-- Passwords are hashed with PBKDF2-SHA-256 using a per-user random salt.
-- The browser receives only an HttpOnly, Secure, SameSite=Lax session cookie.
-- Raw passwords and session tokens are not stored in the database.
-- The account page is available from the `Account` control in the navbar.
-- The frontend uses same-origin requests, so no public CORS configuration is required.
-
-This is an application login system, not an identity provider. Add email verification, password reset, rate limiting, and account recovery before treating it as production-grade authentication for a large public service.
+The learning-state table is protected by RLS, but every new table or RPC added to the project should receive an explicit RLS policy and least-privilege grants before deployment.
