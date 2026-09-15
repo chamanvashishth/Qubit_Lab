@@ -18,8 +18,18 @@ function moodFor(question: string, lastReply: string): Mood {
   return 'idle';
 }
 
+function moodLabel(mood: Mood): string {
+  switch (mood) {
+    case 'thinking': return 'Working through it...';
+    case 'concerned': return 'Debugging it with you.';
+    case 'explain': return 'Breaking it down step by step.';
+    case 'listening': return 'I am listening.';
+    default: return 'Interactive quantum tutor';
+  }
+}
+
 export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen, onClose, externalPrompt }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([{ id: 'welcome', role: 'assistant', content: 'Hi, I’m your QubitLab guide. Ask a quantum question, paste code, send an error, or ask about the circuit you just built.', timestamp: Date.now() }]);
+  const [messages, setMessages] = useState<ChatMessage[]>([{ id: 'welcome', role: 'assistant', content: 'Hi, I am your QubitLab guide. Ask a quantum question, paste code, send an error, or ask about the circuit you just built.', timestamp: Date.now() }]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -59,7 +69,16 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
     <div className="absolute inset-0 bg-black/35 backdrop-blur-[2px] pointer-events-auto" onClick={onClose} />
     <section className="pointer-events-auto absolute right-3 sm:right-6 top-20 bottom-3 w-[calc(100%-1.5rem)] sm:w-[440px] max-w-[440px] glass-panel rounded-2xl overflow-hidden flex flex-col shadow-2xl border border-white/10" role="dialog" aria-modal="true" aria-label="QubitLab virtual guide">
       <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0"><div className="w-12 h-12 shrink-0"><GuideAvatar mood={displayMood} size="md" showStatus /></div><div className="min-w-0"><div className="flex items-center gap-2"><span className="text-sm font-semibold text-zinc-100">QubitLab Guide</span><span className="w-1.5 h-1.5 rounded-full bg-[#dfff3f] shadow-[0_0_8px_rgba(223,255,63,.8)] /></div><div className="text-[10px] text-zinc-500 truncate">{displayMood === 'thinking' ? 'Working through it…' : displayMood === 'concerned' ? 'Let’s debug it together.' : displayMood === 'explain' ? 'Breaking it down step by step.' : displayMood === 'listening' ? 'I’m listening.' : 'Interactive quantum tutor'}</div></div></div>
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-12 h-12 shrink-0"><GuideAvatar mood={displayMood} size="md" showStatus /></div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-zinc-100">QubitLab Guide</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-300" aria-hidden="true" />
+            </div>
+            <div className="text-xs text-zinc-500 truncate">{moodLabel(displayMood)}</div>
+          </div>
+        </div>
         <div className="flex items-center gap-1"><button onClick={resetChat} className="p-2 rounded-lg hover:bg-white/5 text-zinc-500 hover:text-zinc-200" aria-label="Reset conversation"><RefreshCw className="w-4 h-4" /></button><button onClick={onClose} className="p-2 rounded-lg hover:bg-white/5 text-zinc-500 hover:text-zinc-200" aria-label="Close guide"><X className="w-4 h-4" /></button></div>
       </div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -72,7 +91,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
         <div ref={messagesEndRef} />
       </div>
       {messages.length === 1 && <div className="px-4 pb-2 flex gap-2 overflow-x-auto responsive-scroll-x">{DEFAULT_SUGGESTIONS.map((suggestion) => <button key={suggestion} onClick={() => sendMessage(suggestion)} className="shrink-0 rounded-lg border border-white/10 bg-white/[.025] px-2.5 py-1.5 text-[10px] text-zinc-500 hover:text-zinc-200 hover:border-white/20"><Lightbulb className="inline w-3 h-3 mr-1" />{suggestion}</button>)}</div>}
-      <form onSubmit={(e) => { e.preventDefault(); void sendMessage(input); }} className="p-3 border-t border-white/10"><div className="flex items-end gap-2 rounded-xl bg-black/30 border border-white/10 p-2 focus-within:border-[#dfff3f]/30"><textarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void sendMessage(input); } }} placeholder="Ask about quantum computing…" rows={2} className="flex-1 resize-none bg-transparent outline-none text-sm text-zinc-200 placeholder:text-zinc-700 px-1.5 py-1" disabled={isLoading} aria-label="Message the QubitLab guide" /><button type="submit" disabled={isLoading || !input.trim()} className="w-9 h-9 rounded-lg template-button flex items-center justify-center disabled:opacity-30" aria-label="Send message"><Send className="w-4 h-4" /></button></div><div className="text-[9px] text-zinc-700 mt-1.5 px-1">Grounded in the QubitLab curriculum, simulator and learning data.</div></form>
+      <form onSubmit={(e) => { e.preventDefault(); void sendMessage(input); }} className="p-3 border-t border-white/10"><div className="flex items-end gap-2 rounded-xl bg-black/30 border border-white/10 p-2 focus-within:border-[#dfff3f]/30"><textarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void sendMessage(input); } }} placeholder="Ask about quantum computing..." rows={2} className="flex-1 resize-none bg-transparent outline-none text-sm text-zinc-200 placeholder:text-zinc-700 px-1.5 py-1" disabled={isLoading} aria-label="Message the QubitLab guide" /><button type="submit" disabled={isLoading || !input.trim()} className="w-9 h-9 rounded-lg template-button flex items-center justify-center disabled:opacity-30" aria-label="Send message"><Send className="w-4 h-4" /></button></div><div className="text-[9px] text-zinc-700 mt-1.5 px-1">Grounded in the QubitLab curriculum, simulator and learning data.</div></form>
     </section>
   </div>;
 };
