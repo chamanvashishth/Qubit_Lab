@@ -1,3 +1,5 @@
+import { supabase } from '../lib/supabase';
+
 export interface AuthUser {
   id: string;
   email: string;
@@ -5,52 +7,45 @@ export interface AuthUser {
   createdAt: string;
 }
 
-interface AuthResponse {
-  authenticated?: boolean;
-  configured?: boolean;
-  user?: AuthUser | null;
-  error?: string;
-}
-
-const request = async (input: RequestInfo, init?: RequestInit): Promise<AuthResponse> => {
-  const response = await fetch(input, {
-    ...init,
-    headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
-    credentials: 'same-origin',
-  });
-  const data = await response.json().catch(() => ({})) as AuthResponse;
-  if (!response.ok && response.status !== 503) throw new Error(data.error || 'Authentication request failed.');
-  return data;
-};
+const mapUser = (user: { id: string; email?: string | null; created_at?: string; user_metadata?: Record<string, unknown> }): AuthUser => ({
+  id: user.id,
+  email: user.email || '',
+  name: typeof user.user_metadata?.name === 'string' && user.user_metadata.name.trim()
+    ? user.user_metadata.name.trim()
+    : user.email?.split('@')[0] || 'Learner',
+  createdAt: user.created_at || new Date().toISOString(),
+});
 
 export const getCurrentUser = async (): Promise<AuthUser | null> => {
-  try {
-    const data = await request('/api/auth', { method: 'GET', headers: {} });
-    return data.user || null;
-  } catch {
-    return null;
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) return null;
+  return mapUser(data.user);
+};
+
+export const login = async (email: string, password: string): Promise<AuthUser> => {
+  const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+  if (error || !data.user) throw new Error(error?.message || 'Unable to sign in.');
+  return mapUser(data.user);
+};
+
+export const signup = async (name: string, email: string, password: string): Promise<AuthUser> => {
+  const { data, error } = await supabase.auth.signUp({
+    email: email.trim(),
+    password,
+    options: { data: { name: name.trim() } },
+  });
+
+  if (error) throw new Error(error.message);
+  if (!data.user) throw new Error('Unable to create your account.');
+
+  if (!data.session) {
+    throw new Error('Account created. Check your email to confirm your account, then sign in.');
   }
-};
 
-export const login = async (email: string, password: string) => {
-  const data = await request('/api/auth', {
-    method: 'POST',
-    body: JSON.stringify({ action: 'login', email, password }),
-  });
-  if (!data.user) throw new Error(data.error || 'Unable to sign in.');
-  return data.user;
-};
-
-export const signup = async (name: string, email: string, password: string) => {
-  const data = await request('/api/auth', {
-    method: 'POST',
-    body: JSON.stringify({ action: 'signup', name, email, password }),
-  });
-  if (!data.user) throw new Error(data.error || 'Unable to create your account.');
-  return data.user;
+  return mapUser(data.user);
 };
 
 export const logout = async () => {
-  const response = await fetch('/api/auth', { method: 'DELETE', credentials: 'same-origin' });
-  if (!response.ok) throw new Error('Unable to log out.');
+  const { error } = await supabase.auth.signOut();
+  if (error) throw new Error(error.message || 'Unable to log out.');
 };
