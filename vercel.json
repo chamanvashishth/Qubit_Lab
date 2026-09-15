@@ -2,17 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ],
-  "functions": {
-    "api/chat.ts": {
-      "runtime": "nodejs24.x",
-      "supportsCancellation": true,
-      "maxDuration": 60
-    }
-  },
   "headers": [
     {
       "source": "/assets/(.*)",
