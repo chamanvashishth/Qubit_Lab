@@ -26,6 +26,8 @@ DB
 
 The authentication function will return a configuration error until this binding exists.
 
+**Important:** `wrangler.toml` is intentionally kept without `pages_build_output_dir`. That makes the file local-development configuration instead of making it the production source of truth, so the Cloudflare Pages dashboard can remain authoritative for the D1 binding and build settings. If you later choose to manage production bindings entirely through Wrangler, run `npx wrangler pages download config qubit-lab` and review the generated configuration before deploying.
+
 ## 3. Apply the schema
 
 From the repository root:
@@ -39,7 +41,34 @@ The migration creates:
 - `users` — learner account records and password hashes/salts.
 - `sessions` — hashed, expiring HttpOnly login sessions.
 
-## 4. Authentication behavior
+## 4. Cloudflare Pages build settings
+
+Use these values for the Git-connected Pages project:
+
+- Root directory: `/`
+- Production branch: `main`
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Node.js: `22.16.0` (the repository pins this with `.node-version`)
+- Build variable: `SKIP_DEPENDENCY_INSTALL=1`
+
+With `SKIP_DEPENDENCY_INSTALL=1`, Cloudflare skips its automatic dependency install and `build.sh` can be used as the explicit install/build fallback when needed. Cloudflare documents this variable as the supported way to disable automatic dependency installation.
+
+If you do not use `build.sh`, `npm run build` is still the correct React/Vite build command and `dist` is the correct output directory.
+
+## 5. AI tutor environment variables
+
+For the `/api/chat` Pages Function, configure these as Cloudflare environment variables/secrets:
+
+```text
+CLOUDFLARE_ACCOUNT_ID
+CLOUDFLARE_API_TOKEN
+CLOUDFLARE_AI_MODEL=google-ai-studio/gemini-2.5-flash
+```
+
+Do not put the API token in source control or expose it as a `VITE_*` variable.
+
+## 6. Authentication behavior
 
 - Signup requires a name, valid email, and password of 8–128 characters.
 - Passwords are hashed with PBKDF2-SHA-256 using a per-user random salt.
