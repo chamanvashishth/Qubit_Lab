@@ -8,7 +8,7 @@
   ],
   "functions": {
     "api/chat.ts": {
-      "runtime": "nodejs22.x",
+      "runtime": "nodejs24.x",
       "supportsCancellation": true,
       "maxDuration": 60
     }
