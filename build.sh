@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Cloudflare may either install dependencies automatically or skip that step.
-# If dependencies are not present, install them explicitly with npm.
+# Cloudflare Pages can install dependencies before invoking this script.
+# The fallback keeps direct Wrangler/manual builds reproducible without a lockfile.
 if [ ! -d "node_modules" ]; then
-  npm install --no-package-lock
+  npm install --no-package-lock --no-audit --no-fund
 fi
 
 npm run build
