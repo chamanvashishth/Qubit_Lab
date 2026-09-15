@@ -14,6 +14,7 @@ import { loadProgress, recordQuizScore, toggleTopic } from './utils/progress';
 import { AdaptiveState, loadAdaptiveState, saveLearnerProfile, recordQuizResult } from './utils/adaptive';
 import { LearnerProfile } from './data/adaptiveLearning';
 import { AuthUser, getCurrentUser } from './utils/auth';
+import { supabase } from './lib/supabase';
 
 const NAV_TABS: NavTab[] = ['home', 'dashboard', 'curriculum', 'composer', 'bloch', 'sandbox', 'quiz', 'user'];
 const readSession = (key: string) => {
@@ -43,7 +44,26 @@ export default function App() {
   useEffect(() => { writeSession('qubitlab-active-tab', activeTab); }, [activeTab]);
   useEffect(() => { writeSession('qubitlab-curriculum-topic', curriculumTopicId ?? null); }, [curriculumTopicId]);
   useEffect(() => { writeSession('qubitlab-selected-quiz', selectedQuizId ?? null); }, [selectedQuizId]);
-  useEffect(() => { getCurrentUser().then(setUser).catch(() => setUser(null)); }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    void getCurrentUser().then((currentUser) => { if (mounted) setUser(currentUser); });
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+      if (!session?.user) {
+        setUser(null);
+        return;
+      }
+      const metadata = session.user.user_metadata || {};
+      setUser({
+        id: session.user.id,
+        email: session.user.email || '',
+        name: typeof metadata.name === 'string' && metadata.name.trim() ? metadata.name.trim() : session.user.email?.split('@')[0] || 'Learner',
+        createdAt: session.user.created_at || new Date().toISOString(),
+      });
+    });
+    return () => { mounted = false; data.subscription.unsubscribe(); };
+  }, []);
 
   const openAIChatWithPrompt = (prompt: string, contextDescription: string) => { setAiChatContext(contextDescription); setExternalPrompt(prompt); setIsAIChatOpen(true); };
   const handleCircuitAIExplain = (circuit: CircuitState, diracNotation: string) => {
