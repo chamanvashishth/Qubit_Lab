@@ -1,2 +1,9 @@
 name = "qubit-lab"
 compatibility_date = "2026-09-15"
+
+# Keep Cloudflare Pages on the repository's npm-based custom build path.
+# This disables the Pages build system's automatic package-manager install so
+# build.sh can install dependencies with npm instead of accidentally restoring
+# a stale Bun lockfile from the project cache.
+[vars]
+SKIP_DEPENDENCY_INSTALL = "1"
