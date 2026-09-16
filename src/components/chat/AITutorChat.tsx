@@ -2,7 +2,10 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Send, User, X, RefreshCw, Check, Copy, Brain, Lightbulb } from 'lucide-react';
 import { ChatMessage } from '../../types/quantum';
 import { answerLocally } from '../../utils/localTutor';
+import { GuideAvatar } from './GuideAvatar';
 
+interface AITutorChatProps { currentContext?: string; isOpen: boolean; onClose: () => void; externalPrompt?: string; }
+type Mood = 'idle' | 'listening' | 'thinking' | 'speaking' | 'happy' | 'concerned' | 'explain';
 
 const DEFAULT_SUGGESTIONS = ['Explain superposition like I am a beginner', 'What does a CNOT gate actually do?', 'What gates does the simulator support?', 'How does Grover search work?', 'What is the QubitLab syllabus?'];
 const isFollowUp = (text: string) => /^(why|how|what about that|what about it|explain more|tell me more|can you explain|why is that|what does that mean|and why\??|and how\??|okay why\??|then what\??)[?.! ]*$/.test(text.trim().toLowerCase()) || /^(why|how|then what|what next|more|explain|details|why\?)$/.test(text.trim().toLowerCase());
