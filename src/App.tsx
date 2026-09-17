@@ -44,6 +44,7 @@ export default function App() {
   const [progress, setProgress] = useState<UserProgress>(() => loadProgress());
   const [adaptive, setAdaptive] = useState<AdaptiveState>(() => loadAdaptiveState());
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [authReady, setAuthReady] = useState(false);
   const [cloudReady, setCloudReady] = useState(false);
   const cloudSaveTimer = useRef<number | null>(null);
   const [curriculumTopicId, setCurriculumTopicId] = useState<string | undefined>(() => readSession('qubitlab-curriculum-topic') || undefined);
@@ -51,18 +52,19 @@ export default function App() {
 
   useEffect(() => { writeSession('qubitlab-active-tab', activeTab); }, [activeTab]);
   useEffect(() => { writeSession('qubitlab-language', language); }, [language]);
-  useEffect(() => { if (!user && PROTECTED_TABS.has(activeTab)) setActiveTab('user'); }, [user, activeTab]);
+  useEffect(() => { if (authReady && !user && PROTECTED_TABS.has(activeTab)) setActiveTab('user'); }, [authReady, user, activeTab]);
   const navigate = (tab: NavTab) => setActiveTab(tab === 'dashboard' ? 'progress' : tab);
   useEffect(() => { writeSession('qubitlab-curriculum-topic', curriculumTopicId ?? null); }, [curriculumTopicId]);
   useEffect(() => { writeSession('qubitlab-selected-quiz', selectedQuizId ?? null); }, [selectedQuizId]);
 
   useEffect(() => {
     let mounted = true;
-    void getCurrentUser().then((currentUser) => { if (mounted) setUser(currentUser); });
+    void getCurrentUser().then((currentUser) => { if (mounted) { setUser(currentUser); setAuthReady(true); } }).catch(() => { if (mounted) setAuthReady(true); });
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
-      if (!session?.user) { setUser(null); setCloudReady(false); return; }
+      if (!session?.user) { setUser(null); setCloudReady(false); setAuthReady(true); return; }
       const metadata = session.user.user_metadata || {};
+      setAuthReady(true);
       setUser({
         id: session.user.id,
         email: session.user.email || '',
