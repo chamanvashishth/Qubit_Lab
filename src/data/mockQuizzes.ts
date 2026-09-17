@@ -63,7 +63,19 @@ q('a7','Too many Grover iterations can:',['Overshoot and reduce success','Break 
 q('a8','Shor is centered on:',['Factoring through order finding','Sorting','Unstructured search','Compression'],0,'Shor reduces factoring to order finding.'),
 q('a9','Transform used for periodic information:',['Quantum Fourier Transform','SWAP','Measurement only','Pauli-X'],0,'QFT exposes phase and periodic structure.'),
 q('a10','Small noisy devices currently imply cryptographic RSA factoring:',['No','Yes'],0,'Relevant attacks require much larger fault-tolerant resources.')
-]},
+]},,
+{id:'hardware',title:'Quantum Hardware Mock',description:'Noise, hardware platforms, and error correction.',questions:[
+q('h1','A qubit coherence time describes:',['How long phase information is retained','How many gates exist','The number of outcomes','A clock rate'],0,'Coherence measures how long useful quantum information survives.'),
+q('h2','Decoherence is caused by:',['Unwanted environment interaction','Dirac notation','A tensor product','A correct measurement only'],0,'Coupling to the environment leaks quantum information.'),
+q('h3','A common superconducting qubit is a:',['Transmon','Laser diode','Hard disk','CMOS bit'],0,'Transmons are widely used superconducting qubits.'),
+q('h4','Quantum error correction primarily uses:',['Redundant entanglement','Copying an unknown state','One perfect gate','Classical compression'],0,'Codes distribute information across physical qubits.'),
+q('h5','The no-cloning theorem says:',['Unknown states cannot be copied perfectly','Qubits cannot be measured','States have no amplitudes','All gates are noisy'],0,'No unitary can clone every arbitrary unknown state.'),
+q('h6','A gate fidelity near 1 means:',['The operation closely matches its target','The qubit is classical','Measurement is impossible','The state is mixed'],0,'Fidelity quantifies agreement with the intended operation.'),
+q('h7','Readout error occurs during:',['Measurement','State preparation only','Compilation only','Tensor products'],0,'Readout maps a quantum state to a classical result imperfectly.'),
+q('h8','A logical qubit is:',['An error-protected encoded qubit','Always one physical qubit','A classical backup','A visualizer feature'],0,'Logical qubits use multiple physical qubits for protection.'),
+q('h9','Cryogenic operation helps superconducting devices by:',['Reducing thermal noise','Increasing bit size','Eliminating all errors','Avoiding calibration'],0,'Very low temperatures reduce thermal excitations.'),
+q('h10','NISQ describes:',['Noisy intermediate-scale quantum devices','Infinite-state devices','Only simulators','Classical hardware'],0,'NISQ devices are useful but noisy, limited-scale systems.')
+]}
 ];
 
 export const getQuizMock=(id?:string)=>QUIZ_MOCKS.find(mock=>mock.id===id);
