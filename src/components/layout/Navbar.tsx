@@ -2,7 +2,7 @@ import React from 'react';
 import { BookOpen, Sliders, Layers, Terminal, Award, Library, Home, Sparkles, UserRound, Languages } from 'lucide-react';
 import { AuthUser } from '../../utils/auth';
 
-export type NavTab = 'home' | 'progress' | 'library' | 'curriculum' | 'composer' | 'bloch' | 'sandbox' | 'quiz' | 'user';
+export type NavTab = 'home' | 'progress' | 'dashboard' | 'library' | 'curriculum' | 'composer' | 'bloch' | 'sandbox' | 'quiz' | 'user';
 export type Language = 'en' | 'hi';
 
 interface NavbarProps {
