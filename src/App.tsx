@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Navbar, NavTab, Language } from './components/layout/Navbar';
 import { LibraryPage } from './components/library/LibraryPage';
 import { AdaptiveHome } from './components/adaptive/AdaptiveHome';
+import { LandingHero } from './components/landing/LandingHero';
 import { CurriculumExplorer } from './components/curriculum/CurriculumExplorer';
 import { LearnerDashboard } from './components/dashboard/LearnerDashboard';
 import { AITutorChat } from './components/chat/AITutorChat';
@@ -109,7 +110,7 @@ export default function App() {
     <Navbar activeTab={activeTab} onSelectTab={navigate} user={user} language={language} onLanguageChange={setLanguage} onOpenAI={() => { setExternalPrompt(''); setAiChatContext('General Quantum Concepts'); setIsAIChatOpen(true); }} />
     <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
       <Suspense fallback={pageFallback}>
-        {activeTab === 'home' && <AdaptiveHome state={adaptive} onProfile={(profile: LearnerProfile) => setAdaptive(saveLearnerProfile(profile))} onState={setAdaptive} onNavigate={(tab) => navigate(tab)} onOpenAI={() => { setExternalPrompt(''); setAiChatContext('Adaptive Quantum Learning Guide'); setIsAIChatOpen(true); }} />}
+        {activeTab === 'home' && (user ? <AdaptiveHome state={adaptive} onProfile={(profile: LearnerProfile) => setAdaptive(saveLearnerProfile(profile))} onState={setAdaptive} onNavigate={(tab) => navigate(tab)} onOpenAI={() => { setExternalPrompt(''); setAiChatContext('Adaptive Quantum Learning Guide'); setIsAIChatOpen(true); }} /> : <LandingHero onNavigate={(tab) => navigate(tab)} onOpenAI={() => { setExternalPrompt(''); setAiChatContext('General Quantum Concepts'); setIsAIChatOpen(true); }} />)}
         {activeTab === 'curriculum' && <CurriculumExplorer progress={progress} selectedTopicId={curriculumTopicId} onToggleCompleted={(topicId) => setProgress((current) => toggleTopic(current, topicId))} onAskAIExplain={(topic) => openAIChatWithPrompt(`Can you explain the key physics, mathematical formulation, and experimental realization of "${topic}"?`, `Curriculum Topic: ${topic}`)} onOpenQuiz={(quizId) => { setSelectedQuizId(quizId); setActiveTab('quiz'); }} />}
         {activeTab === 'composer' && <CircuitComposer onAskAIExplain={handleCircuitAIExplain} />}
         {activeTab === 'bloch' && <BlochPlayground onAskAI={(prompt) => openAIChatWithPrompt(prompt, '3D Bloch Sphere Geometry')} />}
