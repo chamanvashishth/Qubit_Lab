@@ -8,6 +8,9 @@ export interface AdaptiveState {
   predictionCount: number;
   lastConceptId: string | null;
   journalCount: number;
+  difficultyByTopic: Record<string, number>;
+  streakByTopic: Record<string, number>;
+  questionOutcomes: Record<string, boolean>;
 }
 
 const PROFILE_KEY = 'qubitlab-learner-profile';
@@ -22,6 +25,9 @@ const defaultState = (): AdaptiveState => ({
   predictionCount: 0,
   lastConceptId: null,
   journalCount: 0,
+  difficultyByTopic: {},
+  streakByTopic: {},
+  questionOutcomes: {},
 });
 
 const clamp = (value: number, min = 0, max = 100) => Math.max(min, Math.min(max, value));
@@ -47,6 +53,9 @@ export function loadAdaptiveState(): AdaptiveState {
       predictionAccuracy: typeof parsed.predictionAccuracy === 'number' && Number.isFinite(parsed.predictionAccuracy) ? clamp(Math.round(parsed.predictionAccuracy)) : 0,
       predictionCount: typeof parsed.predictionCount === 'number' && Number.isFinite(parsed.predictionCount) ? Math.max(0, Math.round(parsed.predictionCount)) : 0,
       journalCount: typeof parsed.journalCount === 'number' && Number.isFinite(parsed.journalCount) ? Math.max(0, Math.round(parsed.journalCount)) : 0,
+      difficultyByTopic: typeof parsed.difficultyByTopic === 'object' && parsed.difficultyByTopic ? parsed.difficultyByTopic : {},
+      streakByTopic: typeof parsed.streakByTopic === 'object' && parsed.streakByTopic ? parsed.streakByTopic : {},
+      questionOutcomes: typeof parsed.questionOutcomes === 'object' && parsed.questionOutcomes ? parsed.questionOutcomes : {},
     };
   } catch {
     return defaultState();
@@ -158,4 +167,22 @@ export function recordQuizResult(state: AdaptiveState, quizId: string, percentag
 export function getMasteryAverage(state: AdaptiveState) {
   const values = CONCEPT_NODES.map((node) => state.mastery[node.id] ?? 0);
   return values.length ? Math.round(values.reduce((sum, value) => sum + value, 0) / values.length) : 0;
+}
+
+
+export function getTopicDifficulty(state: AdaptiveState, topic: string) {
+  const level = state.difficultyByTopic[topic] ?? 1;
+  return Math.max(1, Math.min(3, Math.round(level)));
+}
+
+export function recordQuizAnswer(state: AdaptiveState, topic: string, questionId: string, correct: boolean): AdaptiveState {
+  const currentLevel = getTopicDifficulty(state, topic);
+  const previousStreak = state.streakByTopic[topic] ?? 0;
+  const nextStreak = correct ? previousStreak + 1 : 0;
+  // A miss immediately makes the next question more accessible; two successive correct answers unlock a harder level.
+  const nextLevel = correct ? (nextStreak >= 2 ? Math.min(3, currentLevel + 1) : currentLevel) : Math.max(1, currentLevel - 1);
+  const difficultyByTopic = { ...state.difficultyByTopic, [topic]: nextLevel };
+  const streakByTopic = { ...state.streakByTopic, [topic]: nextStreak };
+  const questionOutcomes = { ...state.questionOutcomes, [questionId]: correct };
+  return saveAdaptiveState({ ...state, difficultyByTopic, streakByTopic, questionOutcomes });
 }
