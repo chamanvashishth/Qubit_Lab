@@ -49,3 +49,11 @@ export const logout = async () => {
   const { error } = await supabase.auth.signOut();
   if (error) throw new Error(error.message || 'Unable to log out.');
 };
+
+export const loginWithGoogle = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin },
+  });
+  if (error) throw new Error(error.message || 'Unable to start Google sign-in.');
+};
