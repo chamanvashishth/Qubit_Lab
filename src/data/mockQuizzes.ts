@@ -1,7 +1,7 @@
 import { QuizQuestion } from '../types/quantum';
 
 export interface QuizMock { id:string; title:string; description:string; questions:QuizQuestion[]; }
-const q=(id:string,question:string,options:string[],correctIndex:number,explanation:string):QuizQuestion=>({id,question,options,correctIndex,correctAnswer:correctIndex,explanation});
+const q=(id:string,question:string,options:string[],correctIndex:number,explanation:string):QuizQuestion=>{ const index=Number(id.replace(/[^0-9]/g, '')) || 1; const difficulty: 1 | 2 | 3 = index <= 4 ? 1 : index <= 7 ? 2 : 3; return { id, question, options, correctIndex, correctAnswer:correctIndex, explanation, difficulty }; };
 
 export const QUIZ_MOCKS:QuizMock[]=[
 {id:'foundations',title:'Foundations Mock',description:'Bits, qubits, normalization, and Dirac notation.',questions:[
