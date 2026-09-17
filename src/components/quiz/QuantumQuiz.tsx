@@ -21,6 +21,7 @@ interface QuantumQuizProps {
   onCompleteQuiz?: (score: number, total: number, quizId: string) => void;
   onAskAIForHelp?: (question: QuizQuestion) => void;
   onAnswer?: (quizId: string, questionId: string, correct: boolean) => void;
+  difficultyLevel?: number;
 }
 
 const emptyAttempt: QuizAttempt = {
@@ -50,6 +51,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
   onCompleteQuiz,
   onAskAIForHelp,
   onAnswer,
+  difficultyLevel = 1,
 }) => {
   const mock = useMemo(() => getQuizMock(quizId), [quizId]);
 
@@ -100,7 +102,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
     );
   }
 
-  const questions = mock.questions;
+  const questions = mock.questions.filter((question) => (question.difficulty ?? 1) <= difficultyLevel);
   if (questions.length === 0) {
     return (
       <div className="max-w-xl mx-auto p-6 rounded-2xl bg-white/[.05] border border-white/10 text-center text-zinc-300">
@@ -195,7 +197,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
         </div>
         <div className="text-right">
           <div className="text-xs font-mono text-[#e9ff8a]">Question {currentIndex + 1}/{questions.length}</div>
-          <div className="text-[11px] text-zinc-400">Score: {attempt.score}</div>
+          <div className="text-[11px] text-zinc-400">Score: {attempt.score} · Level {difficultyLevel}</div>
         </div>
       </div>
 
