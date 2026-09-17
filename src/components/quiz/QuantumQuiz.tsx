@@ -20,6 +20,7 @@ interface QuantumQuizProps {
   onBackToMocks?: () => void;
   onCompleteQuiz?: (score: number, total: number, quizId: string) => void;
   onAskAIForHelp?: (question: QuizQuestion) => void;
+  onAnswer?: (quizId: string, questionId: string, correct: boolean) => void;
 }
 
 const emptyAttempt: QuizAttempt = {
@@ -48,6 +49,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
   onBackToMocks,
   onCompleteQuiz,
   onAskAIForHelp,
+  onAnswer,
 }) => {
   const mock = useMemo(() => getQuizMock(quizId), [quizId]);
 
@@ -121,10 +123,9 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
 
   const handleConfirmAnswer = () => {
     if (attempt.selectedOption === null || attempt.isAnswered) return;
-    updateAttempt({
-      isAnswered: true,
-      score: attempt.score + (attempt.selectedOption === correctIndex ? 1 : 0),
-    });
+    const correct = attempt.selectedOption === correctIndex;
+    onAnswer?.(mock.id, currentQ.id, correct);
+    updateAttempt({ isAnswered: true, score: attempt.score + (correct ? 1 : 0) });
   };
 
   const handleNext = () => {
