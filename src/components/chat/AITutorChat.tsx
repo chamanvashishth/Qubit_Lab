@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Send, User, X, RefreshCw, Check, Copy, Brain, Lightbulb } from 'lucide-react';
 import { ChatMessage } from '../../types/quantum';
-import { answerLocally } from '../../utils/localTutor';
 
 interface AITutorChatProps { currentContext?: string; isOpen: boolean; onClose: () => void; externalPrompt?: string; }
 
@@ -22,9 +21,18 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
   const lastUser = useMemo(() => [...messages].reverse().find((m) => m.role === 'user')?.content ?? '', [messages]);
   const getReply = async (question: string): Promise<string> => {
     const resolvedQuestion = lastUser && isFollowUp(question) ? `${question}\n\nFollow-up to the user's previous question: ${lastUser}` : question;
-    const groundedQuestion = currentContext ? `${resolvedQuestion}\n\nCurrent QubitLab context:\n${currentContext}` : resolvedQuestion;
-    try { return answerLocally(groundedQuestion).trim() || 'I do not have a reliable answer for that yet. Try asking about the QubitLab syllabus, a quantum concept, a gate, the simulator, a quiz question, or quantum code.'; }
-    catch { return 'I hit a problem while preparing that answer. Try the question again with the exact topic, gate, quiz question, or error message.'; }
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        context: currentContext || '',
+        messages: [...messages, { role: 'user', content: resolvedQuestion }].slice(-12).map(({ role, content }) => ({ role, content })),
+      }),
+    });
+    const data = await response.json().catch(() => ({})) as { reply?: unknown; error?: unknown };
+    if (!response.ok) throw new Error(typeof data.error === 'string' ? data.error : 'The Gemini service is unavailable. Please try again.');
+    if (typeof data.reply !== 'string' || !data.reply.trim()) throw new Error('Gemini returned an empty response. Please try again.');
+    return data.reply.trim();
   };
 
   const sendMessage = async (textToSend: string) => {
@@ -33,9 +41,13 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
     setMessages((prev) => [...prev, { id: `user-${now}`, role: 'user', content: text, timestamp: now }]);
     setInput(''); setIsLoading(true);
     await new Promise((resolve) => window.setTimeout(resolve, 180));
-    const reply = await getReply(text);
-    setMessages((prev) => [...prev, { id: `assistant-${Date.now()}`, role: 'assistant', content: reply, timestamp: Date.now() }]);
-    setIsLoading(false);
+    try {
+      const reply = await getReply(text);
+      setMessages((prev) => [...prev, { id: `assistant-${Date.now()}`, role: 'assistant', content: reply, timestamp: Date.now() }]);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'The Gemini service is unavailable. Please try again.';
+      setMessages((prev) => [...prev, { id: `assistant-error-${Date.now()}`, role: 'assistant', content: message, timestamp: Date.now() }]);
+    } finally { setIsLoading(false); }
   };
 
   const copyMessage = async (id: string, text: string) => { try { await navigator.clipboard.writeText(text); setCopiedId(id); window.setTimeout(() => setCopiedId(null), 1600); } catch { /* optional */ } };
