@@ -113,6 +113,7 @@ export interface QuizQuestion {
   correctAnswer?: number;
   explanation: string;
   mathNotation?: string;
+  difficulty?: 1 | 2 | 3;
 }
 
 export interface UserProgress {
