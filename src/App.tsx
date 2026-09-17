@@ -8,7 +8,7 @@ import { AITutorChat } from './components/chat/AITutorChat';
 import { UserPage } from './components/user/UserPage';
 import { CircuitState, QuizQuestion, UserProgress } from './types/quantum';
 import { loadProgress, recordQuizScore, toggleTopic } from './utils/progress';
-import { AdaptiveState, loadAdaptiveState, saveLearnerProfile, recordQuizResult } from './utils/adaptive';
+import { AdaptiveState, loadAdaptiveState, saveLearnerProfile, recordQuizAnswer, recordQuizResult } from './utils/adaptive';
 import { LearnerProfile } from './data/adaptiveLearning';
 import { AuthUser, getCurrentUser } from './utils/auth';
 import { supabase } from './lib/supabase';
@@ -112,7 +112,7 @@ export default function App() {
         {activeTab === 'composer' && <CircuitComposer onAskAIExplain={handleCircuitAIExplain} />}
         {activeTab === 'bloch' && <BlochPlayground onAskAI={(prompt) => openAIChatWithPrompt(prompt, '3D Bloch Sphere Geometry')} />}
         {activeTab === 'sandbox' && <QuantumCodeSandbox onAskAIExplain={handleCodeAIExplain} onAskAIDebug={handleCodeAIDebug} />}
-        {activeTab === 'quiz' && <QuantumQuiz quizId={selectedQuizId} onSelectQuiz={setSelectedQuizId} onBackToMocks={() => setSelectedQuizId(undefined)} onAskAIForHelp={handleQuizAIHelp} onCompleteQuiz={(score, total, quizId) => { const percentage = total > 0 ? (score / total) * 100 : 0; setProgress((current) => recordQuizScore(current, quizId, percentage)); setAdaptive((current) => recordQuizResult(current, quizId, percentage)); }} />}
+        {activeTab === 'quiz' && <QuantumQuiz quizId={selectedQuizId} onSelectQuiz={setSelectedQuizId} onBackToMocks={() => setSelectedQuizId(undefined)} onAskAIForHelp={handleQuizAIHelp} onCompleteQuiz={(score, total, quizId) => { const percentage = total > 0 ? (score / total) * 100 : 0; setProgress((current) => recordQuizScore(current, quizId, percentage)); setAdaptive((current) => recordQuizResult(current, quizId, percentage)); }} onAnswer={(quizId, questionId, correct) => setAdaptive((current) => recordQuizAnswer(current, quizId, questionId, correct))} />}
         {(activeTab === 'progress' || activeTab === 'dashboard') && <LearnerDashboard progress={progress} adaptive={adaptive} onNavigate={(tab) => navigate(tab)} onOpenTopic={(topicId) => { setCurriculumTopicId(topicId); setActiveTab('curriculum'); }} />}
         {activeTab === 'library' && <LibraryPage onNavigate={(tab) => navigate(tab)} />}
         {activeTab === 'user' && <UserPage user={user} onAuthenticated={(authenticatedUser) => { setUser(authenticatedUser); navigate('progress'); }} onLoggedOut={() => { setUser(null); setCloudReady(false); navigate('home'); }} />}
