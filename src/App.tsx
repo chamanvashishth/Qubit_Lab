@@ -1,5 +1,6 @@
 import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { Navbar, NavTab } from './components/layout/Navbar';
+import { Navbar, NavTab, Language } from './components/layout/Navbar';
+import { LibraryPage } from './components/library/LibraryPage';
 import { AdaptiveHome } from './components/adaptive/AdaptiveHome';
 import { CurriculumExplorer } from './components/curriculum/CurriculumExplorer';
 import { LearnerDashboard } from './components/dashboard/LearnerDashboard';
@@ -18,7 +19,8 @@ const BlochPlayground = lazy(() => import('./components/bloch/BlochPlayground').
 const QuantumCodeSandbox = lazy(() => import('./components/sandbox/QuantumCodeSandbox').then((module) => ({ default: module.QuantumCodeSandbox })));
 const QuantumQuiz = lazy(() => import('./components/quiz/QuantumQuiz').then((module) => ({ default: module.QuantumQuiz })));
 
-const NAV_TABS: NavTab[] = ['home', 'dashboard', 'curriculum', 'composer', 'bloch', 'sandbox', 'quiz', 'user'];
+const NAV_TABS: NavTab[] = ['home', 'progress', 'dashboard', 'library', 'curriculum', 'composer', 'bloch', 'sandbox', 'quiz', 'user'];
+const PROTECTED_TABS = new Set<NavTab>(['progress', 'dashboard', 'curriculum', 'composer', 'bloch', 'sandbox', 'quiz']);
 const readSession = (key: string) => {
   if (typeof window === 'undefined') return null;
   try { return window.sessionStorage.getItem(key); } catch { return null; }
@@ -35,6 +37,7 @@ const pageFallback = <div className="min-h-[320px] flex items-center justify-cen
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>(() => readNavTab());
+  const [language, setLanguage] = useState<Language>(() => readSession('qubitlab-language') === 'hi' ? 'hi' : 'en');
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [aiChatContext, setAiChatContext] = useState('');
   const [externalPrompt, setExternalPrompt] = useState('');
@@ -47,6 +50,9 @@ export default function App() {
   const [selectedQuizId, setSelectedQuizId] = useState<string | undefined>(() => readSession('qubitlab-selected-quiz') || undefined);
 
   useEffect(() => { writeSession('qubitlab-active-tab', activeTab); }, [activeTab]);
+  useEffect(() => { writeSession('qubitlab-language', language); }, [language]);
+  useEffect(() => { if (!user && PROTECTED_TABS.has(activeTab)) setActiveTab('user'); }, [user, activeTab]);
+  const navigate = (tab: NavTab) => setActiveTab(tab === 'dashboard' ? 'progress' : tab);
   useEffect(() => { writeSession('qubitlab-curriculum-topic', curriculumTopicId ?? null); }, [curriculumTopicId]);
   useEffect(() => { writeSession('qubitlab-selected-quiz', selectedQuizId ?? null); }, [selectedQuizId]);
 
@@ -98,17 +104,18 @@ export default function App() {
 
   return <div className="min-h-screen bg-[#050505] text-zinc-200 flex flex-col font-sans relative overflow-x-hidden template-grid">
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden"><div className="orb orb-blue w-[34rem] h-[34rem] -top-56 left-[12%] opacity-45" /><div className="orb orb-orange w-[40rem] h-[40rem] -bottom-72 -right-32 opacity-40" /><div className="orb orb-pink w-20 h-20 top-[42%] right-[9%] opacity-70" /><div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,.16)_52%,rgba(0,0,0,.72)_100%)]" /></div>
-    <Navbar activeTab={activeTab} onSelectTab={setActiveTab} user={user} onOpenAI={() => { setExternalPrompt(''); setAiChatContext('General Quantum Concepts'); setIsAIChatOpen(true); }} />
+    <Navbar activeTab={activeTab} onSelectTab={navigate} user={user} language={language} onLanguageChange={setLanguage} onOpenAI={() => { setExternalPrompt(''); setAiChatContext('General Quantum Concepts'); setIsAIChatOpen(true); }} />
     <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
       <Suspense fallback={pageFallback}>
-        {activeTab === 'home' && <AdaptiveHome state={adaptive} onProfile={(profile: LearnerProfile) => setAdaptive(saveLearnerProfile(profile))} onState={setAdaptive} onNavigate={(tab) => setActiveTab(tab)} onOpenAI={() => { setExternalPrompt(''); setAiChatContext('Adaptive Quantum Learning Guide'); setIsAIChatOpen(true); }} />}
+        {activeTab === 'home' && <AdaptiveHome state={adaptive} onProfile={(profile: LearnerProfile) => setAdaptive(saveLearnerProfile(profile))} onState={setAdaptive} onNavigate={(tab) => navigate(tab)} onOpenAI={() => { setExternalPrompt(''); setAiChatContext('Adaptive Quantum Learning Guide'); setIsAIChatOpen(true); }} />}
         {activeTab === 'curriculum' && <CurriculumExplorer progress={progress} selectedTopicId={curriculumTopicId} onToggleCompleted={(topicId) => setProgress((current) => toggleTopic(current, topicId))} onAskAIExplain={(topic) => openAIChatWithPrompt(`Can you explain the key physics, mathematical formulation, and experimental realization of "${topic}"?`, `Curriculum Topic: ${topic}`)} onOpenQuiz={(quizId) => { setSelectedQuizId(quizId); setActiveTab('quiz'); }} />}
         {activeTab === 'composer' && <CircuitComposer onAskAIExplain={handleCircuitAIExplain} />}
         {activeTab === 'bloch' && <BlochPlayground onAskAI={(prompt) => openAIChatWithPrompt(prompt, '3D Bloch Sphere Geometry')} />}
         {activeTab === 'sandbox' && <QuantumCodeSandbox onAskAIExplain={handleCodeAIExplain} onAskAIDebug={handleCodeAIDebug} />}
         {activeTab === 'quiz' && <QuantumQuiz quizId={selectedQuizId} onSelectQuiz={setSelectedQuizId} onBackToMocks={() => setSelectedQuizId(undefined)} onAskAIForHelp={handleQuizAIHelp} onCompleteQuiz={(score, total, quizId) => { const percentage = total > 0 ? (score / total) * 100 : 0; setProgress((current) => recordQuizScore(current, quizId, percentage)); setAdaptive((current) => recordQuizResult(current, quizId, percentage)); }} />}
-        {activeTab === 'dashboard' && <LearnerDashboard progress={progress} adaptive={adaptive} onNavigate={(tab) => setActiveTab(tab)} onOpenTopic={(topicId) => { setCurriculumTopicId(topicId); setActiveTab('curriculum'); }} />}
-        {activeTab === 'user' && <UserPage user={user} onAuthenticated={(authenticatedUser) => { setUser(authenticatedUser); setActiveTab('dashboard'); }} onLoggedOut={() => { setUser(null); setCloudReady(false); setActiveTab('home'); }} />}
+        {(activeTab === 'progress' || activeTab === 'dashboard') && <LearnerDashboard progress={progress} adaptive={adaptive} onNavigate={(tab) => navigate(tab)} onOpenTopic={(topicId) => { setCurriculumTopicId(topicId); setActiveTab('curriculum'); }} />}
+        {activeTab === 'library' && <LibraryPage onNavigate={(tab) => navigate(tab)} />}
+        {activeTab === 'user' && <UserPage user={user} onAuthenticated={(authenticatedUser) => { setUser(authenticatedUser); navigate('progress'); }} onLoggedOut={() => { setUser(null); setCloudReady(false); navigate('home'); }} />}
       </Suspense>
     </main>
     <AITutorChat isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} currentContext={aiChatContext} externalPrompt={externalPrompt} />
