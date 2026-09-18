@@ -361,7 +361,7 @@ This example illustrates how Grover's algorithm increases the probability of the
               className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] hover:from-[#efff96] hover:to-[#ffb347] text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-cyan-500/25 active:scale-95 disabled:opacity-50 transition-all"
             >
               <Play className={`w-3.5 h-3.5 ${isRunning ? 'animate-spin' : ''}`} />
-              {isRunning ? '{t('Preparing Preview...')}' : t('Preview Output')}
+              {isRunning ? t('Preparing Preview...') : t('Preview Output')}
             </button>
           </div>
         </div>
