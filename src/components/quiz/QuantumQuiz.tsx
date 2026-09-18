@@ -108,7 +108,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
             >
               <div className="flex items-center justify-between gap-3 mb-3">
                 <Award className="w-5 h-5 text-amber-400" />
-                <span className="text-[10px] font-semibold text-[#e9ff8a] bg-[#dfff3f]/10 border border-[#dfff3f]/20 px-2 py-1 rounded">10 MCQs</span>
+                <span className="text-[10px] font-semibold text-[#e9ff8a] bg-[#dfff3f]/10 border border-[#dfff3f]/20 px-2 py-1 rounded">30 MCQs</span>
               </div>
               <h3 className="text-sm font-bold text-zinc-100">{item.title}</h3>
               <p className="text-sm text-zinc-300 mt-2 leading-relaxed">{item.description}</p>
@@ -146,24 +146,47 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
   const handleConfirmAnswer = () => {
     if (attempt.selectedOption === null || attempt.isAnswered) return;
     const correct = attempt.selectedOption === correctIndex;
+    const nextLevel: 1 | 2 | 3 = correct
+      ? Math.min(3, attempt.adaptiveLevel + 1) as 1 | 2 | 3
+      : Math.max(1, attempt.adaptiveLevel - 1) as 1 | 2 | 3;
     onAnswer?.(mock.id, currentQ.id, correct);
-    updateAttempt({ isAnswered: true, score: attempt.score + (correct ? 1 : 0) });
+    updateAttempt({
+      isAnswered: true,
+      score: attempt.score + (correct ? 1 : 0),
+      answeredIndices: attempt.answeredIndices.includes(currentIndex)
+        ? attempt.answeredIndices
+        : [...attempt.answeredIndices, currentIndex],
+      adaptiveLevel: nextLevel,
+    });
   };
 
   const handleNext = () => {
-    if (currentIndex + 1 < questions.length) {
-      updateAttempt({
-        currentIndex: currentIndex + 1,
-        selectedOption: null,
-        isAnswered: false,
-      });
+    if (attempt.answeredIndices.length >= questions.length) {
+      updateAttempt({ isFinished: true });
+      onCompleteQuiz?.(attempt.score, questions.length, mock.id);
       return;
     }
 
-    const finalCorrect = attempt.selectedOption === correctIndex;
-    const finalScore = attempt.score + (finalCorrect ? 1 : 0);
-    updateAttempt({ isFinished: true, score: finalScore });
-    onCompleteQuiz?.(finalScore, questions.length, mock.id);
+    const unanswered = questions
+      .map((question, index) => ({ question, index }))
+      .filter(({ index }) => !attempt.answeredIndices.includes(index));
+
+    const matching = unanswered.filter(
+      ({ question }) => (question.difficulty ?? 1) === attempt.adaptiveLevel
+    );
+    const pool = matching.length ? matching : unanswered.sort(
+      (a, b) =>
+        Math.abs((a.question.difficulty ?? 1) - attempt.adaptiveLevel) -
+        Math.abs((b.question.difficulty ?? 1) - attempt.adaptiveLevel)
+    );
+    const next = pool[0];
+    if (!next) return;
+
+    updateAttempt({
+      currentIndex: next.index,
+      selectedOption: null,
+      isAnswered: false,
+    });
   };
 
   const handleRestart = () => {
