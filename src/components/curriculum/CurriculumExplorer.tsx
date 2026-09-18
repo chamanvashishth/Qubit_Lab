@@ -10,6 +10,7 @@ import { ConceptsModule } from './modules/ConceptsModule';
 import { MathModule } from './modules/MathModule';
 import { AlgorithmsModule } from './modules/AlgorithmsModule';
 import { CircuitComposer } from '../circuit/CircuitComposer';
+import { t } from '../../utils/i18n';
 
 interface CurriculumExplorerProps {
   progress: UserProgress;
@@ -107,10 +108,10 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
         <div className="flex items-center justify-between pb-3 border-b border-white/10">
           <div className="flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-[#dfff3f]" />
-            <h3 className="text-sm font-bold text-zinc-100 font-mono">QUANTUM CURRICULUM</h3>
+            <h3 className="text-sm font-bold text-zinc-100 font-mono">{t('QUANTUM CURRICULUM')}</h3>
           </div>
           <span className="text-[10px] font-mono text-[#e9ff8a] bg-[#dfff3f]/15 px-2 py-0.5 rounded border border-[#dfff3f]/30">
-            Learning Path
+            {t('Learning Path')}
           </span>
         </div>
 
@@ -145,7 +146,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
                     <div>
                       <h4 className="text-xs font-bold text-zinc-200 font-mono">{mod.title}</h4>
                       <p className="text-[10px] text-zinc-400 font-mono">
-                        {completedCount}/{totalCount} Completed
+                        {completedCount}/{totalCount} {t('Completed')}
                       </p>
                     </div>
                   </div>
@@ -226,7 +227,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
                 }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                {currentSubmodule.completed ? 'Completed' : 'Mark as Done'}
+                {currentSubmodule.completed ? t('Completed') : t('Mark as Done')}
               </button>
 
               {onAskAIExplain && (
@@ -235,7 +236,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
                   className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium text-xs flex items-center gap-1.5 shadow-[0_0_12px_rgba(168,85,247,0.35)] border border-purple-400/30"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  Ask AI Tutor
+                  {t('Ask AI Tutor')}
                 </button>
               )}
             </div>
@@ -247,7 +248,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
 
 {topicFormula && (
               <div className="p-3 rounded-lg bg-black/45 border border-[#dfff3f]/25 font-mono text-xs text-[#e9ff8a] shadow-[inset_0_0_10px_rgba(6,182,212,0.1)]">
-                Key idea: {topicFormula}
+                {t('Key idea:')} {topicFormula}
               </div>
             )}
           </div>
@@ -257,7 +258,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
             <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-xs text-amber-200">
                 <Award className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Practice mock available for this module (10 MCQs)</span>
+                <span>{t('Practice mock available for this module (10 MCQs)')}</span>
               </div>
               <button
                 onClick={() => onOpenQuiz(currentQuizId)}
@@ -274,9 +275,9 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-zinc-200 flex items-center gap-2 font-mono">
               <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.8)]"></span>
-              Interactive Practice
+              {t('Interactive Practice')}
             </h3>
-            <span className="text-xs text-zinc-400 font-mono">Interactive</span>
+            <span className="text-xs text-zinc-400 font-mono">{t('Interactive')}</span>
           </div>
 
           {renderInteractiveLaboratory()}
