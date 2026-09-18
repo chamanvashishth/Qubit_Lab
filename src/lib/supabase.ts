@@ -1,42 +1,29 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 
-export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim() || '';
-export const supabasePublishableKey =
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim() || '';
+export const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
+export const supabasePublishableKey = (
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || ''
+).trim();
 
-let clientPromise: Promise<SupabaseClient> | null = null;
+export const isSupabaseConfigured = Boolean(
+  supabaseUrl && supabasePublishableKey
+);
 
-export const getSupabase = async (): Promise<SupabaseClient> => {
-  if (supabaseUrl && supabasePublishableKey) {
-    return createClient(supabaseUrl, supabasePublishableKey, {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true,
-      },
-    });
+if (!isSupabaseConfigured) {
+  console.error(
+    'QubitLab: Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in Vercel Environment Variables and redeploy.'
+  );
+}
+
+export const supabase = createClient(
+  supabaseUrl || 'https://placeholder.supabase.co',
+  supabasePublishableKey || 'placeholder-publishable-key',
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce',
+    },
   }
-
-  if (!clientPromise) {
-    clientPromise = fetch('/api/supabase-config', {
-      headers: { Accept: 'application/json' },
-      cache: 'no-store',
-    })
-      .then(async (response) => {
-        const config = await response.json().catch(() => ({}));
-        if (!response.ok || !config.url || !config.publishableKey) {
-          throw new Error('Supabase configuration is missing.');
-        }
-
-        return createClient(config.url, config.publishableKey, {
-          auth: {
-            autoRefreshToken: true,
-            persistSession: true,
-            detectSessionInUrl: true,
-          },
-        });
-      });
-  }
-
-  return clientPromise;
-};
+);
