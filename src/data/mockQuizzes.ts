@@ -63,7 +63,7 @@ q('a7','Too many Grover iterations can:',['Overshoot and reduce success','Break 
 q('a8','Shor is centered on:',['Factoring through order finding','Sorting','Unstructured search','Compression'],0,'Shor reduces factoring to order finding.'),
 q('a9','Transform used for periodic information:',['Quantum Fourier Transform','SWAP','Measurement only','Pauli-X'],0,'QFT exposes phase and periodic structure.'),
 q('a10','Small noisy devices currently imply cryptographic RSA factoring:',['No','Yes'],0,'Relevant attacks require much larger fault-tolerant resources.')
-]},,
+]},
 {id:'hardware',title:'Quantum Hardware Mock',description:'Noise, hardware platforms, and error correction.',questions:[
 q('h1','A qubit coherence time describes:',['How long phase information is retained','How many gates exist','The number of outcomes','A clock rate'],0,'Coherence measures how long useful quantum information survives.'),
 q('h2','Decoherence is caused by:',['Unwanted environment interaction','Dirac notation','A tensor product','A correct measurement only'],0,'Coupling to the environment leaks quantum information.'),
