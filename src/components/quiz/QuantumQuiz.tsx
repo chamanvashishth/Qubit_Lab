@@ -76,7 +76,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
             <BookOpen className="w-6 h-6" />
           </div>
           <h2 className="text-2xl font-bold text-zinc-100">Choose a Practice Mock</h2>
-          <p className="text-sm text-zinc-400">Practice with the full set of questions and review the explanation after every answer.</p>
+          <p className="text-sm text-zinc-300">Practice with the full set of questions and review the explanation after every answer.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -88,10 +88,10 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
             >
               <div className="flex items-center justify-between gap-3 mb-3">
                 <Award className="w-5 h-5 text-amber-400" />
-                <span className="text-[10px] font-mono text-[#e9ff8a] bg-[#dfff3f]/10 border border-[#dfff3f]/20 px-2 py-1 rounded">10 MCQs</span>
+                <span className="text-[10px] font-semibold text-[#e9ff8a] bg-[#dfff3f]/10 border border-[#dfff3f]/20 px-2 py-1 rounded">10 MCQs</span>
               </div>
               <h3 className="text-sm font-bold text-zinc-100">{item.title}</h3>
-              <p className="text-xs text-zinc-400 mt-2 leading-relaxed">{item.description}</p>
+              <p className="text-sm text-zinc-300 mt-2 leading-relaxed">{item.description}</p>
               <div className="mt-4 text-xs text-[#dfff3f] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                 Start mock <ChevronRight className="w-4 h-4" />
               </div>
@@ -156,16 +156,16 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
         <Award className="w-10 h-10 text-amber-400 mx-auto" />
         <div>
           <h3 className="text-xl font-bold text-zinc-100">{mock.title} Results</h3>
-          <p className="text-xs text-zinc-400 mt-1">Your result is available for this browser session.</p>
+          <p className="text-xs text-zinc-300 mt-1">Your result is available for this browser session.</p>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="p-4 rounded-xl bg-black/55 border border-white/10">
             <div className="text-2xl font-bold text-[#dfff3f]">{attempt.score}/{questions.length}</div>
-            <div className="text-[11px] text-zinc-400">Correct</div>
+            <div className="text-xs text-zinc-300">Correct</div>
           </div>
           <div className="p-4 rounded-xl bg-black/55 border border-white/10">
             <div className="text-2xl font-bold text-purple-400">{percentage}%</div>
-            <div className="text-[11px] text-zinc-400">Score</div>
+            <div className="text-xs text-zinc-300">Score</div>
           </div>
         </div>
         <p className="text-xs text-zinc-300">
@@ -187,7 +187,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
     <div className="max-w-2xl mx-auto bg-white/[.045] border border-white/10 rounded-2xl p-6 shadow-2xl space-y-6">
       <div className="flex items-center justify-between gap-3 pb-3 border-b border-white/10">
         <div>
-          <button onClick={onBackToMocks} className="text-[11px] text-zinc-400 hover:text-[#e9ff8a] flex items-center gap-1 mb-2">
+          <button onClick={onBackToMocks} className="text-xs text-zinc-300 hover:text-[#e9ff8a] flex items-center gap-1 mb-2">
             <ArrowLeft className="w-3.5 h-3.5" /> All mocks
           </button>
           <div className="flex items-center gap-2">
@@ -197,7 +197,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
         </div>
         <div className="text-right">
           <div className="text-xs font-mono text-[#e9ff8a]">Question {currentIndex + 1}/{questions.length}</div>
-          <div className="text-[11px] text-zinc-400">Score: {attempt.score} · Level {difficultyLevel}</div>
+          <div className="text-xs text-zinc-300">Score: {attempt.score} · Level {difficultyLevel}</div>
         </div>
       </div>
 
@@ -212,7 +212,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
                 ? 'border-emerald-500 bg-emerald-500/10 text-emerald-200'
                 : selected
                 ? 'border-rose-500 bg-rose-500/10 text-rose-200'
-                : 'border-white/10 bg-white/[.05] text-zinc-400'
+                : 'border-white/10 bg-white/[.05] text-zinc-300'
               : selected
               ? 'border-[#e9ff8a] bg-[#dfff3f]/10 text-cyan-100'
               : 'border-white/10 bg-white/[.05] text-zinc-300 hover:border-white/15';
@@ -225,7 +225,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
                 className={`w-full p-3.5 rounded-xl border flex items-center gap-3 text-left transition-all ${style}`}
               >
                 <span className="w-6 h-6 rounded border border-white/15 flex items-center justify-center text-[11px] shrink-0">{String.fromCharCode(65 + idx)}</span>
-                <span className="text-xs leading-relaxed">{opt}</span>
+                <span className="text-sm leading-6">{opt}</span>
                 {attempt.isAnswered && correct && <CheckCircle2 className="w-4 h-4 ml-auto text-emerald-400" />}
                 {attempt.isAnswered && selected && !correct && <XCircle className="w-4 h-4 ml-auto text-rose-400" />}
               </button>
@@ -245,7 +245,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
       )}
 
       <div className="flex items-center justify-between pt-2">
-        <span className="text-[11px] text-zinc-500">Your current attempt survives reloads in this browser session.</span>
+        <span className="text-xs text-zinc-300">Your current attempt survives reloads in this browser session.</span>
         {!attempt.isAnswered ? (
           <button
             onClick={handleConfirmAnswer}
