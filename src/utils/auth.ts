@@ -1,4 +1,4 @@
-import { getSupabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export interface AuthUser {
   id: string;
@@ -24,20 +24,26 @@ const mapUser = (user: SupabaseUser): AuthUser => ({
   createdAt: user.created_at,
 });
 
-export const getCurrentUser = async (): Promise<AuthUser | null> => {
-  try {
-    const supabase = await getSupabase();
-    const { data, error } = await supabase.auth.getUser();
-
-    if (error || !data.user) return null;
-    return mapUser(data.user);
-  } catch {
-    return null;
+const requireConfig = () => {
+  if (!isSupabaseConfigured) {
+    throw new Error(
+      'Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in Vercel, then redeploy.'
+    );
   }
 };
 
+export const getCurrentUser = async (): Promise<AuthUser | null> => {
+  if (!isSupabaseConfigured) return null;
+
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) return null;
+
+  return mapUser(data.user);
+};
+
 export const login = async (email: string, password: string): Promise<AuthUser> => {
-  const supabase = await getSupabase();
+  requireConfig();
+
   const { data, error } = await supabase.auth.signInWithPassword({
     email: email.trim(),
     password,
@@ -54,7 +60,8 @@ export const signup = async (
   email: string,
   password: string
 ): Promise<AuthUser> => {
-  const supabase = await getSupabase();
+  requireConfig();
+
   const { data, error } = await supabase.auth.signUp({
     email: email.trim(),
     password,
@@ -79,23 +86,23 @@ export const getAccountFromBackend = async (): Promise<AuthUser | null> =>
   getCurrentUser();
 
 export const logout = async () => {
-  const supabase = await getSupabase();
-  const { error } = await supabase.auth.signOut();
+  if (!isSupabaseConfigured) return;
 
+  const { error } = await supabase.auth.signOut();
   if (error) throw new Error(error.message);
 };
 
 export const loginWithGoogle = async () => {
-  const supabase = await getSupabase();
+  requireConfig();
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
       redirectTo: window.location.origin,
+      skipBrowserRedirect: false,
     },
   });
 
   if (error) throw new Error(error.message);
   if (!data.url) throw new Error('Unable to start Google sign-in.');
-
-  window.location.assign(data.url);
 };
