@@ -13,7 +13,7 @@ import { LearnerProfile } from './data/adaptiveLearning';
 import { LoadingScreen } from './components/loading/LoadingScreen';
 import { UserPage } from './components/user/UserPage';
 import { getAccountFromBackend, getCurrentUser, AuthUser } from './utils/auth';
-import { setLanguage as applyLanguage, t } from './utils/i18n';
+import { setLanguage as applyLanguage, t, translateDocument } from './utils/i18n';
 
 const CircuitComposer = lazy(() => import('./components/circuit/CircuitComposer').then((module) => ({ default: module.CircuitComposer })));
 const BlochPlayground = lazy(() => import('./components/bloch/BlochPlayground').then((module) => ({ default: module.BlochPlayground })));
