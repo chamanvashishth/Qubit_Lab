@@ -1,15 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-const getConfig = () => ({
-  url: process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '',
-  key: process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || '',
+const getConfig = (request: Request, body: Record<string, unknown> = {}) => ({
+  url: process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || (typeof body.supabaseUrl === 'string' ? body.supabaseUrl : '') || request.headers.get('x-supabase-url') || '',
+  key: process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || (typeof body.supabaseKey === 'string' ? body.supabaseKey : '') || request.headers.get('x-supabase-key') || '',
 });
 
 export async function POST(request: Request) {
-  const { url, key } = getConfig();
+  const body = await request.json().catch(() => ({}));
+  const { url, key } = getConfig(request, body);
   if (!url || !key) return Response.json({ error: 'Supabase server configuration is missing.' }, { status: 500 });
 
-  const body = await request.json().catch(() => ({}));
   const redirectTo = typeof body.redirectTo === 'string' && body.redirectTo
     ? body.redirectTo
     : new URL('/', request.url).origin;
