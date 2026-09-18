@@ -64,9 +64,10 @@ export const logout = async () => {
 };
 
 export const loginWithGoogle = async () => {
+  const redirectTo = window.location.origin;
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin },
+    options: { redirectTo },
   });
   if (error) throw new Error(error.message || 'Unable to start Google sign-in.');
 };
