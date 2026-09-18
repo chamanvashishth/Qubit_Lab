@@ -59,7 +59,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
   };
 
   const copyMessage = async (id: string, text: string) => { try { await navigator.clipboard.writeText(text); setCopiedId(id); window.setTimeout(() => setCopiedId(null), 1600); } catch { /* optional */ } };
-  const resetChat = () => { setMessages([{ id: `welcome-${Date.now()}`, role: 'assistant', content: '{t('Fresh start. What quantum concept should we work through?')}', timestamp: Date.now() }]); setInput(''); };
+  const resetChat = () => { setMessages([{ id: `welcome-${Date.now()}`, role: 'assistant', content: t('Fresh start. What quantum concept should we work through?'), timestamp: Date.now() }]); setInput(''); };
 
   if (!isOpen) return null;
   return <div className="fixed inset-0 z-[70] pointer-events-none">
