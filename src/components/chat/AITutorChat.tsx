@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Send, User, X, RefreshCw, Check, Copy, Brain, Lightbulb } from 'lucide-react';
 import { ChatMessage } from '../../types/quantum';
+import { answerLocally } from '../../utils/localTutor';
 
 interface AITutorChatProps { currentContext?: string; isOpen: boolean; onClose: () => void; externalPrompt?: string; }
 
@@ -26,7 +27,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         context: currentContext || '',
-        messages: [...messages, { role: 'user', content: resolvedQuestion }].slice(-12).map(({ role, content }) => ({ role, content })),
+        messages: [...messages.filter((message) => message.id !== 'welcome' && !message.id.startsWith('welcome-')), { role: 'user', content: resolvedQuestion }].slice(-12).map(({ role, content }) => ({ role, content })),
       }),
     });
     const data = await response.json().catch(() => ({})) as { reply?: unknown; error?: unknown };
@@ -45,8 +46,14 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
       const reply = await getReply(text);
       setMessages((prev) => [...prev, { id: `assistant-${Date.now()}`, role: 'assistant', content: reply, timestamp: Date.now() }]);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'The Gemini service is unavailable. Please try again.';
-      setMessages((prev) => [...prev, { id: `assistant-error-${Date.now()}`, role: 'assistant', content: message, timestamp: Date.now() }]);
+      console.error('QubitLab AI chat error:', error);
+      const fallback = answerLocally(text);
+      setMessages((prev) => [...prev, {
+        id: `assistant-fallback-${Date.now()}`,
+        role: 'assistant',
+        content: `${fallback}\n\n[Offline tutor response — the model service is temporarily unavailable.]`,
+        timestamp: Date.now(),
+      }]);
     } finally { setIsLoading(false); }
   };
 
