@@ -1,16 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl =
-  process.env.SUPABASE_URL ||
-  process.env.VITE_SUPABASE_URL ||
-  '';
-
-const supabaseKey =
-  process.env.SUPABASE_PUBLISHABLE_KEY ||
-  process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  '';
+const getConfig = (request: Request) => ({
+  url: process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || request.headers.get('x-supabase-url') || '',
+  key: process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || request.headers.get('x-supabase-key') || '',
+});
 
 export async function GET(request: Request) {
+  const { url: supabaseUrl, key: supabaseKey } = getConfig(request);
+
   if (!supabaseUrl || !supabaseKey) {
     return Response.json({ error: 'Supabase server configuration is missing.' }, { status: 500 });
   }
