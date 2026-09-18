@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { t } from '../../utils/i18n';
 import { 
-  Terminal, Play, RotateCcw, Copy, Check, Sparkles, 
+  Terminal, Play, RotateCcw, {t('Copy')}, Check, Sparkles, 
   Bug, Code2, Layers, Cpu, Download 
 } from 'lucide-react';
 
@@ -186,7 +187,7 @@ export const QuantumCodeSandbox: React.FC<QuantumCodeSandboxProps> = ({
   const [code, setCode] = useState<string>(TEMPLATES.qiskit.bell);
   const [isRunning, setIsRunning] = useState(false);
   const [output, setOutput] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [copied, set{t('Copied')}] = useState(false);
 
   const handleFrameworkChange = (newFw: 'qiskit' | 'pennylane' | 'cirq') => {
     setFramework(newFw);
@@ -241,10 +242,10 @@ This example illustrates how Grover's algorithm increases the probability of the
     }, 600);
   };
 
-  const handleCopy = () => {
+  const handle{t('Copy')} = () => {
     navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    set{t('Copied')}(true);
+    setTimeout(() => set{t('Copied')}(false), 2000);
   };
 
   return (
@@ -291,9 +292,9 @@ This example illustrates how Grover's algorithm increases the probability of the
             aria-label="Select quantum algorithm template"
             className="px-3 py-1.5 rounded-lg bg-white/[.05] border border-white/15 text-xs text-zinc-200 font-mono focus:outline-none focus:border-[#dfff3f]"
           >
-            <option value="bell">Template: Bell State |Φ⁺⟩</option>
-            <option value="ghz">Template: GHZ 3-Qubit State</option>
-            <option value="grover">Template: Grover's Search</option>
+            <option value="bell">{t('Template: Bell State |Φ⁺⟩')}</option>
+            <option value="ghz">{t('Template: GHZ 3-Qubit State')}</option>
+            <option value="grover">{t("Template: Grover's Search")}</option>
           </select>
         </div>
       </div>
@@ -314,11 +315,11 @@ This example illustrates how Grover's algorithm increases the probability of the
 
             <div className="flex items-center gap-2">
               <button
-                onClick={handleCopy}
+                onClick={handle{t('Copy')}}
                 className="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1 font-mono"
               >
-                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                {copied ? 'Copied' : 'Copy'}
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <{t('Copy')} className="w-3.5 h-3.5" />}
+                {copied ? '{t('Copied')}' : '{t('Copy')}'}
               </button>
             </div>
           </div>
@@ -339,7 +340,7 @@ This example illustrates how Grover's algorithm increases the probability of the
                   className="px-3 py-1.5 rounded-lg bg-white/[.08] hover:bg-white/[.12] text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition-colors border border-white/15"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                  Explain Code
+                  {t('Explain Code')}
                 </button>
               )}
 
@@ -349,7 +350,7 @@ This example illustrates how Grover's algorithm increases the probability of the
                   className="px-3 py-1.5 rounded-lg bg-white/[.08] hover:bg-white/[.12] text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition-colors border border-white/15"
                 >
                   <Bug className="w-3.5 h-3.5 text-amber-400" />
-                  Check Code
+                  {t('Check Code')}
                 </button>
               )}
             </div>
@@ -360,7 +361,7 @@ This example illustrates how Grover's algorithm increases the probability of the
               className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] hover:from-[#efff96] hover:to-[#ffb347] text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-cyan-500/25 active:scale-95 disabled:opacity-50 transition-all"
             >
               <Play className={`w-3.5 h-3.5 ${isRunning ? 'animate-spin' : ''}`} />
-              {isRunning ? 'Preparing Preview...' : 'Preview Output'}
+              {isRunning ? '{t('Preparing Preview...')}' : '{t('Preview Output')}'}
             </button>
           </div>
         </div>
@@ -371,7 +372,7 @@ This example illustrates how Grover's algorithm increases the probability of the
             <div className="flex items-center gap-2">
               <Terminal className="w-4 h-4 text-[#dfff3f]" />
               <span className="text-xs font-mono font-bold text-zinc-300">
-                Example Output
+                {t('Example Output')}
               </span>
             </div>
 
@@ -391,7 +392,7 @@ This example illustrates how Grover's algorithm increases the probability of the
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-zinc-400 py-16">
                 <Terminal className="w-8 h-8 mb-2 opacity-40 text-[#dfff3f]" />
-                <p>Choose "Preview Output" to see an example result for the selected circuit.</p>
+                <p>Choose "{t('Preview Output')}" to see an example result for the selected circuit.</p>
               </div>
             )}
           </div>
