@@ -76,7 +76,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
             <BookOpen className="w-6 h-6" />
           </div>
           <h2 className="text-2xl font-bold text-zinc-100">Choose a Practice Mock</h2>
-          <p className="text-sm text-zinc-400">Each mock contains exactly 10 multiple-choice questions.</p>
+          <p className="text-sm text-zinc-400">Practice with the full set of questions and review the explanation after every answer.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -102,7 +102,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
     );
   }
 
-  const questions = mock.questions.filter((question) => (question.difficulty ?? 1) <= difficultyLevel);
+  const questions = mock.questions;
   if (questions.length === 0) {
     return (
       <div className="max-w-xl mx-auto p-6 rounded-2xl bg-white/[.05] border border-white/10 text-center text-zinc-300">
