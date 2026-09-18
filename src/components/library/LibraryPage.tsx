@@ -64,27 +64,6 @@ const ResourceLink = ({ href, children }: { href: string; children: React.ReactN
 
 export const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => (
   <div className="space-y-10 py-7 text-zinc-200">
-    <section className="library-hero rounded-[2rem] p-7 sm:p-12">
-      <div className="max-w-3xl">
-        <div className="text-sm uppercase tracking-[.2em] text-slate-600 font-semibold">QubitLab Resource Library</div>
-        <h1 className="mt-3 text-4xl sm:text-6xl font-semibold tracking-tight text-slate-950">Learn quantum computing beyond the simulator.</h1>
-        <p className="mt-5 max-w-2xl text-base leading-7 text-slate-700">A curated collection of open learning resources, university lectures, researchers, research references, articles and talks mapped to the QubitLab learning journey.</p>
-      </div>
-    </section>
-
-    <section>
-      <div className="flex items-end justify-between gap-5">
-        <div><h2 className="text-2xl font-semibold text-white">Study spaces</h2><p className="mt-2 text-sm text-zinc-200">Use QubitLab tools to learn, experiment and practice.</p></div>
-        <button onClick={() => onNavigate('quiz')} className="hidden sm:inline-flex items-center gap-2 text-sm text-[#e9ff8a] hover:text-white">Practice a mock <ChevronRight className="w-4 h-4" /></button>
-      </div>
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
-        {tools.map(({ title, description, tab, icon: Icon }) => <button key={title} onClick={() => onNavigate(tab)} className="library-card group text-left p-6 rounded-2xl">
-          <Icon className="w-5 h-5 text-[#e9ff8a]" /><h3 className="mt-8 text-lg font-semibold text-white">{title}</h3>
-          <p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><span className="mt-5 inline-flex items-center gap-1 text-sm text-zinc-200 group-hover:text-[#e9ff8a]">Open <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
-        </button>)}
-      </div>
-    </section>
-
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
       <div className="flex items-center gap-3"><BookOpen className="w-5 h-5 text-amber-300" /><div><h2 className="text-xl font-semibold text-white">Free eBooks & Learning Resources</h2><p className="mt-1 text-sm text-zinc-200">Beginner to advanced resources from the supplied QubitLab resource guide.</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
