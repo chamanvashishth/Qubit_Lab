@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Sparkles, Sliders, Terminal, BookOpen, ArrowRight, Award, Layers, Zap, Play } from 'lucide-react';
 import { BlochSphere3D } from '../bloch/BlochSphere3D';
 import { QubitState } from '../../types/quantum';
+import { t } from '../../utils/i18n';
 
 interface LandingHeroProps {
   onNavigate: (tab: 'dashboard' | 'curriculum' | 'composer' | 'bloch' | 'sandbox' | 'quiz') => void;
@@ -24,12 +25,12 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
   };
 
   const cards = [
-    { title: 'Circuit Composer', text: 'Place gates, build circuits, and inspect state changes.', icon: Sliders, tab: 'composer' as const },
-    { title: 'Bloch Space', text: 'See a single qubit as geometry you can reason about.', icon: Layers, tab: 'bloch' as const },
-    { title: 'Code Workspace', text: 'Explore quantum code without leaving the learning flow.', icon: Terminal, tab: 'sandbox' as const },
-    { title: 'Learning Path', text: 'Move from foundations to algorithms at your own pace.', icon: BookOpen, tab: 'curriculum' as const },
-    { title: 'Practice Mocks', text: 'Test understanding with focused 10-question modules.', icon: Award, tab: 'quiz' as const },
-    { title: 'Progress', text: 'Track what you completed during the active session.', icon: Zap, tab: 'dashboard' as const },
+    { title: '{t('Circuit Composer')}', text: '{t('Place gates, build circuits, and inspect state changes.')}', icon: Sliders, tab: 'composer' as const },
+    { title: '{t('Bloch Space')}', text: '{t('See a single qubit as geometry you can reason about.')}', icon: Layers, tab: 'bloch' as const },
+    { title: '{t('Code Workspace')}', text: '{t('Explore quantum code without leaving the learning flow.')}', icon: Terminal, tab: 'sandbox' as const },
+    { title: '{t('Learning Path')}', text: '{t('Move from foundations to algorithms at your own pace.')}', icon: BookOpen, tab: 'curriculum' as const },
+    { title: '{t('Practice Mocks')}', text: '{t('Test understanding with focused 10-question modules.')}', icon: Award, tab: 'quiz' as const },
+    { title: '{t('Progress')}', text: '{t('Track what you completed during the active session.')}', icon: Zap, tab: 'dashboard' as const },
   ];
 
   return (
@@ -47,13 +48,13 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 p-7 sm:p-12 lg:p-16 items-center min-h-[610px]">
           <div className="lg:col-span-7 space-y-7">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/25 bg-black/30 text-[10px] tracking-[.16em] uppercase text-zinc-300">
-              Interactive quantum computing workspace
+              {t('Interactive quantum workspace')}
             </div>
 
             <h1 className="max-w-3xl text-4xl sm:text-6xl lg:text-7xl font-semibold tracking-tight leading-[.98] text-zinc-100">
-              Learn the ideas.<br />
-              <span className="template-accent font-bold">Build the circuit.</span><br />
-              See what changes.
+              {t('Learn the ideas.')}<br />
+              <span className="template-accent font-bold">{t('Build the circuit.')}</span><br />
+              {t('See what changes.')}
             </h1>
 
             <p className="max-w-xl text-sm sm:text-base leading-7 text-zinc-400">
@@ -62,13 +63,13 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
 
             <div className="flex flex-wrap gap-3">
               <button onClick={() => onNavigate('composer')} className="template-button px-5 py-3 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all">
-                <Sliders className="w-4 h-4" /> Open composer
+                <Sliders className="w-4 h-4" /> {t('Open composer')}
               </button>
               <button onClick={() => onNavigate('curriculum')} className="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-zinc-200 text-sm flex items-center gap-2 transition-all">
-                <Play className="w-4 h-4" /> Start learning
+                <Play className="w-4 h-4" /> {t('Start learning')}
               </button>
               <button onClick={onOpenAI} className="px-5 py-3 rounded-xl text-zinc-300 hover:text-white text-sm border border-white/10 hover:border-white/25 transition-all">
-                Ask a question
+                {t('Ask a question')}
               </button>
             </div>
           </div>
@@ -77,8 +78,8 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
             <div className="glass-panel rounded-[1.7rem] p-5 sm:p-6 max-w-md mx-auto relative overflow-hidden">
               <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-2">
                 <div>
-                  <div className="text-[10px] uppercase tracking-[.2em] text-zinc-500">Live state preview</div>
-                  <div className="text-sm font-medium text-zinc-100 mt-1">Single-qubit laboratory</div>
+                  <div className="text-[10px] uppercase tracking-[.2em] text-zinc-500">{t('Live state preview')}</div>
+                  <div className="text-sm font-medium text-zinc-100 mt-1">{t('Single-qubit laboratory')}</div>
                 </div>
                 <span className="w-2 h-2 rounded-full bg-[#dfff3f] shadow-[0_0_15px_rgba(223,255,63,.7)]" />
               </div>
@@ -103,8 +104,8 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
 
       <section className="space-y-6">
         <div className="max-w-2xl">
-          <div className="text-[10px] uppercase tracking-[.22em] text-zinc-500 mb-3">One workspace, multiple ways to learn</div>
-          <h2 className="text-3xl sm:text-4xl font-semibold text-zinc-100">Move between theory and experimentation without changing tools.</h2>
+          <div className="text-[10px] uppercase tracking-[.22em] text-zinc-500 mb-3">{t('One workspace, multiple ways to learn')}</div>
+          <h2 className="text-3xl sm:text-4xl font-semibold text-zinc-100">{t('Move between theory and experimentation without changing tools.')}</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
