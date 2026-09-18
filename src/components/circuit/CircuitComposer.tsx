@@ -1,12 +1,12 @@
-import React, { useMemo, use{t('State')} } from 'react';
+import React, { useMemo, useState } from 'react';
 import { t } from '../../utils/i18n';
-import { {t('Copy')}, Check, RefreshCw, Trash2, Sparkles, Sliders, Layers, Code2 } from 'lucide-react';
-import { Circuit{t('State')}, GatePlacement, GateType, SimulationResult } from '../../types/quantum';
+import { Copy, Check, RefreshCw, Trash2, Sparkles, Sliders, Layers, Code2 } from 'lucide-react';
+import { CircuitState, GatePlacement, GateType, SimulationResult } from '../../types/quantum';
 import { simulateCircuit, exportToQiskit, exportToPennyLane, exportToCirq, exportToOpenQASM } from '../../utils/quantumEngine';
 import { BlochSphere3D } from '../bloch/BlochSphere3D';
-import { {t('State')}VectorVisualizer } from '../visualization/{t('State')}VectorVisualizer';
+import { StateVectorVisualizer } from '../visualization/StateVectorVisualizer';
 
-interface CircuitComposerProps { onAskAIExplain?: (circuit: Circuit{t('State')}, diracNotation: string) => void; }
+interface CircuitComposerProps { onAskAIExplain?: (circuit: CircuitState, diracNotation: string) => void; }
 
 type PresetKey = 'bell' | 'ghz' | 'superposition' | 'grover' | 'deutsch' | 'teleportation';
 
@@ -38,19 +38,19 @@ const PRESETS: Record<PresetKey, { qubits: number; gates: GatePlacement[] }> = {
 };
 
 export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain }) => {
-  const [numQubits, setNumQubits] = use{t('State')}(2);
-  const [numSteps, setNumSteps] = use{t('State')}(8);
-  const [gates, setGates] = use{t('State')}<GatePlacement[]>(PRESETS.bell.gates);
-  const [selectedPreset, setSelectedPreset] = use{t('State')}<PresetKey>('bell');
-  const [selectedGate, setSelectedGate] = use{t('State')}<GateType>('H');
-  const [controlQubit, setControlQubit] = use{t('State')}(0);
-  const [angle, setAngle] = use{t('State')}(Math.PI / 2);
-  const [scrubStep, setScrubStep] = use{t('State')}<number | null>(null);
-  const [shots, setShots] = use{t('State')}(1024);
-  const [tab, setTab] = use{t('State')}<'state' | 'bloch' | 'code'>('state');
-  const [copied, set{t('Copied')}] = use{t('State')}<string | null>(null);
+  const [numQubits, setNumQubits] = useState(2);
+  const [numSteps, setNumSteps] = useState(8);
+  const [gates, setGates] = useState<GatePlacement[]>(PRESETS.bell.gates);
+  const [selectedPreset, setSelectedPreset] = useState<PresetKey>('bell');
+  const [selectedGate, setSelectedGate] = useState<GateType>('H');
+  const [controlQubit, setControlQubit] = useState(0);
+  const [angle, setAngle] = useState(Math.PI / 2);
+  const [scrubStep, setScrubStep] = useState<number | null>(null);
+  const [shots, setShots] = useState(1024);
+  const [tab, setTab] = useState<'state' | 'bloch' | 'code'>('state');
+  const [copied, setCopied] = useState<string | null>(null);
 
-  const circuit: Circuit{t('State')} = useMemo(() => ({ numQubits, numSteps, gates }), [numQubits, numSteps, gates]);
+  const circuit: CircuitState = useMemo(() => ({ numQubits, numSteps, gates }), [numQubits, numSteps, gates]);
   const simulation: SimulationResult = useMemo(() => {
     const visibleGates = scrubStep === null ? gates : gates.filter((gate) => gate.step <= scrubStep);
     return simulateCircuit({ numQubits, numSteps, gates: visibleGates }, shots);
@@ -99,16 +99,16 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
     setScrubStep(null);
   };
 
-  const copy = async (key: string, code: string) => { try { await navigator.clipboard.writeText(code); set{t('Copied')}(key); window.setTimeout(() => set{t('Copied')}(null), 1500); } catch { /* no-op */ } };
+  const copy = async (key: string, code: string) => { try { await navigator.clipboard.writeText(code); setCopied(key); window.setTimeout(() => setCopied(null), 1500); } catch { /* no-op */ } };
   const codes = useMemo(() => ({ qiskit: exportToQiskit(circuit), pennylane: exportToPennyLane(circuit), cirq: exportToCirq(circuit), qasm: exportToOpenQASM(circuit) }), [circuit]);
 
   return (
     <div className="space-y-6">
       <section className="bg-white/[.05] border border-white/10 rounded-xl p-4 backdrop-blur-sm shadow-xl">
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
-          <div className="flex items-center gap-3"><div className="p-2 rounded-lg bg-[#dfff3f]/10 text-[#dfff3f] border border-[#dfff3f]/20"><Sliders className="w-5 h-5" /></div><div><h3 className="text-base font-bold text-zinc-100 font-mono">{t('{t('CIRCUIT COMPOSER')}')} <span className="ml-2 text-[10px] px-2 py-0.5 rounded border border-[#dfff3f]/30 text-[#e9ff8a]">{t('{t('LIVE SIMULATION')}')}</span></h3><p className="text-xs text-zinc-400">{t('{t('Every edit immediately recomputes the statevector, probabilities and Bloch vectors locally.')}')}</p></div></div>
+          <div className="flex items-center gap-3"><div className="p-2 rounded-lg bg-[#dfff3f]/10 text-[#dfff3f] border border-[#dfff3f]/20"><Sliders className="w-5 h-5" /></div><div><h3 className="text-base font-bold text-zinc-100 font-mono">{t('CIRCUIT COMPOSER')} <span className="ml-2 text-[10px] px-2 py-0.5 rounded border border-[#dfff3f]/30 text-[#e9ff8a]">{t('LIVE SIMULATION')}</span></h3><p className="text-xs text-zinc-400">{t('Every edit immediately recomputes the statevector, probabilities and Bloch vectors locally.')}</p></div></div>
           <div className="flex flex-wrap items-center gap-2">
-            <select value={selectedPreset} onChange={(event) => resetToPreset(event.target.value as PresetKey)} className="px-3 py-1.5 rounded-lg bg-white/[.05] border border-white/15 text-xs text-zinc-200 font-mono"><option value="bell">{t('Bell {t('State')}')}</option><option value="ghz">GHZ</option><option value="superposition">{t('Superposition')}</option><option value="grover">Grover</option><option value="deutsch">Deutsch</option><option value="teleportation">{t('Teleportation')}</option></select>
+            <select value={selectedPreset} onChange={(event) => resetToPreset(event.target.value as PresetKey)} className="px-3 py-1.5 rounded-lg bg-white/[.05] border border-white/15 text-xs text-zinc-200 font-mono"><option value="bell">{t('Bell State')}</option><option value="ghz">GHZ</option><option value="superposition">{t('Superposition')}</option><option value="grover">Grover</option><option value="deutsch">Deutsch</option><option value="teleportation">{t('Teleportation')}</option></select>
             <div className="flex items-center gap-1 px-2 py-1 rounded-lg border border-white/10 bg-white/[.04] text-xs font-mono"><span className="text-zinc-400">{t('Qubits')}</span><button onClick={() => changeQubits(-1)} disabled={numQubits === 1} className="w-5 h-5 rounded bg-white/[.08] disabled:opacity-30">−</button><b className="text-[#e9ff8a] w-4 text-center">{numQubits}</b><button onClick={() => changeQubits(1)} disabled={numQubits === 5} className="w-5 h-5 rounded bg-white/[.08] disabled:opacity-30">+</button></div>
             <div className="flex items-center gap-1 px-2 py-1 rounded-lg border border-white/10 bg-white/[.04] text-xs font-mono"><span className="text-zinc-400">{t('Steps')}</span><button onClick={() => changeSteps(-1)} disabled={numSteps === 4} className="w-5 h-5 rounded bg-white/[.08] disabled:opacity-30">−</button><b className="text-[#e9ff8a] w-5 text-center">{numSteps}</b><button onClick={() => changeSteps(1)} disabled={numSteps === 12} className="w-5 h-5 rounded bg-white/[.08] disabled:opacity-30">+</button></div>
             <button onClick={() => resetToPreset()} className="px-3 py-1.5 rounded-lg bg-white/[.08] border border-white/10 text-xs flex items-center gap-1.5"><RefreshCw className="w-3.5 h-3.5" />{t('Refresh')}</button>
@@ -119,7 +119,7 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
       </section>
 
       <section className="bg-white/[.05] border border-white/10 rounded-xl p-3.5 backdrop-blur-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 pb-2 border-b border-white/10"><span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">{t('{t('Active Quantum Gates')}')}</span><span className="text-[11px] text-zinc-500 font-mono">{t('{t('Select a gate, then click a cell. Click a placed gate to remove it.')}')}</span></div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 pb-2 border-b border-white/10"><span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">{t('Active Quantum Gates')}</span><span className="text-[11px] text-zinc-500 font-mono">{t('Select a gate, then click a cell. Click a placed gate to remove it.')}</span></div>
         <div className="flex gap-1.5 overflow-x-auto pb-1">{PALETTE.map((item) => <button key={item.type} title={item.desc} onClick={() => setSelectedGate(item.type)} className={`min-w-12 h-9 px-2 rounded border text-xs font-mono font-bold ${selectedGate === item.type ? 'bg-[#dfff3f]/20 border-[#dfff3f] text-[#e9ff8a] shadow-[0_0_10px_rgba(223,255,63,.25)]' : 'bg-white/[.04] border-white/10 text-zinc-300 hover:bg-white/[.08]'}`}>{item.label}</button>)}</div>
         {(selectedGate === 'CNOT' || selectedGate === 'CZ') && <div className="mt-3 flex items-center gap-2 text-[11px] font-mono text-zinc-400">Control: {Array.from({ length: numQubits }, (_, i) => <button key={i} onClick={() => setControlQubit(i)} className={`px-2 py-1 rounded ${controlQubit === i ? 'bg-pink-500 text-white' : 'bg-white/[.08] text-zinc-300'}`}>q[{i}]</button>)}</div>}
         {['RX', 'RY', 'RZ'].includes(selectedGate) && <label className="mt-3 flex items-center gap-3 text-[11px] font-mono text-zinc-400">θ = {angle.toFixed(2)} rad<input type="range" min={-Math.PI} max={Math.PI} step={0.01} value={angle} onChange={(event) => setAngle(Number(event.target.value))} className="w-56" /></label>}
@@ -141,17 +141,17 @@ export const CircuitComposer: React.FC<CircuitComposerProps> = ({ onAskAIExplain
               </button>;
             })}
           </div>)}</div>
-          {scrubStep !== null && <div className="mt-3 flex items-center justify-between px-3 py-2 rounded-lg border border-[#dfff3f]/30 bg-[#dfff3f]/10 text-xs"><span className="font-mono text-[#e9ff8a]">Live state is simulated through Step {scrubStep}.</span><button onClick={() => setScrubStep(null)} className="underline text-zinc-300">{t('{t('Show final state')}')}</button></div>}
+          {scrubStep !== null && <div className="mt-3 flex items-center justify-between px-3 py-2 rounded-lg border border-[#dfff3f]/30 bg-[#dfff3f]/10 text-xs"><span className="font-mono text-[#e9ff8a]">Live state is simulated through Step {scrubStep}.</span><button onClick={() => setScrubStep(null)} className="underline text-zinc-300">{t('Show final state')}</button></div>}
         </div>
       </section>
 
-      <div className="flex flex-wrap gap-2 border-b border-white/10 pb-3"><button onClick={() => setTab('state')} className={`px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 ${tab === 'state' ? 'bg-[#dfff3f]/15 text-[#e9ff8a] border border-[#dfff3f]/40' : 'text-zinc-400'}`}><Layers className="w-3.5 h-3.5" />{t('{t('State')} + Histogram')}</button><button onClick={() => setTab('bloch')} className={`px-3 py-1.5 rounded-lg text-xs ${tab === 'bloch' ? 'bg-[#dfff3f]/15 text-[#e9ff8a] border border-[#dfff3f]/40' : 'text-zinc-400'}`}>{t('Bloch Spheres')}</button><button onClick={() => setTab('code')} className={`px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 ${tab === 'code' ? 'bg-[#dfff3f]/15 text-[#e9ff8a] border border-[#dfff3f]/40' : 'text-zinc-400'}`}><Code2 className="w-3.5 h-3.5" />{t('Code Export')}</button></div>
+      <div className="flex flex-wrap gap-2 border-b border-white/10 pb-3"><button onClick={() => setTab('state')} className={`px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 ${tab === 'state' ? 'bg-[#dfff3f]/15 text-[#e9ff8a] border border-[#dfff3f]/40' : 'text-zinc-400'}`}><Layers className="w-3.5 h-3.5" />{t('State + Histogram')}</button><button onClick={() => setTab('bloch')} className={`px-3 py-1.5 rounded-lg text-xs ${tab === 'bloch' ? 'bg-[#dfff3f]/15 text-[#e9ff8a] border border-[#dfff3f]/40' : 'text-zinc-400'}`}>{t('Bloch Spheres')}</button><button onClick={() => setTab('code')} className={`px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 ${tab === 'code' ? 'bg-[#dfff3f]/15 text-[#e9ff8a] border border-[#dfff3f]/40' : 'text-zinc-400'}`}><Code2 className="w-3.5 h-3.5" />{t('Code Export')}</button></div>
 
-      {tab === 'state' && <{t('State')}VectorVisualizer simulation={simulation} numQubits={numQubits} onResimulateShots={setShots} />}
-      {tab === 'bloch' && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">{simulation.blochVectors.map((state, index) => <BlochSphere3D key={index} qubit{t('State')}={state} qubitIndex={index} label={`Qubit q[${index}]`} size={270} interactive={false} />)}</div>}
-      {tab === 'code' && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">{Object.entries(codes).map(([key, code]) => <div key={key} className="bg-white/[.04] border border-white/10 rounded-xl p-3"><div className="flex justify-between items-center mb-2"><span className="text-xs font-mono text-[#e9ff8a] uppercase">{key}</span><button onClick={() => void copy(key, code)} className="text-xs text-zinc-400 flex items-center gap-1">{copied === key ? <Check className="w-3 h-3 text-emerald-400" /> : <{t('Copy')} className="w-3 h-3" />}{copied === key ? '{t('Copied')}' : '{t('Copy')}'}</button></div><pre className="text-[11px] text-zinc-300 bg-black/50 rounded-lg p-3 overflow-auto max-h-64"><code>{code}</code></pre></div>)}</div>}
+      {tab === 'state' && <StateVectorVisualizer simulation={simulation} numQubits={numQubits} onResimulateShots={setShots} />}
+      {tab === 'bloch' && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">{simulation.blochVectors.map((state, index) => <BlochSphere3D key={index} qubitState={state} qubitIndex={index} label={`Qubit q[${index}]`} size={270} interactive={false} />)}</div>}
+      {tab === 'code' && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">{Object.entries(codes).map(([key, code]) => <div key={key} className="bg-white/[.04] border border-white/10 rounded-xl p-3"><div className="flex justify-between items-center mb-2"><span className="text-xs font-mono text-[#e9ff8a] uppercase">{key}</span><button onClick={() => void copy(key, code)} className="text-xs text-zinc-400 flex items-center gap-1">{copied === key ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}{copied === key ? t('Copied') : t('Copy')}</button></div><pre className="text-[11px] text-zinc-300 bg-black/50 rounded-lg p-3 overflow-auto max-h-64"><code>{code}</code></pre></div>)}</div>}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono"><div className="p-3 rounded-xl bg-white/[.04] border border-white/10"><span className="text-zinc-500">{t('State')}</span><div className="mt-1 text-zinc-200 break-words">{simulation.diracNotation}</div></div><div className="p-3 rounded-xl bg-white/[.04] border border-white/10"><span className="text-zinc-500">{t('Entanglement')}</span><div className={`mt-1 font-bold ${simulation.isEntangled ? 'text-pink-300' : 'text-emerald-300'}`}>{simulation.isEntangled ? '{t('Detected')}' : '{t('Not detected')}'}</div></div><div className="p-3 rounded-xl bg-white/[.04] border border-white/10"><span className="text-zinc-500">{t('Measurement shots')}</span><div className="mt-1 text-[#e9ff8a]">{simulation.totalShots}</div></div></div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono"><div className="p-3 rounded-xl bg-white/[.04] border border-white/10"><span className="text-zinc-500">State</span><div className="mt-1 text-zinc-200 break-words">{simulation.diracNotation}</div></div><div className="p-3 rounded-xl bg-white/[.04] border border-white/10"><span className="text-zinc-500">Entanglement</span><div className={`mt-1 font-bold ${simulation.isEntangled ? 'text-pink-300' : 'text-emerald-300'}`}>{simulation.isEntangled ? 'Detected' : 'Not detected'}</div></div><div className="p-3 rounded-xl bg-white/[.04] border border-white/10"><span className="text-zinc-500">Measurement shots</span><div className="mt-1 text-[#e9ff8a]">{simulation.totalShots}</div></div></div>
     </div>
   );
 };
