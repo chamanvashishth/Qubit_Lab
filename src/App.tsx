@@ -10,6 +10,7 @@ import { CircuitState, QuizQuestion, UserProgress } from './types/quantum';
 import { loadProgress, recordQuizScore, toggleTopic } from './utils/progress';
 import { AdaptiveState, getTopicDifficulty, loadAdaptiveState, saveLearnerProfile, recordQuizAnswer, recordQuizResult } from './utils/adaptive';
 import { LearnerProfile } from './data/adaptiveLearning';
+import { LoadingScreen } from './components/loading/LoadingScreen';
 
 const CircuitComposer = lazy(() => import('./components/circuit/CircuitComposer').then((module) => ({ default: module.CircuitComposer })));
 const BlochPlayground = lazy(() => import('./components/bloch/BlochPlayground').then((module) => ({ default: module.BlochPlayground })));
@@ -32,6 +33,7 @@ const readNavTab = (): NavTab => {
 const pageFallback = <div className="min-h-[320px] flex items-center justify-center text-xs font-mono text-zinc-600">Loading workspace…</div>;
 
 export default function App() {
+  const [showLoading, setShowLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<NavTab>(() => readNavTab());
   const [language, setLanguage] = useState<Language>(() => readSession('qubitlab-language') === 'hi' ? 'hi' : 'en');
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
@@ -57,7 +59,7 @@ export default function App() {
   const handleCodeAIDebug = (code: string, framework: string) => openAIChatWithPrompt(`Please inspect the following ${framework} quantum code for logical bugs, gate ordering errors, unmeasured wires, or non-unitary operations:\n\n\`\`\`python\n${code}\n\`\`\``, `Code Debugging (${framework})`);
   const handleQuizAIHelp = (question: QuizQuestion) => { const idx = question.correctAnswer ?? question.correctIndex ?? 0; openAIChatWithPrompt(`I am reviewing this quantum quiz question: "${question.question}". Could you provide a physical intuition and mathematical derivation for why the answer is "${question.options[idx]}"?`, 'Quiz Knowledge Check'); };
 
-  return <div className="min-h-screen bg-[#050505] text-zinc-200 flex flex-col font-sans relative overflow-x-hidden template-grid">
+  return <>{showLoading && <LoadingScreen onComplete={() => setShowLoading(false)} />}<div className="min-h-screen bg-[#050505] text-zinc-200 flex flex-col font-sans relative overflow-x-hidden template-grid">
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden"><div className="orb orb-blue w-[34rem] h-[34rem] -top-56 left-[12%] opacity-45" /><div className="orb orb-orange w-[40rem] h-[40rem] -bottom-72 -right-32 opacity-40" /><div className="orb orb-pink w-20 h-20 top-[42%] right-[9%] opacity-70" /><div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,.16)_52%,rgba(0,0,0,.72)_100%)]" /></div>
     <Navbar activeTab={activeTab} onSelectTab={navigate} user={null} language={language} onLanguageChange={setLanguage} onOpenAI={() => { setExternalPrompt(''); setAiChatContext('General Quantum Concepts'); setIsAIChatOpen(true); }} />
     <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
@@ -74,5 +76,5 @@ export default function App() {
     </main>
     <AITutorChat isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} currentContext={aiChatContext} externalPrompt={externalPrompt} />
     <footer className="w-full mt-16 py-8 relative z-10 border-t border-white/10 bg-black/45 backdrop-blur-xl"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500 font-mono"><div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#dfff3f] shadow-[0_0_12px_rgba(223,255,63,.75)]" /><span className="text-zinc-200 font-bold">QUBITLAB</span></div><div className="flex items-center gap-6"><button onClick={() => setActiveTab('composer')} className="hover:text-[#dfff3f] transition-colors">Composer</button><button onClick={() => setActiveTab('bloch')} className="hover:text-[#dfff3f] transition-colors">3D Bloch</button><button onClick={() => setActiveTab('sandbox')} className="hover:text-[#dfff3f] transition-colors">Sandbox</button><button onClick={() => setActiveTab('curriculum')} className="hover:text-[#dfff3f] transition-colors">Curriculum</button></div></div></footer>
-  </div>;
+  </div></>;
 }
