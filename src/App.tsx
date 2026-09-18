@@ -13,7 +13,7 @@ import { LearnerProfile } from './data/adaptiveLearning';
 import { LoadingScreen } from './components/loading/LoadingScreen';
 import { UserPage } from './components/user/UserPage';
 import { getAccountFromBackend, getCurrentUser, AuthUser } from './utils/auth';
-import { setLanguage, t } from './utils/i18n';
+import { setLanguage as applyLanguage, t } from './utils/i18n';
 
 const CircuitComposer = lazy(() => import('./components/circuit/CircuitComposer').then((module) => ({ default: module.CircuitComposer })));
 const BlochPlayground = lazy(() => import('./components/bloch/BlochPlayground').then((module) => ({ default: module.BlochPlayground })));
@@ -40,7 +40,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>(() => readNavTab());
   const [language, setLanguage] = useState<Language>(() => readSession('qubitlab-language') === 'hi' ? 'hi' : 'en');
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
-  setLanguage(language);
+  applyLanguage(language);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [aiChatContext, setAiChatContext] = useState('');
