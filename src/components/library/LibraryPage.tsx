@@ -68,7 +68,7 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => (
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
       <div className="flex items-center gap-3"><BookOpen className="w-5 h-5 text-amber-300" /><div><h2 className="text-xl font-semibold text-white">{t('Free eBooks & Learning Resources')}</h2><p className="mt-1 text-sm text-zinc-200">{t('Beginner to advanced resources from the supplied QubitLab resource guide.')}</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {ebooks.map(([title, level, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5 hover:border-[#dfff3f]/30 transition-colors"><div className="text-sm uppercase tracking-[.12em] text-zinc-200 font-medium">{level}</div><h3 className="mt-2 text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>{t('{t('Open official resource')}')}</ResourceLink></div></article>)}
+        {ebooks.map(([title, level, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5 hover:border-[#dfff3f]/30 transition-colors"><div className="text-sm uppercase tracking-[.12em] text-zinc-200 font-medium">{level}</div><h3 className="mt-2 text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>{t('Open official resource')}</ResourceLink></div></article>)}
       </div>
     </section>
 
