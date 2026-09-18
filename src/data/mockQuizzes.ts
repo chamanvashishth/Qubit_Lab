@@ -1,9 +1,9 @@
 import { QuizQuestion } from '../types/quantum';
 
 export interface QuizMock { id:string; title:string; description:string; questions:QuizQuestion[]; }
-const q=(id:string,question:string,options:string[],correctIndex:number,explanation:string):QuizQuestion=>{ const index=Number(id.replace(/[^0-9]/g, '')) || 1; const difficulty: 1 | 2 | 3 = index <= 4 ? 1 : index <= 7 ? 2 : 3; return { id, question, options, correctIndex, correctAnswer:correctIndex, explanation, difficulty }; };
+const q=(id:string,question:string,options:string[],correctIndex:number,explanation:string,difficulty?:1|2|3):QuizQuestion=>{ const index=Number(id.replace(/[^0-9]/g, '')) || 1; const level:1|2|3=difficulty ?? (index<=10 ? (index<=3 ? 1 : index<=7 ? 2 : 3) : 3); return { id, question, options, correctIndex, correctAnswer:correctIndex, explanation, difficulty:level }; };
 
-export const QUIZ_MOCKS:QuizMock[]=[
+const BASE_QUIZ_MOCKS:QuizMock[]=[
 {id:'foundations',title:'Foundations Mock',description:'Bits, qubits, normalization, and Dirac notation.',questions:[
 q('f1','How many basis states exist for 3 qubits?',['3','6','8','9'],2,'Three qubits span 2³ = 8 basis states.'),
 q('f2','A normalized qubit must satisfy:',['α+β=1','|α|²+|β|²=1','αβ=1','α=β'],1,'Squared amplitude magnitudes sum to one.'),
@@ -77,5 +77,146 @@ q('h9','Cryogenic operation helps superconducting devices by:',['Reducing therma
 q('h10','NISQ describes:',['Noisy intermediate-scale quantum devices','Infinite-state devices','Only simulators','Classical hardware'],0,'NISQ devices are useful but noisy, limited-scale systems.')
 ]}
 ];
+
+
+const EXTRA_QUESTIONS: Record<string, QuizQuestion[]> = {
+  foundations: [
+    q('f11','Which statement about a qubit is correct?',['It must be exactly 0 or 1 before measurement','It can be α|0⟩ + β|1⟩ with normalized amplitudes','It cannot have complex amplitudes','It always has 50% probability for both outcomes'],1,'A pure qubit can be a normalized complex linear combination of |0⟩ and |1⟩.',1),
+    q('f12','For n qubits, the computational basis contains:',['n states','2n states','2ⁿ states','n² states'],2,'Each additional qubit doubles the Hilbert-space dimension.',1),
+    q('f13','If |α|² = 0.25 for a qubit, then |β|² must be:',['0.25','0.5','0.75','1.25'],2,'Normalization requires the probabilities to sum to 1.',1),
+    q('f14','Which physical system is a qubit platform in the syllabus?',['Superconducting transmon','Spreadsheet formula','Ethernet frame','Magnetic hard disk sector'],0,'Superconducting transmons are a physical realization of qubits.',1),
+    q('f15','The computational basis for one qubit is:',['{|0⟩, |1⟩}','{|+⟩ only}','{0,1,2}','{|00⟩,|11⟩}'],0,'The standard one-qubit computational basis is |0⟩ and |1⟩.',2),
+    q('f16','A ket is conventionally represented as a:',['Column vector','Row vector only','Scalar','Boolean'],0,'A ket is represented by a column state vector.',2),
+    q('f17','The bra corresponding to |ψ⟩ is:',['ψ⁻¹','⟨ψ|, the conjugate transpose','|ψ⟩²','A measurement bit'],1,'The bra is the Hermitian conjugate of the ket.',2),
+    q('f18','For orthonormal basis states, ⟨i|j⟩ equals:',['δij','1 for every i,j','i+j','0 for every i,j'],0,'Orthonormality is expressed by the Kronecker delta δij.',2),
+    q('f19','An outer product |0⟩⟨0| is useful as a:',['Projector','Classical register','Rotation angle','Probability percentage'],0,'It projects a state onto the |0⟩ subspace.',3),
+    q('f20','A global phase applied to an isolated state changes:',['Measurement probabilities','Nothing physically observable by itself','The number of qubits','The Hilbert-space dimension'],1,'A global phase has no observable effect on measurement probabilities.',3),
+    q('f21','Which condition defines a normalized state?',['Total probability is 0','Total probability is 1','Every amplitude is real','Every amplitude is equal'],1,'The sum of squared magnitudes of amplitudes must equal one.',3),
+    q('f22','A two-qubit computational basis has how many states?',['2','3','4','8'],2,'Two qubits give 2² = 4 basis states.',3),
+    q('f23','A trapped-ion device is best described as:',['A qubit hardware platform','A classical database','A gate notation','A compiler flag'],0,'Trapped ions are a physical qubit technology.',3),
+    q('f24','Photonic qubits can encode information using properties such as:',['Polarization','CPU cache size','Disk sectors','TCP ports'],0,'Photon polarization is one way to encode a photonic qubit.',3),
+    q('f25','Hilbert space for one qubit is two-dimensional over:',['Real integers only','Complex numbers','ASCII characters','Boolean values'],1,'A qubit state lives in a two-dimensional complex Hilbert space.',3),
+    q('f26','The expression ⟨φ|ψ⟩ is an:',['Inner product','Outer product','X gate','Measurement circuit'],0,'It computes the inner product between two states.',3),
+    q('f27','Which notation represents an outer product?',['⟨φ|ψ⟩','|ψ⟩⟨φ|','|ψ⟩ + ⟨φ|','ψφ'],1,'A ket followed by a bra forms an operator-valued outer product.',3),
+    q('f28','If a state has amplitudes 3/5 and 4/5, its total probability is:',['1/5','7/5','1','25'],2,'(3/5)² + (4/5)² = 9/25 + 16/25 = 1.',3),
+    q('f29','Quantum parallelism refers to:',['Encoding amplitudes over multiple basis states','Running many classical CPUs only','Duplicating unknown qubits','Removing measurement'],0,'A superposition can encode amplitudes across many basis states.',3),
+    q('f30','Which statement is false?',['A qubit uses complex amplitudes','Measurement produces classical outcomes','A qubit is simply two independent classical bits','Normalization is required'],2,'A qubit is a two-level quantum system, not two independent classical bits.',3)
+  ],
+  concepts: [
+    q('c11','What is the main role of phase in a superposition?',['It can affect later interference','It changes qubit count','It removes normalization','It forces measurement'],0,'Relative phase controls how amplitudes interfere.',1),
+    q('c12','The state |+⟩ is:',['(|0⟩+|1⟩)/√2','|00⟩','(|0⟩−|1⟩)/2','|1⟩'],0,'Hadamard maps |0⟩ to the equal plus superposition.',1),
+    q('c13','The state |-⟩ differs from |+⟩ by:',['A relative π phase','An extra qubit','A measurement','A non-unitary operation'],0,'The minus sign represents a π relative phase.',1),
+    q('c14','Born’s rule converts amplitudes into:',['Measurement probabilities','Gate matrices','Temperatures','Circuit depth'],0,'Probability is the squared magnitude of the relevant amplitude.',1),
+    q('c15','After measuring a qubit in the computational basis, the result is:',['A classical basis outcome','A new unknown qubit','Always 50%','A unitary matrix'],0,'Projective measurement returns a classical outcome.',2),
+    q('c16','If a state is 70% likely to yield |0⟩, the probability of |1⟩ is:',['30%','50%','70%','100%'],0,'For a normalized two-outcome measurement, probabilities sum to 100%.',2),
+    q('c17','A coherent superposition retains information about:',['Relative phase','Only classical frequency','CPU voltage','Memory address'],0,'Relative phase distinguishes coherent superposition from a classical mixture.',2),
+    q('c18','Entanglement means a joint state:',['Cannot generally be factored into individual states','Must contain only |00⟩','Has no probabilities','Is always mixed'],0,'Entangled states are non-separable.',2),
+    q('c19','How many standard Bell states are there?',['2','4','8','16'],1,'There are four maximally entangled Bell states.',2),
+    q('c20','Which operation is central to creating |Φ⁺⟩ from |00⟩?',['H followed by CNOT','Z followed by SWAP','Measure followed by X','S only'],0,'H creates superposition and CNOT correlates the qubits.',2),
+    q('c21','A Bell-state measurement can reveal:',['Strong quantum correlations','The CPU temperature','A classical password','Gate voltage'],0,'Bell states exhibit characteristic correlated measurement outcomes.',3),
+    q('c22','Destructive interference occurs when amplitudes:',['Cancel through opposite phase contributions','Are always positive','Are measured first','Become classical bits'],0,'Opposing complex amplitudes can sum toward zero.',3),
+    q('c23','Constructive interference tends to:',['Increase an amplitude magnitude','Delete normalization','Reduce all probabilities','Create a classical copy'],0,'In-phase contributions reinforce each other.',3),
+    q('c24','Measurement generally destroys:',['The original coherent superposition information','The Hilbert space','The qubit hardware','All classical data'],0,'Projective measurement changes the state and removes the original coherent superposition.',3),
+    q('c25','The EPR discussion is associated with:',['Quantum entanglement and non-classical correlations','Classical sorting','Matrix inversion only','Compiler optimization'],0,'EPR is a foundational discussion of entanglement and correlations.',3),
+    q('c26','Bell tests investigate:',['Correlations predicted by quantum mechanics versus local hidden-variable models','CPU benchmarks','Database indexing','Classical encryption only'],0,'Bell tests probe experimentally testable non-classical correlations.',3),
+    q('c27','A mixed state differs from a pure coherent state because it:',['Can represent statistical uncertainty without a single state vector description','Always has zero probability','Cannot be measured','Has more qubits'],0,'Mixed states are represented by density operators rather than one pure-state vector.',3),
+    q('c28','If amplitudes for two paths are equal and opposite, their sum is:',['Zero','One','Two','i'],0,'Equal opposite amplitudes cancel.',3),
+    q('c29','Entanglement by itself permits:',['No controllable faster-than-light communication','Instant classical messaging','Perfect cloning','Zero measurement noise'],0,'Entanglement does not provide a controllable FTL signalling channel.',3),
+    q('c30','Which sequence best demonstrates interference?',['H then H returns |0⟩ through amplitude recombination','Measure twice only','X then measure only','SWAP two classical bits'],0,'The second H recombines the superposition and interference returns the state to |0⟩.',3)
+  ],
+  gates: [
+    q('g11','Which Pauli gate is represented by [[0,1],[1,0]]?',['X','Y','Z','S'],0,'That matrix is the Pauli-X gate.',1),
+    q('g12','Hadamard satisfies:',['H²=I','H²=X','H²=0','H†H=0'],0,'Hadamard is self-inverse and unitary.',1),
+    q('g13','The Pauli-Y gate contains:',['Imaginary phase factors','Only zeros','No complex numbers','A measurement projector only'],0,'Y has ±i off-diagonal entries.',1),
+    q('g14','The Pauli-Z gate primarily changes:',['The phase of |1⟩','The qubit count','The measurement device','The wire order'],0,'Z|1⟩ = −|1⟩ while Z|0⟩ = |0⟩.',1),
+    q('g15','The S gate applies which phase to |1⟩?',['π/2','π','π/4','0'],0,'S maps |1⟩ to i|1⟩, corresponding to π/2 phase.',2),
+    q('g16','The T gate applies which phase to |1⟩?',['π/4','π/2','π','2π'],0,'T maps |1⟩ to e^(iπ/4)|1⟩.',2),
+    q('g17','RX(θ) rotates around which Bloch axis?',['X','Y','Z','None'],0,'RX is rotation about the X axis.',2),
+    q('g18','RY(θ) rotates around which Bloch axis?',['X','Y','Z','All axes equally'],1,'RY rotates around Y.',2),
+    q('g19','RZ(θ) mainly changes:',['Relative phase','Qubit count','Number of wires','Classical memory'],0,'RZ changes phase relationships between basis components.',2),
+    q('g20','A CNOT with control 0 does what to its target?',['Leaves it unchanged','Always flips it','Measures it','Swaps it'],0,'The X operation is conditional on control = 1.',2),
+    q('g21','A CNOT can create entanglement when applied after:',['A suitable superposition such as H|0⟩','Only measurement','SWAP on classical bits','A scalar multiplication'],0,'H followed by CNOT is the standard Bell-state preparation.',3),
+    q('g22','CZ changes the phase of which computational basis state?',['|11⟩','|00⟩','|01⟩ only','All states equally'],0,'CZ applies a − sign to |11⟩.',3),
+    q('g23','SWAP acts by:',['Exchanging two qubit states','Measuring both qubits','Adding a phase to one qubit','Flipping only control'],0,'SWAP exchanges the states of two qubits.',3),
+    q('g24','Toffoli flips its target when:',['Both controls are 1','Either control is 0','The target is 1 only','A measurement occurs'],0,'CCNOT applies X to the target only when both controls are 1.',3),
+    q('g25','For CNOT, control and target should be:',['Distinct qubits','The same qubit','Classical variables only','Measured first'],0,'A two-qubit controlled operation needs distinct wires.',3),
+    q('g26','A unitary gate preserves:',['State-vector norm','Number of classical files','Temperature','Measurement history'],0,'Unitary evolution preserves normalization.',3),
+    q('g27','The set {H,T,CNOT} is important because it can form:',['A universal gate set','A measurement-only circuit','A classical CPU','A probability distribution'],0,'H, T and CNOT form a standard universal gate set for quantum computation.',3),
+    q('g28','Phase kickback is especially associated with:',['Controlled operations on a phase-sensitive target','SWAP only','Classical addition','Measurement-only circuits'],0,'Controlled gates can transfer phase information back to the control register.',3),
+    q('g29','A two-qubit gate is represented by a matrix of size:',['4×4','2×2 only','8×8','1×1'],0,'Two qubits have a four-dimensional state space, so operators are 4×4.',3),
+    q('g30','Which gate is not a general measurement operation?',['Hadamard','MEASURE','Projector','Measurement basis operation'],0,'Hadamard is a unitary gate, not a measurement.',3)
+  ],
+  math: [
+    q('m11','For z=3+4i, |z| is:',['5','7','1','25'],0,'The modulus is √(3²+4²)=5.',1),
+    q('m12','For z=3+4i, |z|² is:',['5','7','25','12'],2,'The squared modulus is 3²+4²=25.',1),
+    q('m13','The complex conjugate of 2−5i is:',['2+5i','−2−5i','5+2i','2−5i'],0,'Conjugation reverses the sign of the imaginary component.',1),
+    q('m14','Euler’s formula is:',['e^(iθ)=cosθ+i sinθ','e^(iθ)=θ+i','e^(iθ)=cosθ−sinθ','e^(iθ)=θ²'],0,'Euler’s formula connects complex exponentials with trigonometric functions.',1),
+    q('m15','The Argand-plane vertical axis represents:',['Imaginary part','Real part','Probability only','Qubit count'],0,'The vertical axis is the imaginary component.',2),
+    q('m16','The dagger symbol † denotes:',['Conjugate transpose','Ordinary transpose only','Derivative','Determinant'],0,'The dagger is the Hermitian adjoint.',2),
+    q('m17','A unitary matrix U satisfies:',['U†U=I','U†U=0','U=0','det(U)=0'],0,'This is the defining unitary condition.',2),
+    q('m18','A quantum gate must preserve:',['Vector norm','Matrix dimensions only','Classical memory','Temperature'],0,'Unitary quantum evolution preserves normalization.',2),
+    q('m19','The tensor product symbol is:',['⊗','†','∑','∂'],0,'Tensor products combine subsystem state spaces and operators.',2),
+    q('m20','Two qubits have statevector dimension:',['2','4','6','8'],1,'The dimension is 2²=4.',2),
+    q('m21','The tensor product |0⟩⊗|1⟩ is commonly written as:',['|01⟩','|1⟩','|0⟩','⟨01|'],0,'The composite computational basis state is |01⟩.',3),
+    q('m22','For z=a+bi, |z|² equals:',['a²+b²','a+b','a−b','ab'],0,'Squared modulus is the sum of squared real and imaginary parts.',3),
+    q('m23','A Hermitian matrix satisfies:',['A=A†','A=0','A†A=0','A=A⁻¹ always'],0,'Hermitian matrices equal their conjugate transpose.',3),
+    q('m24','Eigenvectors of an observable are associated with:',['Possible measurement eigenstates','Only classical bits','Compiler errors','Gate counts'],0,'Measurement of an observable yields its eigenvalues with corresponding eigenstates.',3),
+    q('m25','The tensor product of dimensions 2 and 4 has dimension:',['6','8','4','2'],1,'Dimensions multiply under tensor products: 2×4=8.',3),
+    q('m26','If U is unitary, U⁻¹ equals:',['U†','U','0','2U'],0,'For a unitary matrix, the inverse is the conjugate transpose.',3),
+    q('m27','Why are complex amplitudes needed?',['They encode magnitude and phase','They remove probability','They increase qubit count','They replace measurement'],0,'Complex numbers naturally represent both amplitude magnitude and phase.',3),
+    q('m28','A global phase factor e^(iφ) applied to every amplitude changes:',['No isolated measurement statistics','All probabilities','The number of basis states','The matrix dimension'],0,'Global phase cancels from observable probabilities.',3),
+    q('m29','The dimension of an n-qubit Hilbert space is:',['2ⁿ','n²','2n','n'],0,'Each qubit doubles the dimension.',3),
+    q('m30','Kronecker products are used to:',['Build composite multi-qubit states and operators','Perform measurement automatically','Clone states','Remove phase'],0,'Tensor/Kronecker products construct composite quantum systems.',3)
+  ],
+  algorithms: [
+    q('a11','Deutsch-Jozsa assumes the oracle is:',['Constant or balanced','Always constant','Always balanced','Random without promise'],0,'The promise restricts the function to constant or balanced.',1),
+    q('a12','The ideal Deutsch-Jozsa algorithm uses:',['One oracle query','N queries always','2ⁿ queries','No oracle'],0,'The ideal quantum algorithm determines the promised property with one query.',1),
+    q('a13','Phase kickback in Deutsch-Jozsa uses an ancilla prepared in:',['|−⟩','|0⟩ only','|1⟩ only','|+⟩ only'],0,'Preparing the target in |−⟩ converts the oracle output into phase information.',1),
+    q('a14','A nonzero query-register result in Deutsch-Jozsa indicates:',['Balanced function','Constant function','No measurement','Hardware failure'],0,'Under the promise, any nonzero query result identifies a balanced function.',1),
+    q('a15','Grover’s algorithm is designed for:',['Unstructured search','Matrix multiplication only','Sorting already ordered data','Quantum error correction'],0,'Grover provides quadratic query speedup for unstructured search.',2),
+    q('a16','Grover’s diffuser performs:',['Inversion about the average','A measurement','A SWAP','Classical sorting'],0,'The diffuser reflects amplitudes about their average.',2),
+    q('a17','Grover’s marked state is identified using an:',['Oracle phase marking','Unconditional measurement','X gate only','Classical password'],0,'The oracle marks target states through a phase change.',2),
+    q('a18','Too many Grover iterations can cause:',['Reduced success from overshooting','Guaranteed success','Non-unitary evolution','State cloning'],0,'Amplitude amplification is a rotation and can overshoot the target.',2),
+    q('a19','QFT primarily transforms:',['Computational information into phase/frequency structure','Classical bits into bytes','Noise into heat','Measurements into gates'],0,'QFT exposes periodic and phase information.',2),
+    q('a20','QFT is central to:',['Period finding and phase estimation','Classical sorting','TCP routing','Memory allocation'],0,'QFT is a key component of quantum period-finding methods.',2),
+    q('a21','Shor’s algorithm reduces factoring to:',['Order finding','Sorting','Unstructured search only','Random guessing'],0,'The quantum core finds the order/period of modular exponentiation.',3),
+    q('a22','For Shor’s algorithm, QFT helps extract:',['Period information','CPU temperature','Classical passwords','Gate voltage'],0,'The Fourier transform reveals periodic structure.',3),
+    q('a23','The N=15 educational Shor example is intended to show:',['The algorithmic workflow at small scale','A practical RSA attack','Infinite qubit scaling','A hardware benchmark'],0,'Small N examples illustrate the mathematics without representing cryptographic-scale hardware.',3),
+    q('a24','VQE estimates:',['Ground-state energies','Sorting indices','Network latency','Classical bit parity only'],0,'VQE uses a variational state to estimate expectation values such as ground-state energy.',3),
+    q('a25','The variational principle gives:',['⟨ψ(θ)|H|ψ(θ)⟩ ≥ E₀','E=mc² only','U=0','P=0 always'],0,'The expectation value of H for a trial state is at least the ground-state energy.',3),
+    q('a26','QAOA is commonly applied to:',['Combinatorial optimization such as Max-Cut','Only factoring','Only teleportation','Image resizing'],0,'QAOA maps optimization problems such as Max-Cut to parameterized circuits.',3),
+    q('a27','An ansatz is:',['A parameterized trial quantum state/circuit','A measurement error','A classical database','A hardware cable'],0,'An ansatz is a chosen parameterized family of quantum states.',3),
+    q('a28','QAOA and VQE are described as:',['Hybrid quantum-classical algorithms','Purely classical algorithms','Measurement-only protocols','Error-correction codes'],0,'A quantum circuit is combined with classical parameter optimization.',3),
+    q('a29','The QFT circuit commonly contains:',['Hadamards and controlled-phase gates','Only SWAP gates','Only measurements','Classical sorting gates'],0,'Standard QFT decompositions use H and controlled phase rotations, often followed by swaps.',3),
+    q('a30','Grover’s ideal query scaling is:',['O(√N)','O(N²)','O(log N) always','O(1) for every problem'],0,'Grover gives quadratic query scaling for unstructured search.',3)
+  ],
+  hardware: [
+    q('h11','A transmon is a type of:',['Superconducting qubit','Photonic detector','Classical CPU','Quantum algorithm'],0,'A transmon is a superconducting qubit implementation.',1),
+    q('h12','Coherence time measures approximately:',['How long useful quantum phase information persists','How many qubits a CPU has','Gate matrix size','Number of measurement shots'],0,'Coherence time characterizes persistence of quantum coherence.',1),
+    q('h13','Decoherence generally results from:',['Interaction with the environment','Correct normalization','Tensor products','Ideal unitary evolution'],0,'Environmental coupling can degrade quantum coherence.',1),
+    q('h14','Readout error happens during:',['Measurement','State notation','Matrix multiplication','Circuit drawing'],0,'Readout converts a quantum state to a classical result imperfectly.',1),
+    q('h15','Quantum error correction uses:',['Encoded information across multiple physical qubits','Perfect copying of unknown states','No redundancy','Only classical RAM'],0,'Error-correcting codes distribute logical information across physical qubits.',2),
+    q('h16','A logical qubit is:',['An encoded error-protected qubit','Always one physical qubit','A classical bit','A measurement histogram'],0,'A logical qubit is represented using an error-correcting code over physical qubits.',2),
+    q('h17','Gate fidelity close to 1 indicates:',['The implemented operation closely matches its target','The device has no noise ever','Measurement is impossible','The qubit is classical'],0,'Fidelity quantifies agreement between actual and target operations.',2),
+    q('h18','Cryogenic temperatures help superconducting qubits by:',['Reducing thermal excitations','Creating classical bits','Removing all calibration','Increasing room temperature'],0,'Cooling suppresses thermal excitations in superconducting circuits.',2),
+    q('h19','NISQ stands for:',['Noisy Intermediate-Scale Quantum','New Integrated Superconducting Qubit','Nonlinear Information State Query','Noise-Free Integrated Quantum'],0,'NISQ refers to noisy intermediate-scale quantum devices.',2),
+    q('h20','A major challenge for current quantum hardware is:',['Noise and limited coherence','Unlimited error-free scaling','No need for calibration','Infinite connectivity'],0,'Noise, decoherence, calibration and connectivity constraints limit devices.',2),
+    q('h21','The no-cloning theorem prevents:',['Perfect copying of an arbitrary unknown quantum state','All measurements','Classical communication','Unitary gates'],0,'Quantum mechanics does not permit a universal perfect cloning operation.',3),
+    q('h22','A physical qubit differs from a logical qubit because a logical qubit:',['Can be encoded across multiple physical qubits','Must be classical','Cannot be measured','Has no error model'],0,'Logical qubits use encoded physical resources for protection.',3),
+    q('h23','Surface codes are associated with:',['Quantum error correction','Classical sorting','QFT only','Photonic polarization only'],0,'Surface codes are a major family of quantum error-correcting codes.',3),
+    q('h24','A calibration procedure is used to:',['Characterize and tune hardware operations','Create new basis states mathematically','Replace all measurements','Remove the need for control electronics'],0,'Calibration tunes control parameters and characterizes device behavior.',3),
+    q('h25','Thermal noise can cause:',['Unwanted transitions and errors','Perfect coherence','Guaranteed entanglement','Zero readout error'],0,'Thermal excitations can disturb quantum states and operations.',3),
+    q('h26','Fault tolerance aims to:',['Operate logical computation reliably despite physical errors','Eliminate the need for qubits','Copy arbitrary states','Avoid all classical computation'],0,'Fault-tolerant schemes suppress physical errors at the logical level.',3),
+    q('h27','A measurement error can change:',['The recorded classical bitstring','The definition of Hilbert space','The number of basis states','The mathematical value of i'],0,'Readout imperfections can cause incorrect recorded outcomes.',3),
+    q('h28','Why are more physical qubits needed for a logical qubit?',['Error correction requires redundancy','Qubits cannot be measured','Every gate needs two CPUs','Normalization requires RAM'],0,'Encoding adds redundancy so errors can be detected and corrected.',3),
+    q('h29','NISQ algorithms are designed around the reality of:',['Limited, noisy quantum hardware','Perfect infinite hardware','No classical optimization','Zero gate errors'],0,'NISQ-era methods account for hardware limitations and noise.',3),
+    q('h30','Which statement best matches the syllabus hardware topic?',['Quantum hardware must manage noise, coherence, calibration and readout','Quantum hardware has no errors','All qubits use transmons','Error correction is unnecessary'],0,'The syllabus covers hardware platforms and the practical challenges of noise and error.',3)
+  ],
+};
+
+export const QUIZ_MOCKS: QuizMock[] = BASE_QUIZ_MOCKS.map((mock) => ({
+  ...mock,
+  questions: [...mock.questions, ...(EXTRA_QUESTIONS[mock.id] ?? [])],
+}));
 
 export const getQuizMock=(id?:string)=>QUIZ_MOCKS.find(mock=>mock.id===id);
