@@ -1,5 +1,6 @@
 import React from 'react';
 import { BookOpen, ChevronRight, Code2, Layers3, FlaskConical, GraduationCap, ExternalLink, UserRound, FileText, Newspaper } from 'lucide-react';
+import { t } from '../../utils/i18n';
 
 type LibraryDestination = 'curriculum' | 'composer' | 'bloch' | 'sandbox' | 'quiz';
 
@@ -8,10 +9,10 @@ interface LibraryPageProps {
 }
 
 const tools: Array<{ title: string; description: string; tab: LibraryDestination; icon: React.ElementType }> = [
-  { title: 'Structured lessons', description: 'Read the core concepts in a clear sequence, from qubits to algorithms.', tab: 'curriculum', icon: BookOpen },
-  { title: 'Circuit composer', description: 'Build and inspect quantum circuits gate by gate.', tab: 'composer', icon: FlaskConical },
-  { title: 'Bloch sphere', description: 'Use geometry to understand a one-qubit state.', tab: 'bloch', icon: Layers3 },
-  { title: 'Code workspace', description: 'Explore quantum code and see how it maps to operations.', tab: 'sandbox', icon: Code2 },
+  { title: '{t('Structured lessons')}', description: '{t('Read the core concepts in a clear sequence, from qubits to algorithms.')}', tab: 'curriculum', icon: BookOpen },
+  { title: '{t('Circuit composer')}', description: '{t('Build and inspect quantum circuits gate by gate.')}', tab: 'composer', icon: FlaskConical },
+  { title: '{t('Bloch sphere')}', description: '{t('Use geometry to understand a one-qubit state.')}', tab: 'bloch', icon: Layers3 },
+  { title: '{t('Code workspace')}', description: '{t('Explore quantum code and see how it maps to operations.')}', tab: 'sandbox', icon: Code2 },
 ];
 
 const ebooks = [
