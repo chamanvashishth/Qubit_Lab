@@ -1,24 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
+const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
 
-const hasSupabaseConfig = Boolean(supabaseUrl && supabasePublishableKey);
-
-if (!hasSupabaseConfig) {
-  console.error(
-    'QubitLab: Supabase configuration is missing. Check Vercel environment variables.'
+if (!supabaseUrl || !supabasePublishableKey) {
+  throw new Error(
+    'QubitLab authentication is not configured. Vercel must provide VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY at build time.'
   );
 }
 
-export const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabasePublishableKey || 'placeholder-publishable-key',
-  {
-    auth: {
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: true,
-    },
-  }
-);
+export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+  },
+});
