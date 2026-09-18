@@ -263,5 +263,33 @@ export const setLanguage = (language: Language) => {
 
 export const getLanguage = () => currentLanguage;
 
+const translateNodeText = (value: string) => {
+  const direct = translations[value];
+  if (currentLanguage === 'hi' && direct) return direct;
+  if (currentLanguage === 'en') {
+    const original = Object.entries(translations).find(([, hindi]) => hindi === value)?.[0];
+    return original || value;
+  }
+  return value;
+};
+
+export const translateDocument = () => {
+  if (typeof document === 'undefined') return;
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  const nodes: Text[] = [];
+  let node: Node | null;
+  while ((node = walker.nextNode())) nodes.push(node as Text);
+  nodes.forEach((textNode) => {
+    const parent = textNode.parentElement;
+    if (!parent || ['SCRIPT', 'STYLE', 'CODE', 'PRE', 'TEXTAREA'].includes(parent.tagName)) return;
+    const value = textNode.nodeValue || '';
+    const translated = translateNodeText(value.trim());
+    if (translated !== value.trim() && value.trim()) {
+      textNode.nodeValue = value.replace(value.trim(), translated);
+    }
+  });
+};
+
+
 export const t = (text: string) =>
   currentLanguage === 'hi' ? translations[text] || text : text;
