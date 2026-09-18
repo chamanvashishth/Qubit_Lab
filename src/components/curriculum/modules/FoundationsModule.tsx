@@ -250,7 +250,7 @@ export const FoundationsModule: React.FC = () => {
 
           {/* Evaluated Inner Product Bracket */}
           <div className="bg-gradient-to-br from-[#0e1838] to-[#12224d] border border-cyan-500/30 rounded-xl p-5 flex flex-col items-center justify-center text-center shadow-lg">
-            <span className="text-xs text-slate-400 font-mono mb-1">{t('Inner Product (Bracket')}</span>
+            <span className="text-xs text-slate-400 font-mono mb-1">{t('Inner Product (Bracket)')}</span>
             <div className="text-2xl font-mono font-extrabold text-cyan-300 my-1">
               ⟨{diracBra}|{diracKet}⟩
             </div>
