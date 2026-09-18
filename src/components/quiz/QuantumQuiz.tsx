@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { QuizQuestion } from '../../types/quantum';
 import { QUIZ_MOCKS, getQuizMock } from '../../data/mockQuizzes';
+import { t } from '../../utils/i18n';
 
 interface QuizAttempt {
   currentIndex: number;
@@ -95,8 +96,8 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
           <div className="inline-flex p-3 rounded-xl bg-[#dfff3f]/10 border border-[#dfff3f]/30 text-[#e9ff8a]">
             <BookOpen className="w-6 h-6" />
           </div>
-          <h2 className="text-2xl font-bold text-zinc-100">Choose a Practice Mock</h2>
-          <p className="text-sm text-zinc-300">Practice with the full set of questions and review the explanation after every answer.</p>
+          <h2 className="text-2xl font-bold text-zinc-100">{t('Choose a Practice Mock')}</h2>
+          <p className="text-sm text-zinc-300">{t('Practice with the full set of questions and review the explanation after every answer.')}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -113,7 +114,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
               <h3 className="text-sm font-bold text-zinc-100">{item.title}</h3>
               <p className="text-sm text-zinc-300 mt-2 leading-relaxed">{item.description}</p>
               <div className="mt-4 text-xs text-[#dfff3f] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                Start mock <ChevronRight className="w-4 h-4" />
+                {t('Start mock')} <ChevronRight className="w-4 h-4" />
               </div>
             </button>
           ))}
@@ -126,7 +127,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
   if (questions.length === 0) {
     return (
       <div className="max-w-xl mx-auto p-6 rounded-2xl bg-white/[.05] border border-white/10 text-center text-zinc-300">
-        This practice mock does not contain any questions yet.
+        {t('This practice mock does not contain any questions yet.')}
       </div>
     );
   }
@@ -201,16 +202,16 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
         <Award className="w-10 h-10 text-amber-400 mx-auto" />
         <div>
           <h3 className="text-xl font-bold text-zinc-100">{mock.title} Results</h3>
-          <p className="text-xs text-zinc-300 mt-1">Your result is available for this browser session.</p>
+          <p className="text-xs text-zinc-300 mt-1">{t('Your result is available for this browser session.')}</p>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="p-4 rounded-xl bg-black/55 border border-white/10">
             <div className="text-2xl font-bold text-[#dfff3f]">{attempt.score}/{questions.length}</div>
-            <div className="text-xs text-zinc-300">Correct</div>
+            <div className="text-xs text-zinc-300">{t('Correct')}</div>
           </div>
           <div className="p-4 rounded-xl bg-black/55 border border-white/10">
             <div className="text-2xl font-bold text-purple-400">{percentage}%</div>
-            <div className="text-xs text-zinc-300">Score</div>
+            <div className="text-xs text-zinc-300">{t('Score')}</div>
           </div>
         </div>
         <p className="text-xs text-zinc-300">
@@ -218,10 +219,10 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <button onClick={handleRestart} className="px-5 py-2.5 rounded-lg bg-[#dfff3f] hover:bg-[#efff96] text-slate-950 font-bold text-xs flex items-center gap-2">
-            <RotateCcw className="w-4 h-4" /> Try Again
+            <RotateCcw className="w-4 h-4" /> {t('Try Again')}
           </button>
           <button onClick={onBackToMocks} className="px-5 py-2.5 rounded-lg bg-white/[.05] border border-white/15 hover:border-slate-500 text-zinc-200 font-bold text-xs">
-            All Mocks
+            {t('All Mocks')}
           </button>
         </div>
       </div>
@@ -233,7 +234,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
       <div className="flex items-center justify-between gap-3 pb-3 border-b border-white/10">
         <div>
           <button onClick={onBackToMocks} className="text-xs text-zinc-300 hover:text-[#e9ff8a] flex items-center gap-1 mb-2">
-            <ArrowLeft className="w-3.5 h-3.5" /> All mocks
+            <ArrowLeft className="w-3.5 h-3.5" /> {t('All mocks')}
           </button>
           <div className="flex items-center gap-2">
             <HelpCircle className="w-5 h-5 text-[#dfff3f]" />
@@ -243,9 +244,9 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
         <div className="text-right">
           <div className="text-xs font-mono text-[#e9ff8a]">Question {attempt.answeredIndices.length + (attempt.isAnswered ? 0 : 1)}/{questions.length}</div>
           <div className="flex items-center justify-end gap-2 mt-1">
-            <span className="text-xs text-zinc-300">Score: {attempt.score}</span>
+            <span className="text-xs text-zinc-300">{t('Score')}: {attempt.score}</span>
             <span className="text-[10px] font-semibold px-2 py-1 rounded border border-[#dfff3f]/20 bg-[#dfff3f]/10 text-[#e9ff8a]">
-              {attempt.adaptiveLevel === 1 ? 'Beginner' : attempt.adaptiveLevel === 2 ? 'Intermediate' : 'Advanced'}
+              {attempt.adaptiveLevel === 1 ? t('Beginner') : attempt.adaptiveLevel === 2 ? t('Intermediate') : t('Advanced')}
             </span>
           </div>
         </div>
@@ -287,24 +288,24 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
       {attempt.isAnswered && (
         <div className="p-4 rounded-xl bg-black/55 border border-white/10 space-y-2 text-xs">
           <div className="flex items-center justify-between gap-3">
-            <span className="font-bold text-[#e9ff8a] flex items-center gap-1.5"><Sparkles className="w-4 h-4" /> Explanation</span>
-            <button onClick={() => onAskAIForHelp?.(currentQ)} className="text-[11px] text-purple-300 hover:underline">Explain further</button>
+            <span className="font-bold text-[#e9ff8a] flex items-center gap-1.5"><Sparkles className="w-4 h-4" /> {t('Explanation')}</span>
+            <button onClick={() => onAskAIForHelp?.(currentQ)} className="text-[11px] text-purple-300 hover:underline">{t('Explain further')}</button>
           </div>
           <p className="text-zinc-300 leading-relaxed">{currentQ.explanation}</p>
         </div>
       )}
 
       <div className="flex items-center justify-between pt-2">
-        <span className="text-xs text-zinc-300">Your current attempt survives reloads in this browser session.</span>
+        <span className="text-xs text-zinc-300">{t('Your current attempt survives reloads in this browser session.')}</span>
         {!attempt.isAnswered ? (
           <button
             onClick={handleConfirmAnswer}
             disabled={attempt.selectedOption === null}
             className="px-5 py-2 rounded-lg bg-[#dfff3f] hover:bg-[#efff96] text-slate-950 font-bold text-xs disabled:opacity-40"
-          >Check Answer</button>
+          >{t('Check Answer')}</button>
         ) : (
           <button onClick={handleNext} className="px-5 py-2 rounded-lg bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] text-slate-950 font-bold text-xs flex items-center gap-1.5">
-            {currentIndex + 1 < questions.length ? 'Next Question' : 'View Results'} <ChevronRight className="w-4 h-4" />
+            {currentIndex + 1 < questions.length ? '{t('Next Question')}' : '{t('View Results')}'} <ChevronRight className="w-4 h-4" />
           </button>
         )}
       </div>
