@@ -305,7 +305,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
           >{t('Check Answer')}</button>
         ) : (
           <button onClick={handleNext} className="px-5 py-2 rounded-lg bg-gradient-to-r from-[#dfff3f] to-[#f4a81d] text-slate-950 font-bold text-xs flex items-center gap-1.5">
-            {currentIndex + 1 < questions.length ? '{t('Next Question')}' : '{t('View Results')}'} <ChevronRight className="w-4 h-4" />
+            {currentIndex + 1 < questions.length ? t('Next Question') : t('View Results')} <ChevronRight className="w-4 h-4" />
           </button>
         )}
       </div>
