@@ -40,7 +40,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>(() => readNavTab());
   const [language, setLanguage] = useState<Language>(() => readSession('qubitlab-language') === 'hi' ? 'hi' : 'en');
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
-  applyLanguage(language);
+  useEffect(() => { applyLanguage(language); }, [language]);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [aiChatContext, setAiChatContext] = useState('');
