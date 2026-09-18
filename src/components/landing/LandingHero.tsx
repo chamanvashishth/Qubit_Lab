@@ -58,7 +58,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
             </h1>
 
             <p className="max-w-xl text-sm sm:text-base leading-7 text-zinc-400">
-              QubitLab turns quantum concepts into things you can manipulate: states, gates, circuits, code, visualizations, and practice questions.
+              {t('QubitLab turns quantum concepts into things you can manipulate: states, gates, circuits, code, visualizations, and practice questions.')}
             </p>
 
             <div className="flex flex-wrap gap-3">
