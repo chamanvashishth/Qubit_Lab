@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { t } from '../../utils/i18n';
 import { 
-  Terminal, Play, RotateCcw, {t('Copy')}, Check, Sparkles, 
+  Terminal, Play, RotateCcw, Copy, Check, Sparkles, 
   Bug, Code2, Layers, Cpu, Download 
 } from 'lucide-react';
 
@@ -187,7 +187,7 @@ export const QuantumCodeSandbox: React.FC<QuantumCodeSandboxProps> = ({
   const [code, setCode] = useState<string>(TEMPLATES.qiskit.bell);
   const [isRunning, setIsRunning] = useState(false);
   const [output, setOutput] = useState<string | null>(null);
-  const [copied, set{t('Copied')}] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const handleFrameworkChange = (newFw: 'qiskit' | 'pennylane' | 'cirq') => {
     setFramework(newFw);
@@ -242,10 +242,10 @@ This example illustrates how Grover's algorithm increases the probability of the
     }, 600);
   };
 
-  const handle{t('Copy')} = () => {
+  const handleCopy = () => {
     navigator.clipboard.writeText(code);
-    set{t('Copied')}(true);
-    setTimeout(() => set{t('Copied')}(false), 2000);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -315,11 +315,11 @@ This example illustrates how Grover's algorithm increases the probability of the
 
             <div className="flex items-center gap-2">
               <button
-                onClick={handle{t('Copy')}}
+                onClick={handleCopy}
                 className="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1 font-mono"
               >
-                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <{t('Copy')} className="w-3.5 h-3.5" />}
-                {copied ? '{t('Copied')}' : '{t('Copy')}'}
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                {copied ? 'Copied' : 'Copy'}
               </button>
             </div>
           </div>
