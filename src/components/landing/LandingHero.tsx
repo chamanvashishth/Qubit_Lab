@@ -25,12 +25,12 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onNavigate, onOpenAI }
   };
 
   const cards = [
-    { title: '{t('Circuit Composer')}', text: '{t('Place gates, build circuits, and inspect state changes.')}', icon: Sliders, tab: 'composer' as const },
-    { title: '{t('Bloch Space')}', text: '{t('See a single qubit as geometry you can reason about.')}', icon: Layers, tab: 'bloch' as const },
-    { title: '{t('Code Workspace')}', text: '{t('Explore quantum code without leaving the learning flow.')}', icon: Terminal, tab: 'sandbox' as const },
-    { title: '{t('Learning Path')}', text: '{t('Move from foundations to algorithms at your own pace.')}', icon: BookOpen, tab: 'curriculum' as const },
-    { title: '{t('Practice Mocks')}', text: '{t('Test understanding with focused 10-question modules.')}', icon: Award, tab: 'quiz' as const },
-    { title: '{t('Progress')}', text: '{t('Track what you completed during the active session.')}', icon: Zap, tab: 'dashboard' as const },
+    { title: t('Circuit Composer'), text: t('Place gates, build circuits, and inspect state changes.'), icon: Sliders, tab: 'composer' as const },
+    { title: t('Bloch Space'), text: t('See a single qubit as geometry you can reason about.'), icon: Layers, tab: 'bloch' as const },
+    { title: t('Code Workspace'), text: t('Explore quantum code without leaving the learning flow.'), icon: Terminal, tab: 'sandbox' as const },
+    { title: t('Learning Path'), text: t('Move from foundations to algorithms at your own pace.'), icon: BookOpen, tab: 'curriculum' as const },
+    { title: t('Practice Mocks'), text: t('Test understanding with focused 10-question modules.'), icon: Award, tab: 'quiz' as const },
+    { title: t('Progress'), text: t('Track what you completed during the active session.'), icon: Zap, tab: 'dashboard' as const },
   ];
 
   return (
