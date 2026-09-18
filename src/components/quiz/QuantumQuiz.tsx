@@ -12,6 +12,8 @@ interface QuizAttempt {
   isAnswered: boolean;
   score: number;
   isFinished: boolean;
+  answeredIndices: number[];
+  adaptiveLevel: 1 | 2 | 3;
 }
 
 interface QuantumQuizProps {
@@ -30,6 +32,8 @@ const emptyAttempt: QuizAttempt = {
   isAnswered: false,
   score: 0,
   isFinished: false,
+  answeredIndices: [],
+  adaptiveLevel: 1,
 };
 
 const storageKey = (id: string) => `qubitlab-quiz-attempt:${id}`;
@@ -55,12 +59,24 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
 }) => {
   const mock = useMemo(() => getQuizMock(quizId), [quizId]);
 
-  const [attempt, setAttempt] = useState<QuizAttempt>(() =>
-    quizId ? loadAttempt(quizId) : { ...emptyAttempt }
-  );
+  const [attempt, setAttempt] = useState<QuizAttempt>(() => {
+    const saved = quizId ? loadAttempt(quizId) : { ...emptyAttempt };
+    return {
+      ...emptyAttempt,
+      ...saved,
+      answeredIndices: Array.isArray(saved.answeredIndices) ? saved.answeredIndices : [],
+      adaptiveLevel: saved.adaptiveLevel === 2 || saved.adaptiveLevel === 3 ? saved.adaptiveLevel : 1,
+    };
+  });
 
   useEffect(() => {
-    setAttempt(quizId ? loadAttempt(quizId) : { ...emptyAttempt });
+    const saved = quizId ? loadAttempt(quizId) : { ...emptyAttempt };
+    setAttempt({
+      ...emptyAttempt,
+      ...saved,
+      answeredIndices: Array.isArray(saved.answeredIndices) ? saved.answeredIndices : [],
+      adaptiveLevel: saved.adaptiveLevel === 2 || saved.adaptiveLevel === 3 ? saved.adaptiveLevel : 1,
+    });
   }, [quizId]);
 
   useEffect(() => {
@@ -199,7 +215,7 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
         </div>
         <div className="text-right">
           <div className="text-xs font-mono text-[#e9ff8a]">Question {currentIndex + 1}/{questions.length}</div>
-          <div className="text-xs text-zinc-300">Score: {attempt.score} · Level {difficultyLevel}</div>
+          <div className="text-xs text-zinc-300">Score: {attempt.score} · Adaptive Level {attempt.adaptiveLevel}</div>
         </div>
       </div>
 
