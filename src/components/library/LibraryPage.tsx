@@ -89,14 +89,14 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => (
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
       <div className="flex items-center gap-3"><BookOpen className="w-5 h-5 text-amber-300" /><div><h2 className="text-xl font-semibold text-zinc-100">Free eBooks & Learning Resources</h2><p className="mt-1 text-sm text-zinc-500">Beginner to advanced resources from the supplied QubitLab resource guide.</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {ebooks.map(([title, level, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5 hover:border-[#dfff3f]/30 transition-colors"><div className="text-[10px] uppercase tracking-[.16em] text-zinc-500">{level}</div><h3 className="mt-2 text-sm font-semibold text-zinc-100">{title}</h3><p className="mt-2 text-xs leading-5 text-zinc-400">{description}</p><div className="mt-4"><ResourceLink href={href}>Open official resource</ResourceLink></div></article>)}
+        {ebooks.map(([title, level, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5 hover:border-[#dfff3f]/30 transition-colors"><div className="text-[10px] uppercase tracking-[.16em] text-zinc-300 font-medium">{level}</div><h3 className="mt-2 text-sm font-semibold text-zinc-100">{title}</h3><p className="mt-2 text-xs leading-5 text-zinc-400">{description}</p><div className="mt-4"><ResourceLink href={href}>Open official resource</ResourceLink></div></article>)}
       </div>
     </section>
 
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
       <div className="flex items-center gap-3"><UserRound className="w-5 h-5 text-sky-300" /><div><h2 className="text-xl font-semibold text-zinc-100">Researchers & Direct Resources</h2><p className="mt-1 text-sm text-zinc-500">Professor pages, courses, notes and research hubs from the supplied guide.</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {researchers.map(([name, institution, specialty, href, secondaryLabel, secondaryHref]) => <article key={name} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-sm font-semibold text-zinc-100">{name}</h3><div className="mt-1 text-[10px] uppercase tracking-[.16em] text-zinc-500">{institution}</div><p className="mt-3 text-xs leading-5 text-zinc-400">{specialty}</p><div className="mt-4 flex flex-wrap gap-4"><ResourceLink href={href}>Open resource</ResourceLink>{secondaryHref && <ResourceLink href={secondaryHref}>{secondaryLabel}</ResourceLink>}</div></article>)}
+        {researchers.map(([name, institution, specialty, href, secondaryLabel, secondaryHref]) => <article key={name} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-sm font-semibold text-zinc-100">{name}</h3><div className="mt-1 text-[10px] uppercase tracking-[.16em] text-zinc-300 font-medium">{institution}</div><p className="mt-3 text-xs leading-5 text-zinc-400">{specialty}</p><div className="mt-4 flex flex-wrap gap-4"><ResourceLink href={href}>Open resource</ResourceLink>{secondaryHref && <ResourceLink href={secondaryHref}>{secondaryLabel}</ResourceLink>}</div></article>)}
       </div>
     </section>
 
@@ -131,13 +131,9 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => (
           ['Phase 4', 'Algorithms', 'IBM Quantum Learning — Fundamentals of Quantum Algorithms'],
           ['Phase 5', 'AI + Quantum', 'Quantum Computing from Hopfield Nets'],
           ['Phase 6', 'Advanced theory', 'MIT OpenCourseWare + Introduction to Quantum Computation and Information'],
-        ].map(([phase, title, resource]) => <div key={phase} className="rounded-xl border border-white/10 bg-black/20 p-4"><div className="text-[10px] uppercase tracking-[.16em] text-zinc-500">{phase}</div><div className="mt-2 text-sm font-semibold text-zinc-100">{title}</div><div className="mt-2 text-xs leading-5 text-zinc-400">{resource}</div></div>)}
+        ].map(([phase, title, resource]) => <div key={phase} className="rounded-xl border border-white/10 bg-black/20 p-4"><div className="text-[10px] uppercase tracking-[.16em] text-zinc-300 font-medium">{phase}</div><div className="mt-2 text-sm font-semibold text-zinc-100">{title}</div><div className="mt-2 text-xs leading-5 text-zinc-400">{resource}</div></div>)}
       </div>
     </section>
-
-    <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><GraduationCap className="w-5 h-5 text-amber-300" /><div><h2 className="text-xl font-semibold text-zinc-100">Concept index</h2><p className="mt-1 text-sm text-zinc-500">A map of the ideas covered in QubitLab.</p></div></div>
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{CONCEPT_NODES.map((node) => <button key={node.id} onClick={() => onNavigate('curriculum')} className="rounded-xl border border-white/10 bg-black/20 p-4 text-left hover:border-[#dfff3f]/40 transition-colors"><div className="text-[10px] uppercase tracking-[.16em] text-zinc-500">{node.category}</div><div className="mt-2 text-sm font-medium text-zinc-100">{node.title}</div><div className="mt-2 text-xs text-zinc-500">{node.difficulty} · {node.duration} min</div></button>)}</div>
-    </section>
+>
   </div>
 );
