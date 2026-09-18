@@ -144,7 +144,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
                       {idx + 1}
                     </span>
                     <div>
-                      <h4 className="text-xs font-bold text-zinc-200 font-mono">{mod.title}</h4>
+                      <h4 className="text-xs font-bold text-zinc-200 font-mono">{t(mod.title)}</h4>
                       <p className="text-[10px] text-zinc-400 font-mono">
                         {completedCount}/{totalCount} {t('Completed')}
                       </p>
@@ -186,7 +186,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
                                 <Circle className="w-3.5 h-3.5" />
                               )}
                             </button>
-                            <span className="truncate">{sub.title}</span>
+                            <span className="truncate">{t(sub.title)}</span>
                           </div>
 
                           <span className="text-[10px] font-mono text-zinc-500 shrink-0 ml-2">
@@ -210,11 +210,11 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
             <div>
               <div className="flex items-center gap-2 text-xs font-mono text-[#dfff3f] mb-1">
-                <span>{currentModule.title}</span>
+                <span>{t(currentModule.title)}</span>
                 <span>•</span>
-                <span className="capitalize">{currentSubmodule.difficulty}</span>
+                <span className="capitalize">{t(currentSubmodule.difficulty)}</span>
               </div>
-              <h2 className="text-xl font-bold text-white font-mono">{currentSubmodule.title}</h2>
+              <h2 className="text-xl font-bold text-white font-mono">{t(currentSubmodule.title)}</h2>
             </div>
 
             <div className="flex items-center gap-2">
@@ -244,7 +244,7 @@ export const CurriculumExplorer: React.FC<CurriculumExplorerProps> = ({
 
           {/* Lesson content */}
           <div className="p-4 rounded-xl bg-black/70 border border-white/10 text-xs sm:text-sm text-zinc-300 leading-relaxed space-y-3 font-sans">
-            <p>{currentSubmodule.content}</p>
+            <p>{t(currentSubmodule.content)}</p>
 
 {topicFormula && (
               <div className="p-3 rounded-lg bg-black/45 border border-[#dfff3f]/25 font-mono text-xs text-[#e9ff8a] shadow-[inset_0_0_10px_rgba(6,182,212,0.1)]">
