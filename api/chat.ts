@@ -73,20 +73,34 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json().catch(() => ({})) as { messages?: unknown; context?: unknown };
-    const messages = Array.isArray(body.messages)
+    const rawMessages = Array.isArray(body.messages)
       ? body.messages.filter((message: unknown): message is ChatMessage => {
           const item = message as Partial<ChatMessage>;
           return !!item &&
             (item.role === 'user' || item.role === 'assistant') &&
             typeof item.content === 'string' &&
             item.content.trim().length > 0;
-        }).slice(-12).map(({ role, content }) => ({
+        }).map(({ role, content }) => ({
           role,
           content: content.trim().slice(0, 12000),
         }))
       : [];
 
-    if (!messages.length) return json({ error: 'Please send at least one valid message.' }, 400);
+    // Gemini conversations must start with a user turn. Also merge repeated
+    // turns so a stale/retried chat state cannot produce an invalid history.
+    const messages: ChatMessage[] = [];
+    for (const message of rawMessages) {
+      if (!messages.length && message.role === 'assistant') continue;
+      const previous = messages[messages.length - 1];
+      if (previous?.role === message.role) {
+        previous.content = `${previous.content}\n\n${message.content}`.slice(0, 16000);
+      } else {
+        messages.push({ ...message });
+      }
+    }
+
+    const recentMessages = messages.slice(-12);
+    if (!recentMessages.length) return json({ error: 'Please send at least one valid message.' }, 400);
 
     const context = typeof body.context === 'string' ? body.context.slice(0, 4000) : '';
     const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
@@ -98,7 +112,7 @@ export async function POST(request: Request) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: buildSystemPrompt(context) }] },
-          contents: messages.map(({ role, content }) => ({
+          contents: recentMessages.map(({ role, content }) => ({
             role: role === 'assistant' ? 'model' : 'user',
             parts: [{ text: content }],
           })),
@@ -115,11 +129,13 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       console.error('Gemini error:', response.status);
+      const lastUserMessage = [...recentMessages].reverse().find((message) => message.role === 'user');
+      console.error('Gemini request rejected:', response.status, data.error?.message ?? 'unknown error');
       return json({
-        error: typeof data.error?.message === 'string'
-          ? data.error.message
-          : 'Gemini could not complete the request. Please try again.',
-      }, 502);
+        reply: answerLocally(lastUserMessage?.content ?? ''),
+        fallback: true,
+        providerError: typeof data.error?.message === 'string' ? data.error.message : undefined,
+      });
     }
 
     const reply = data.candidates?.[0]?.content?.parts
@@ -127,11 +143,14 @@ export async function POST(request: Request) {
       .join('')
       .trim();
 
-    if (!reply) return json({ error: 'Gemini returned an empty response.' }, 502);
+    if (!reply) {
+      const lastUserMessage = [...recentMessages].reverse().find((message) => message.role === 'user');
+      return json({ reply: answerLocally(lastUserMessage?.content ?? '') });
+    }
     return json({ reply });
   } catch (error) {
     if (request.signal.aborted) return json({ error: 'Request cancelled.' }, 499);
     console.error('QubitLab Gemini function error:', error);
-    return json({ error: 'The Gemini request failed. Please try again.' }, 500);
+    return json({ reply: answerLocally(''), fallback: true }, 200);
   }
 }
