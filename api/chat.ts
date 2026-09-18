@@ -151,6 +151,7 @@ export async function POST(request: Request) {
   } catch (error) {
     if (request.signal.aborted) return json({ error: 'Request cancelled.' }, 499);
     console.error('QubitLab Gemini function error:', error);
-    return json({ reply: answerLocally(''), fallback: true }, 200);
+    const lastUserMessage = [...recentMessages].reverse().find((message) => message.role === 'user');
+    return json({ reply: answerLocally(lastUserMessage?.content ?? ''), fallback: true }, 200);
   }
 }
