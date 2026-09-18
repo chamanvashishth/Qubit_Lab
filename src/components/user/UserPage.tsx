@@ -11,9 +11,9 @@ interface UserPageProps {
 
 export const UserPage: React.FC<UserPageProps> = ({ user, onAuthenticated, onLoggedOut }) => {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
-  const [name, set{t('Name')}] = useState('');
-  const [email, set{t('Email')}] = useState('');
-  const [password, set{t('Password')}] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +42,7 @@ export const UserPage: React.FC<UserPageProps> = ({ user, onAuthenticated, onLog
     event.preventDefault(); setError(''); setLoading(true);
     try {
       const authenticatedUser = mode === 'login' ? await login(email, password) : await signup(name, email, password);
-      onAuthenticated(authenticatedUser); set{t('Password')}('');
+      onAuthenticated(authenticatedUser); setPassword('');
     } catch (e) { setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.'); }
     finally { setLoading(false); }
   };
@@ -60,9 +60,9 @@ export const UserPage: React.FC<UserPageProps> = ({ user, onAuthenticated, onLog
         <button type="button" onClick={async () => { setError(''); setLoading(true); try { await loginWithGoogle(); } catch (e) { setError(e instanceof Error ? e.message : 'Unable to start Google sign-in.'); setLoading(false); } }} disabled={loading} className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-zinc-200 hover:bg-white/10 disabled:opacity-50"><Chrome className="w-4 h-4" /> {t('Continue with Google')}</button>
         <div className="flex items-center gap-3 text-[10px] uppercase tracking-wider text-zinc-600"><span className="h-px flex-1 bg-white/10" />{t('or continue with email')}<span className="h-px flex-1 bg-white/10" /></div>
         <form onSubmit={submit} className="space-y-4">
-          {mode === 'signup' && <label className="block"><span className="block text-xs font-mono uppercase tracking-wider text-zinc-500 mb-2">{t('Name')}</span><div className="relative"><UserRound className="absolute left-3 top-3.5 w-4 h-4 text-zinc-600" /><input value={name} onChange={(e) => set{t('Name')}(e.target.value)} required minLength={2} maxLength={80} autoComplete="name" className="w-full rounded-xl border border-white/10 bg-black/35 pl-10 pr-4 py-3 text-sm text-white outline-none focus:border-[#dfff3f]/50" placeholder="{t('Your name')}" /></div></label>}
-          <label className="block"><span className="block text-xs font-mono uppercase tracking-wider text-zinc-500 mb-2">{t('Email')}</span><div className="relative"><Mail className="absolute left-3 top-3.5 w-4 h-4 text-zinc-600" /><input value={email} onChange={(e) => set{t('Email')}(e.target.value)} required type="email" autoComplete="email" className="w-full rounded-xl border border-white/10 bg-black/35 pl-10 pr-4 py-3 text-sm text-white outline-none focus:border-[#dfff3f]/50" placeholder="you@example.com" /></div></label>
-          <label className="block"><span className="block text-xs font-mono uppercase tracking-wider text-zinc-500 mb-2">{t('Password')}</span><div className="relative"><Lock className="absolute left-3 top-3.5 w-4 h-4 text-zinc-600" /><input value={password} onChange={(e) => set{t('Password')}(e.target.value)} required minLength={8} maxLength={128} type="password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} className="w-full rounded-xl border border-white/10 bg-black/35 pl-10 pr-4 py-3 text-sm text-white outline-none focus:border-[#dfff3f]/50" placeholder="{t('At least 8 characters')}" /></div></label>
+          {mode === 'signup' && <label className="block"><span className="block text-xs font-mono uppercase tracking-wider text-zinc-500 mb-2">{t('Name')}</span><div className="relative"><UserRound className="absolute left-3 top-3.5 w-4 h-4 text-zinc-600" /><input value={name} onChange={(e) => setName(e.target.value)} required minLength={2} maxLength={80} autoComplete="name" className="w-full rounded-xl border border-white/10 bg-black/35 pl-10 pr-4 py-3 text-sm text-white outline-none focus:border-[#dfff3f]/50" placeholder={t('Your name')} /></div></label>}
+          <label className="block"><span className="block text-xs font-mono uppercase tracking-wider text-zinc-500 mb-2">{t('Email')}</span><div className="relative"><Mail className="absolute left-3 top-3.5 w-4 h-4 text-zinc-600" /><input value={email} onChange={(e) => setEmail(e.target.value)} required type="email" autoComplete="email" className="w-full rounded-xl border border-white/10 bg-black/35 pl-10 pr-4 py-3 text-sm text-white outline-none focus:border-[#dfff3f]/50" placeholder="you@example.com" /></div></label>
+          <label className="block"><span className="block text-xs font-mono uppercase tracking-wider text-zinc-500 mb-2">{t('Password')}</span><div className="relative"><Lock className="absolute left-3 top-3.5 w-4 h-4 text-zinc-600" /><input value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} maxLength={128} type="password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} className="w-full rounded-xl border border-white/10 bg-black/35 pl-10 pr-4 py-3 text-sm text-white outline-none focus:border-[#dfff3f]/50" placeholder={t('At least 8 characters')} /></div></label>
           {error && <div className="rounded-xl border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-300">{error}</div>}
           <button disabled={loading} className="w-full inline-flex items-center justify-center gap-2 rounded-xl template-button px-4 py-3.5 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all">{loading ? t('Please wait…') : mode === 'login' ? t('Log in') : t('Create account')} {!loading && <ArrowRight className="w-4 h-4" />}</button>
         </form>
