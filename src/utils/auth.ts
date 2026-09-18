@@ -95,6 +95,8 @@ export const login = async (email: string, password: string): Promise<AuthUser> 
   const payload = await apiRequest('/api/auth/login', {
     email: email.trim(),
     password,
+    supabaseUrl,
+    supabaseKey: supabasePublishableKey,
   });
   if (!payload.user || !payload.session?.access_token) {
     throw new Error('Unable to sign in.');
@@ -108,6 +110,8 @@ export const signup = async (name: string, email: string, password: string): Pro
     name: name.trim(),
     email: email.trim(),
     password,
+    supabaseUrl,
+    supabaseKey: supabasePublishableKey,
   });
   if (!payload.user) throw new Error('Unable to create your account.');
   if (!payload.session?.access_token) {
@@ -124,7 +128,7 @@ export const logout = async () => {
 };
 
 export const loginWithGoogle = async () => {
-  const payload = await apiRequest('/api/auth/google', { redirectTo: window.location.origin });
+  const payload = await apiRequest('/api/auth/google', { redirectTo: window.location.origin, supabaseUrl, supabaseKey: supabasePublishableKey });
   if (!payload.url) throw new Error('Unable to start Google sign-in.');
   window.location.assign(payload.url);
 };
