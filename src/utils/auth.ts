@@ -1,3 +1,5 @@
+import { supabaseUrl, supabasePublishableKey } from '../lib/supabase';
+
 export interface AuthUser {
   id: string;
   email: string;
@@ -51,6 +53,8 @@ const apiRequest = async (path: string, body?: Record<string, unknown>) => {
     headers: {
       'Content-Type': 'application/json',
       ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+      ...(supabaseUrl ? { 'x-supabase-url': supabaseUrl } : {}),
+      ...(supabasePublishableKey ? { 'x-supabase-key': supabasePublishableKey } : {}),
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
