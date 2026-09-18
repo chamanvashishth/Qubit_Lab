@@ -47,6 +47,46 @@ const buildSystemPrompt = (context: string) => [
   context ? `Current QubitLab context:\n${context}` : '',
 ].filter(Boolean).join('\n\n');
 
+
+const callAiGateway = async (messages: ChatMessage[], context: string): Promise<string | null> => {
+  const gatewayKey = process.env.AI_GATEWAY_API_KEY;
+  if (!gatewayKey || !messages.length) return null;
+
+  try {
+    const model = process.env.AI_GATEWAY_MODEL || 'google/gemini-2.5-flash';
+    const response = await fetch('https://ai-gateway.vercel.sh/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${gatewayKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: buildSystemPrompt(context) },
+          ...messages.map(({ role, content }) => ({ role, content })),
+        ],
+        temperature: 0.35,
+        max_tokens: 1400,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('AI Gateway error:', response.status);
+      return null;
+    }
+
+    const data = await response.json().catch(() => ({})) as {
+      choices?: Array<{ message?: { content?: unknown } }>;
+    };
+    const reply = data.choices?.[0]?.message?.content;
+    return typeof reply === 'string' && reply.trim() ? reply.trim() : null;
+  } catch (error) {
+    console.error('AI Gateway fallback error:', error);
+    return null;
+  }
+};
+
 export async function OPTIONS() {
   return new Response(null, {
     status: 204,
@@ -62,13 +102,22 @@ export async function OPTIONS() {
 export async function POST(request: Request) {
   const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
   if (!apiKey) {
-    const body = await request.json().catch(() => ({})) as { messages?: unknown };
-    const messages = Array.isArray(body.messages) ? body.messages : [];
-    const lastUserMessage = [...messages].reverse().find((message: unknown) => {
-      const item = message as Partial<ChatMessage>;
-      return item?.role === 'user' && typeof item.content === 'string';
-    }) as ChatMessage | undefined;
-    return json({ reply: answerLocally(lastUserMessage?.content ?? '') });
+    const body = await request.json().catch(() => ({})) as { messages?: unknown; context?: unknown };
+    const rawMessages = Array.isArray(body.messages)
+      ? body.messages.filter((message: unknown): message is ChatMessage => {
+          const item = message as Partial<ChatMessage>;
+          return !!item &&
+            (item.role === 'user' || item.role === 'assistant') &&
+            typeof item.content === 'string' &&
+            item.content.trim().length > 0;
+        }).map(({ role, content }) => ({ role, content: content.trim().slice(0, 12000) }))
+      : [];
+    const context = typeof body.context === 'string' ? body.context.slice(0, 4000) : '';
+    const messages = rawMessages.slice(-12);
+    const gatewayReply = await callAiGateway(messages, context);
+    if (gatewayReply) return json({ reply: gatewayReply, provider: 'vercel-ai-gateway' });
+    const lastUserMessage = [...messages].reverse().find((message) => message.role === 'user');
+    return json({ reply: answerLocally(lastUserMessage?.content ?? ''), fallback: true });
   }
 
   let recentMessages: ChatMessage[] = [];
@@ -133,10 +182,11 @@ export async function POST(request: Request) {
       console.error('Gemini error:', response.status);
       const lastUserMessage = [...recentMessages].reverse().find((message) => message.role === 'user');
       console.error('Gemini request rejected:', response.status, data.error?.message ?? 'unknown error');
+      const gatewayReply = await callAiGateway(recentMessages, context);
+      if (gatewayReply) return json({ reply: gatewayReply, provider: 'vercel-ai-gateway' });
       return json({
         reply: answerLocally(lastUserMessage?.content ?? ''),
         fallback: true,
-        providerError: typeof data.error?.message === 'string' ? data.error.message : undefined,
       });
     }
 
@@ -153,6 +203,8 @@ export async function POST(request: Request) {
   } catch (error) {
     if (request.signal.aborted) return json({ error: 'Request cancelled.' }, 499);
     console.error('QubitLab Gemini function error:', error);
+    const gatewayReply = await callAiGateway(recentMessages, context);
+    if (gatewayReply) return json({ reply: gatewayReply, provider: 'vercel-ai-gateway' });
     const lastUserMessage = [...recentMessages].reverse().find((message) => message.role === 'user');
     return json({ reply: answerLocally(lastUserMessage?.content ?? ''), fallback: true }, 200);
   }
