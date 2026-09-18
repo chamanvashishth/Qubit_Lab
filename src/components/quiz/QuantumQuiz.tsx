@@ -36,7 +36,7 @@ const emptyAttempt: QuizAttempt = {
   adaptiveLevel: 1,
 };
 
-const storageKey = (id: string) => `qubitlab-quiz-attempt:${id}`;
+const storageKey = (id: string) => `qubitlab-quiz-attempt:v2:${id}`;
 
 const loadAttempt = (id: string): QuizAttempt => {
   try {
@@ -65,7 +65,9 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
       ...emptyAttempt,
       ...saved,
       answeredIndices: Array.isArray(saved.answeredIndices) ? saved.answeredIndices : [],
-      adaptiveLevel: saved.adaptiveLevel === 2 || saved.adaptiveLevel === 3 ? saved.adaptiveLevel : 1,
+      adaptiveLevel: saved.adaptiveLevel === 2 || saved.adaptiveLevel === 3
+        ? saved.adaptiveLevel
+        : (difficultyLevel === 2 || difficultyLevel === 3 ? difficultyLevel : 1),
     };
   });
 
@@ -75,9 +77,11 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
       ...emptyAttempt,
       ...saved,
       answeredIndices: Array.isArray(saved.answeredIndices) ? saved.answeredIndices : [],
-      adaptiveLevel: saved.adaptiveLevel === 2 || saved.adaptiveLevel === 3 ? saved.adaptiveLevel : 1,
+      adaptiveLevel: saved.adaptiveLevel === 2 || saved.adaptiveLevel === 3
+        ? saved.adaptiveLevel
+        : (difficultyLevel === 2 || difficultyLevel === 3 ? difficultyLevel : 1),
     });
-  }, [quizId]);
+  }, [quizId, difficultyLevel]);
 
   useEffect(() => {
     if (!quizId || typeof window === 'undefined') return;
@@ -214,8 +218,13 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
           </div>
         </div>
         <div className="text-right">
-          <div className="text-xs font-mono text-[#e9ff8a]">Question {currentIndex + 1}/{questions.length}</div>
-          <div className="text-xs text-zinc-300">Score: {attempt.score} · Adaptive Level {attempt.adaptiveLevel}</div>
+          <div className="text-xs font-mono text-[#e9ff8a]">Question {attempt.answeredIndices.length + (attempt.isAnswered ? 0 : 1)}/{questions.length}</div>
+          <div className="flex items-center justify-end gap-2 mt-1">
+            <span className="text-xs text-zinc-300">Score: {attempt.score}</span>
+            <span className="text-[10px] font-semibold px-2 py-1 rounded border border-[#dfff3f]/20 bg-[#dfff3f]/10 text-[#e9ff8a]">
+              {attempt.adaptiveLevel === 1 ? 'Beginner' : attempt.adaptiveLevel === 2 ? 'Intermediate' : 'Advanced'}
+            </span>
+          </div>
         </div>
       </div>
 
