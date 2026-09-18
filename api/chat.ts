@@ -121,6 +121,7 @@ export async function POST(request: Request) {
   }
 
   let recentMessages: ChatMessage[] = [];
+  let requestContext = '';
 
   try {
     const body = await request.json().catch(() => ({})) as { messages?: unknown; context?: unknown };
@@ -153,7 +154,8 @@ export async function POST(request: Request) {
     recentMessages = messages.slice(-12);
     if (!recentMessages.length) return json({ error: 'Please send at least one valid message.' }, 400);
 
-    const context = typeof body.context === 'string' ? body.context.slice(0, 4000) : '';
+    requestContext = typeof body.context === 'string' ? body.context.slice(0, 4000) : '';
+    const context = requestContext;
     const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
     const response = await fetch(
@@ -182,7 +184,7 @@ export async function POST(request: Request) {
       console.error('Gemini error:', response.status);
       const lastUserMessage = [...recentMessages].reverse().find((message) => message.role === 'user');
       console.error('Gemini request rejected:', response.status, data.error?.message ?? 'unknown error');
-      const gatewayReply = await callAiGateway(recentMessages, context);
+      const gatewayReply = await callAiGateway(recentMessages, requestContext);
       if (gatewayReply) return json({ reply: gatewayReply, provider: 'vercel-ai-gateway' });
       return json({
         reply: answerLocally(lastUserMessage?.content ?? ''),
