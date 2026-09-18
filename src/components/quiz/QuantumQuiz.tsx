@@ -140,8 +140,10 @@ export const QuantumQuiz: React.FC<QuantumQuizProps> = ({
       return;
     }
 
-    updateAttempt({ isFinished: true });
-    onCompleteQuiz?.(attempt.score, questions.length, mock.id);
+    const finalCorrect = attempt.selectedOption === correctIndex;
+    const finalScore = attempt.score + (finalCorrect ? 1 : 0);
+    updateAttempt({ isFinished: true, score: finalScore });
+    onCompleteQuiz?.(finalScore, questions.length, mock.id);
   };
 
   const handleRestart = () => {
