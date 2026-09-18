@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { getSupabase } from '../lib/supabase';
 
 export interface AuthUser {
   id: string;
@@ -25,33 +25,36 @@ const mapUser = (user: SupabaseUser): AuthUser => ({
 });
 
 export const getCurrentUser = async (): Promise<AuthUser | null> => {
-  const { data, error } = await supabase.auth.getUser();
+  try {
+    const supabase = await getSupabase();
+    const { data, error } = await supabase.auth.getUser();
 
-  if (error || !data.user) {
+    if (error || !data.user) return null;
+    return mapUser(data.user);
+  } catch {
     return null;
   }
-
-  return mapUser(data.user);
 };
 
 export const login = async (email: string, password: string): Promise<AuthUser> => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase.auth.signInWithPassword({
     email: email.trim(),
     password,
   });
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  if (!data.user) {
-    throw new Error('Unable to sign in.');
-  }
+  if (error) throw new Error(error.message);
+  if (!data.user) throw new Error('Unable to sign in.');
 
   return mapUser(data.user);
 };
 
-export const signup = async (name: string, email: string, password: string): Promise<AuthUser> => {
+export const signup = async (
+  name: string,
+  email: string,
+  password: string
+): Promise<AuthUser> => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase.auth.signUp({
     email: email.trim(),
     password,
@@ -60,32 +63,30 @@ export const signup = async (name: string, email: string, password: string): Pro
     },
   });
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  if (!data.user) {
-    throw new Error('Unable to create your account.');
-  }
+  if (error) throw new Error(error.message);
+  if (!data.user) throw new Error('Unable to create your account.');
 
   if (!data.session) {
-    throw new Error('Account created. Check your email to confirm your account, then sign in.');
+    throw new Error(
+      'Account created. Check your email to confirm your account, then sign in.'
+    );
   }
 
   return mapUser(data.user);
 };
 
-export const getAccountFromBackend = async (): Promise<AuthUser | null> => getCurrentUser();
+export const getAccountFromBackend = async (): Promise<AuthUser | null> =>
+  getCurrentUser();
 
 export const logout = async () => {
+  const supabase = await getSupabase();
   const { error } = await supabase.auth.signOut();
 
-  if (error) {
-    throw new Error(error.message);
-  }
+  if (error) throw new Error(error.message);
 };
 
 export const loginWithGoogle = async () => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
@@ -93,13 +94,8 @@ export const loginWithGoogle = async () => {
     },
   });
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  if (!data.url) {
-    throw new Error('Unable to start Google sign-in.');
-  }
+  if (error) throw new Error(error.message);
+  if (!data.url) throw new Error('Unable to start Google sign-in.');
 
   window.location.assign(data.url);
 };
