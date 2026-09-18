@@ -40,7 +40,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>(() => readNavTab());
   const [language, setLanguage] = useState<Language>(() => readSession('qubitlab-language') === 'hi' ? 'hi' : 'en');
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
-  useEffect(() => { applyLanguage(language); }, [language]);
+  // Apply the selected language during render so every t() call sees the new language immediately.\n  applyLanguage(language);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [aiChatContext, setAiChatContext] = useState('');
