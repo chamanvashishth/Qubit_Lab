@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { BlochSphere3D } from './BlochSphere3D';
 import { BlochState } from '../../types/quantum';
+import { t } from '../../utils/i18n';
 
 interface BlochPlaygroundProps {
   onAskAI?: (prompt: string) => void;
@@ -108,7 +109,7 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
           </div>
           <div>
             <h3 className="text-base font-bold text-zinc-100 flex items-center gap-2">
-              Interactive Bloch Sphere
+              {t('Interactive Bloch Sphere')}
               <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#dfff3f]/15 text-[#e9ff8a]">
                 SU(2) Qubit Geometry
               </span>
@@ -125,7 +126,7 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
             className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium text-xs flex items-center gap-1.5 shadow-md transition-all active:scale-95"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            Explain Geometry
+            {t('Explain Geometry')}
           </button>
         )}
       </div>
@@ -136,7 +137,7 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
           <div className="w-full flex items-center justify-between mb-4">
             <span className="text-xs font-mono font-bold text-[#dfff3f] flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-              3D Bloch Sphere
+              {t('3D Bloch Sphere')}
             </span>
             <span className="text-[11px] font-mono text-zinc-400">
               Left Click + Drag to Orbit • Scroll to Zoom
@@ -154,7 +155,7 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
           {/* Quick Presets */}
           <div className="w-full mt-6 pt-4 border-t border-white/10">
             <span className="text-xs font-mono text-zinc-400 block mb-2 font-semibold">
-              Canonical Basis State Presets:
+              {t('Canonical Basis State Presets:')}
             </span>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {[
@@ -183,7 +184,7 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
           <div className="bg-[#080d1e] border border-[#dfff3f]/20 rounded-2xl p-5 shadow-xl shadow-black/40 space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#dfff3f] font-mono flex items-center gap-1.5">
               <Sliders className="w-3.5 h-3.5" />
-              Spherical Polar Angle Coordinates
+              {t('Spherical Polar Angle Coordinates')}
             </h4>
 
             {/* Theta slider */}
@@ -228,7 +229,7 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
           {/* Unitary Gate Rotation Triggers */}
           <div className="bg-[#080d1e] border border-[#dfff3f]/20 rounded-2xl p-5 shadow-xl shadow-black/40 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-300 font-mono">
-              Apply Unitary Rotation Gates
+              {t('Apply Unitary Rotation Gates')}
             </h4>
             <p className="text-[11px] text-zinc-400">
               Click a gate to perform an instantaneous physical rotation on the Bloch vector:
@@ -256,7 +257,7 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
           {/* Vector & Density Matrix Details */}
           <div className="bg-[#080d1e] border border-[#dfff3f]/20 rounded-2xl p-5 shadow-xl shadow-black/40 font-mono text-xs space-y-2.5">
             <span className="text-xs font-bold uppercase tracking-wider text-[#dfff3f] block font-mono">
-              Cartesian Vector Coordinates (x, y, z)
+              {t('Cartesian Vector Coordinates (x, y, z)')}
             </span>
 
             <div className="grid grid-cols-3 gap-2">
@@ -275,7 +276,7 @@ export const BlochPlayground: React.FC<BlochPlaygroundProps> = ({ onAskAI }) => 
             </div>
 
             <div className="p-3 rounded-lg bg-black/55 border border-white/10 flex justify-between">
-              <span className="text-zinc-400">Measurement Probabilities:</span>
+              <span className="text-zinc-400">{t('Measurement Probabilities:')}</span>
               <span className="text-zinc-200">
                 P(0)={(prob0 * 100).toFixed(1)}% | P(1)={(prob1 * 100).toFixed(1)}%
               </span>
