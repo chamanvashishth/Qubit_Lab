@@ -7,27 +7,34 @@ import { defineConfig, loadEnv } from 'vite';
 const rootDir = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, rootDir, '');
-  const supabaseUrl = env.SUPABASE_URL ?? env.VITE_SUPABASE_URL;
+  const fileEnv = loadEnv(mode, rootDir, '');
+  const supabaseUrl =
+    process.env.SUPABASE_URL ??
+    process.env.VITE_SUPABASE_URL ??
+    fileEnv.SUPABASE_URL ??
+    fileEnv.VITE_SUPABASE_URL;
   const supabasePublishableKey =
-    env.SUPABASE_PUBLISHABLE_KEY ?? env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    process.env.SUPABASE_PUBLISHABLE_KEY ??
+    process.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+    fileEnv.SUPABASE_PUBLISHABLE_KEY ??
+    fileEnv.VITE_SUPABASE_PUBLISHABLE_KEY;
 
   return {
-  root: rootDir,
-  base: '/',
-  plugins: [react(), tailwindcss()],
-  define: {
-    'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(supabaseUrl),
-    'import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY': JSON.stringify(supabasePublishableKey),
-  },
-  resolve: {
-    alias: {
-      '@': resolve(rootDir, 'src'),
+    root: rootDir,
+    base: '/',
+    plugins: [react(), tailwindcss()],
+    define: {
+      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(supabaseUrl),
+      'import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY': JSON.stringify(supabasePublishableKey),
     },
-  },
-  server: {
-    hmr: process.env.DISABLE_HMR !== 'true',
-    watch: process.env.DISABLE_HMR === 'true' ? null : {},
-  },
+    resolve: {
+      alias: {
+        '@': resolve(rootDir, 'src'),
+      },
+    },
+    server: {
+      hmr: process.env.DISABLE_HMR !== 'true',
+      watch: process.env.DISABLE_HMR === 'true' ? null : {},
+    },
   };
 });
