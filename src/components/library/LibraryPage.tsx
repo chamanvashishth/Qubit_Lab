@@ -134,6 +134,5 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => (
         ].map(([phase, title, resource]) => <div key={phase} className="rounded-xl border border-white/10 bg-black/20 p-4"><div className="text-[10px] uppercase tracking-[.16em] text-zinc-300 font-medium">{phase}</div><div className="mt-2 text-sm font-semibold text-zinc-100">{title}</div><div className="mt-2 text-xs leading-5 text-zinc-400">{resource}</div></div>)}
       </div>
     </section>
->
   </div>
 );
