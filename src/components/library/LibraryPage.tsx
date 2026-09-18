@@ -57,16 +57,16 @@ const researchAndMedia = [
 ];
 
 const ResourceLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
-  <a href={href} target="_blank" rel="noreferrer" onClick={(event) => event.stopPropagation()} className="inline-flex items-center gap-1.5 text-xs text-[#e9ff8a] hover:text-white transition-colors">
+  <a href={href} target="_blank" rel="noreferrer" onClick={(event) => event.stopPropagation()} className="inline-flex items-center gap-1.5 text-sm text-[#e9ff8a] hover:text-white transition-colors">
     {children}<ExternalLink className="w-3.5 h-3.5" />
   </a>
 );
 
 export const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => (
-  <div className="space-y-10 py-7">
+  <div className="space-y-10 py-7 text-zinc-200">
     <section className="library-hero rounded-[2rem] p-7 sm:p-12">
       <div className="max-w-3xl">
-        <div className="text-xs uppercase tracking-[.2em] text-slate-600 font-semibold">QubitLab Resource Library</div>
+        <div className="text-sm uppercase tracking-[.2em] text-slate-600 font-semibold">QubitLab Resource Library</div>
         <h1 className="mt-3 text-4xl sm:text-6xl font-semibold tracking-tight text-slate-950">Learn quantum computing beyond the simulator.</h1>
         <p className="mt-5 max-w-2xl text-base leading-7 text-slate-700">A curated collection of open learning resources, university lectures, researchers, research references, articles and talks mapped to the QubitLab learning journey.</p>
       </div>
@@ -74,54 +74,54 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => (
 
     <section>
       <div className="flex items-end justify-between gap-5">
-        <div><h2 className="text-2xl font-semibold text-zinc-100">Study spaces</h2><p className="mt-2 text-sm text-zinc-300">Use QubitLab tools to learn, experiment and practice.</p></div>
+        <div><h2 className="text-2xl font-semibold text-white">Study spaces</h2><p className="mt-2 text-sm text-zinc-200">Use QubitLab tools to learn, experiment and practice.</p></div>
         <button onClick={() => onNavigate('quiz')} className="hidden sm:inline-flex items-center gap-2 text-sm text-[#e9ff8a] hover:text-white">Practice a mock <ChevronRight className="w-4 h-4" /></button>
       </div>
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         {tools.map(({ title, description, tab, icon: Icon }) => <button key={title} onClick={() => onNavigate(tab)} className="library-card group text-left p-6 rounded-2xl">
-          <Icon className="w-5 h-5 text-[#e9ff8a]" /><h3 className="mt-8 text-lg font-semibold text-zinc-100">{title}</h3>
-          <p className="mt-2 text-sm leading-6 text-zinc-300">{description}</p><span className="mt-5 inline-flex items-center gap-1 text-xs text-zinc-300 group-hover:text-[#e9ff8a]">Open <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
+          <Icon className="w-5 h-5 text-[#e9ff8a]" /><h3 className="mt-8 text-lg font-semibold text-white">{title}</h3>
+          <p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><span className="mt-5 inline-flex items-center gap-1 text-sm text-zinc-200 group-hover:text-[#e9ff8a]">Open <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
         </button>)}
       </div>
     </section>
 
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><BookOpen className="w-5 h-5 text-amber-300" /><div><h2 className="text-xl font-semibold text-zinc-100">Free eBooks & Learning Resources</h2><p className="mt-1 text-sm text-zinc-300">Beginner to advanced resources from the supplied QubitLab resource guide.</p></div></div>
+      <div className="flex items-center gap-3"><BookOpen className="w-5 h-5 text-amber-300" /><div><h2 className="text-xl font-semibold text-white">Free eBooks & Learning Resources</h2><p className="mt-1 text-sm text-zinc-200">Beginner to advanced resources from the supplied QubitLab resource guide.</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {ebooks.map(([title, level, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5 hover:border-[#dfff3f]/30 transition-colors"><div className="text-xs uppercase tracking-[.16em] text-zinc-300 font-medium">{level}</div><h3 className="mt-2 text-base font-semibold text-zinc-100">{title}</h3><p className="mt-2 text-sm leading-6 text-zinc-300">{description}</p><div className="mt-4"><ResourceLink href={href}>Open official resource</ResourceLink></div></article>)}
+        {ebooks.map(([title, level, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5 hover:border-[#dfff3f]/30 transition-colors"><div className="text-sm uppercase tracking-[.12em] text-zinc-200 font-medium">{level}</div><h3 className="mt-2 text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>Open official resource</ResourceLink></div></article>)}
       </div>
     </section>
 
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><UserRound className="w-5 h-5 text-sky-300" /><div><h2 className="text-xl font-semibold text-zinc-100">Researchers & Direct Resources</h2><p className="mt-1 text-sm text-zinc-300">Professor pages, courses, notes and research hubs from the supplied guide.</p></div></div>
+      <div className="flex items-center gap-3"><UserRound className="w-5 h-5 text-sky-300" /><div><h2 className="text-xl font-semibold text-white">Researchers & Direct Resources</h2><p className="mt-1 text-sm text-zinc-200">Professor pages, courses, notes and research hubs from the supplied guide.</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {researchers.map(([name, institution, specialty, href, secondaryLabel, secondaryHref]) => <article key={name} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-zinc-100">{name}</h3><div className="mt-1 text-xs uppercase tracking-[.16em] text-zinc-300 font-medium">{institution}</div><p className="mt-3 text-sm leading-6 text-zinc-300">{specialty}</p><div className="mt-4 flex flex-wrap gap-4"><ResourceLink href={href}>Open resource</ResourceLink>{secondaryHref && <ResourceLink href={secondaryHref}>{secondaryLabel}</ResourceLink>}</div></article>)}
+        {researchers.map(([name, institution, specialty, href, secondaryLabel, secondaryHref]) => <article key={name} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-white">{name}</h3><div className="mt-1 text-sm uppercase tracking-[.12em] text-zinc-200 font-medium">{institution}</div><p className="mt-3 text-[15px] leading-7 text-zinc-200">{specialty}</p><div className="mt-4 flex flex-wrap gap-4"><ResourceLink href={href}>Open resource</ResourceLink>{secondaryHref && <ResourceLink href={secondaryHref}>{secondaryLabel}</ResourceLink>}</div></article>)}
       </div>
     </section>
 
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><GraduationCap className="w-5 h-5 text-violet-300" /><div><h2 className="text-xl font-semibold text-zinc-100">University Lecture Series</h2><p className="mt-1 text-sm text-zinc-300">Use these alongside the QubitLab curriculum for deeper study.</p></div></div>
+      <div className="flex items-center gap-3"><GraduationCap className="w-5 h-5 text-violet-300" /><div><h2 className="text-xl font-semibold text-white">University Lecture Series</h2><p className="mt-1 text-sm text-zinc-200">Use these alongside the QubitLab curriculum for deeper study.</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {lectureSeries.map(([title, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-zinc-100">{title}</h3><p className="mt-2 text-sm leading-6 text-zinc-300">{description}</p><div className="mt-4"><ResourceLink href={href}>Open lectures</ResourceLink></div></article>)}
+        {lectureSeries.map(([title, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>Open lectures</ResourceLink></div></article>)}
       </div>
     </section>
 
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><FileText className="w-5 h-5 text-emerald-300" /><div><h2 className="text-xl font-semibold text-zinc-100">Research & Reference</h2><p className="mt-1 text-sm text-zinc-300">Research and reference material explicitly linked in the supplied guide.</p></div></div>
+      <div className="flex items-center gap-3"><FileText className="w-5 h-5 text-emerald-300" /><div><h2 className="text-xl font-semibold text-white">Research & Reference</h2><p className="mt-1 text-sm text-zinc-200">Research and reference material explicitly linked in the supplied guide.</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {researchAndMedia.filter(([title]) => !title.includes('Quantum Frontiers') && !title.includes('Aaronson')).map(([title, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-zinc-100">{title}</h3><p className="mt-2 text-sm leading-6 text-zinc-300">{description}</p><div className="mt-4"><ResourceLink href={href}>Open reference</ResourceLink></div></article>)}
+        {researchAndMedia.filter(([title]) => !title.includes('Quantum Frontiers') && !title.includes('Aaronson')).map(([title, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>Open reference</ResourceLink></div></article>)}
       </div>
     </section>
 
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><Newspaper className="w-5 h-5 text-orange-300" /><div><h2 className="text-xl font-semibold text-zinc-100">Articles, Blogs & Talks</h2><p className="mt-1 text-sm text-zinc-300">Accessible material for staying connected with the quantum-computing community.</p></div></div>
+      <div className="flex items-center gap-3"><Newspaper className="w-5 h-5 text-orange-300" /><div><h2 className="text-xl font-semibold text-white">Articles, Blogs & Talks</h2><p className="mt-1 text-sm text-zinc-200">Accessible material for staying connected with the quantum-computing community.</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {researchAndMedia.filter(([title]) => title.includes('Quantum Frontiers') || title.includes('Aaronson') || title.includes('MIT OpenCourseWare')).map(([title, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-zinc-100">{title}</h3><p className="mt-2 text-sm leading-6 text-zinc-300">{description}</p><div className="mt-4"><ResourceLink href={href}>Open resource</ResourceLink></div></article>)}
+        {researchAndMedia.filter(([title]) => title.includes('Quantum Frontiers') || title.includes('Aaronson') || title.includes('MIT OpenCourseWare')).map(([title, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>Open resource</ResourceLink></div></article>)}
       </div>
     </section>
 
     <section className="rounded-2xl border border-[#dfff3f]/15 bg-[#dfff3f]/[.03] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><GraduationCap className="w-5 h-5 text-[#e9ff8a]" /><div><h2 className="text-xl font-semibold text-zinc-100">Recommended QubitLab Learning Path</h2><p className="mt-1 text-sm text-zinc-300">Follow the order in the supplied resource guide.</p></div></div>
+      <div className="flex items-center gap-3"><GraduationCap className="w-5 h-5 text-[#e9ff8a]" /><div><h2 className="text-xl font-semibold text-white">Recommended QubitLab Learning Path</h2><p className="mt-1 text-sm text-zinc-200">Follow the order in the supplied resource guide.</p></div></div>
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {[
           ['Phase 1', 'Foundation', 'Quantum Computing for the Quantum Curious'],
@@ -130,7 +130,7 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => (
           ['Phase 4', 'Algorithms', 'IBM Quantum Learning — Fundamentals of Quantum Algorithms'],
           ['Phase 5', 'AI + Quantum', 'Quantum Computing from Hopfield Nets'],
           ['Phase 6', 'Advanced theory', 'MIT OpenCourseWare + Introduction to Quantum Computation and Information'],
-        ].map(([phase, title, resource]) => <div key={phase} className="rounded-xl border border-white/10 bg-black/20 p-4"><div className="text-xs uppercase tracking-[.16em] text-zinc-300 font-medium">{phase}</div><div className="mt-2 text-base font-semibold text-zinc-100">{title}</div><div className="mt-2 text-sm leading-6 text-zinc-300">{resource}</div></div>)}
+        ].map(([phase, title, resource]) => <div key={phase} className="rounded-xl border border-white/10 bg-black/20 p-4"><div className="text-sm uppercase tracking-[.12em] text-zinc-200 font-medium">{phase}</div><div className="mt-2 text-base font-semibold text-white">{title}</div><div className="mt-2 text-[15px] leading-7 text-zinc-200">{resource}</div></div>)}
       </div>
     </section>
   </div>
