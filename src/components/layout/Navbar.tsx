@@ -16,7 +16,7 @@ interface NavbarProps {
 
 const labels = {
   en: { home: 'Home', learn: 'Learn', composer: 'Composer', bloch: 'Bloch', code: 'Code', practice: 'Practice', library: 'Library', tutor: 'Ask tutor', account: 'Account' },
-  hi: { home: 'होम', learn: 'सीखें', composer: 'सर्किट', bloch: 'ब्लॉक', code: 'कोड', practice: 'अभ्यास', library: 'लाइब्रेरी', tutor: 'ट्यूटर से पूछें', account: 'खाता' },
+  hi: { home: 'होम', learn: 'सीखें', composer: 'सर्किट', bloch: 'ब्लोख', code: 'कोड', practice: 'अभ्यास', library: 'लाइब्रेरी', tutor: 'ट्यूटर से पूछें', account: 'खाता' },
 };
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, onSelectTab, onOpenAI, user, language, onLanguageChange }) => {
