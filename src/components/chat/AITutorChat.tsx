@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Send, User, X, RefreshCw, Check, Copy, Brain, Lightbulb } from 'lucide-react';
 import { ChatMessage } from '../../types/quantum';
 import { answerLocally } from '../../utils/localTutor';
+import { t } from '../../utils/i18n';
 
 interface AITutorChatProps { currentContext?: string; isOpen: boolean; onClose: () => void; externalPrompt?: string; }
 
@@ -58,7 +59,7 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
   };
 
   const copyMessage = async (id: string, text: string) => { try { await navigator.clipboard.writeText(text); setCopiedId(id); window.setTimeout(() => setCopiedId(null), 1600); } catch { /* optional */ } };
-  const resetChat = () => { setMessages([{ id: `welcome-${Date.now()}`, role: 'assistant', content: 'Fresh start. What quantum concept should we work through?', timestamp: Date.now() }]); setInput(''); };
+  const resetChat = () => { setMessages([{ id: `welcome-${Date.now()}`, role: 'assistant', content: '{t('Fresh start. What quantum concept should we work through?')}', timestamp: Date.now() }]); setInput(''); };
 
   if (!isOpen) return null;
   return <div className="fixed inset-0 z-[70] pointer-events-none">
@@ -67,10 +68,10 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
       <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-zinc-100">QubitLab Guide</span>
+            <span className="text-sm font-semibold text-zinc-100">{t('QubitLab Guide')}</span>
             <span className="w-1.5 h-1.5 rounded-full bg-lime-300" aria-hidden="true" />
           </div>
-          <div className="text-xs text-zinc-500 truncate">Interactive quantum tutor</div>
+          <div className="text-xs text-zinc-500 truncate">{t('Interactive quantum tutor')}</div>
         </div>
         <div className="flex items-center gap-1"><button onClick={resetChat} className="p-2 rounded-lg hover:bg-white/5 text-zinc-500 hover:text-zinc-200" aria-label="Reset conversation"><RefreshCw className="w-4 h-4" /></button><button onClick={onClose} className="p-2 rounded-lg hover:bg-white/5 text-zinc-500 hover:text-zinc-200" aria-label="Close guide"><X className="w-4 h-4" /></button></div>
       </div>
@@ -79,11 +80,11 @@ export const AITutorChat: React.FC<AITutorChatProps> = ({ currentContext, isOpen
           <div className={`max-w-[86%] rounded-xl px-3.5 py-3 text-sm leading-6 ${message.role === 'user' ? 'bg-[#dfff3f]/10 border border-[#dfff3f]/20 text-zinc-200' : 'bg-white/[.035] border border-white/10 text-zinc-300'}`}><div className="whitespace-pre-wrap">{message.content}</div>{message.role === 'assistant' && <div className="flex justify-end mt-2"><button onClick={() => copyMessage(message.id, message.content)} className="text-zinc-600 hover:text-zinc-300" aria-label="Copy response">{copiedId === message.id ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}</button></div>}</div>
           {message.role === 'user' && <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-1"><User className="w-3.5 h-3.5 text-zinc-500" /></div>}
         </div>)}
-        {isLoading && <div className="flex items-center"><div className="rounded-xl bg-white/[.035] border border-white/10 px-3.5 py-3 text-xs text-zinc-500 flex items-center gap-2"><Brain className="w-3.5 h-3.5 text-[#dfff3f]" /><span>Thinking through the question</span><span className="flex gap-1"><i className="w-1 h-1 rounded-full bg-zinc-500 animate-pulse" /><i className="w-1 h-1 rounded-full bg-zinc-500 animate-pulse [animation-delay:150ms]" /><i className="w-1 h-1 rounded-full bg-zinc-500 animate-pulse [animation-delay:300ms]" /></span></div></div>}
+        {isLoading && <div className="flex items-center"><div className="rounded-xl bg-white/[.035] border border-white/10 px-3.5 py-3 text-xs text-zinc-500 flex items-center gap-2"><Brain className="w-3.5 h-3.5 text-[#dfff3f]" /><span>{t('Thinking through the question')}</span><span className="flex gap-1"><i className="w-1 h-1 rounded-full bg-zinc-500 animate-pulse" /><i className="w-1 h-1 rounded-full bg-zinc-500 animate-pulse [animation-delay:150ms]" /><i className="w-1 h-1 rounded-full bg-zinc-500 animate-pulse [animation-delay:300ms]" /></span></div></div>}
         <div ref={messagesEndRef} />
       </div>
       {messages.length === 1 && <div className="px-4 pb-2 flex gap-2 overflow-x-auto responsive-scroll-x">{DEFAULT_SUGGESTIONS.map((suggestion) => <button key={suggestion} onClick={() => sendMessage(suggestion)} className="shrink-0 rounded-lg border border-white/10 bg-white/[.025] px-2.5 py-1.5 text-[10px] text-zinc-500 hover:text-zinc-200 hover:border-white/20"><Lightbulb className="inline w-3 h-3 mr-1" />{suggestion}</button>)}</div>}
-      <form onSubmit={(e) => { e.preventDefault(); void sendMessage(input); }} className="p-3 border-t border-white/10"><div className="flex items-end gap-2 rounded-xl bg-black/30 border border-white/10 p-2 focus-within:border-[#dfff3f]/30"><textarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void sendMessage(input); } }} placeholder="Ask about quantum computing..." rows={2} className="flex-1 resize-none bg-transparent outline-none text-sm text-zinc-200 placeholder:text-zinc-700 px-1.5 py-1" disabled={isLoading} aria-label="Message the QubitLab guide" /><button type="submit" disabled={isLoading || !input.trim()} className="w-9 h-9 rounded-lg template-button flex items-center justify-center disabled:opacity-30" aria-label="Send message"><Send className="w-4 h-4" /></button></div><div className="text-[9px] text-zinc-700 mt-1.5 px-1">Grounded in the QubitLab curriculum, simulator and learning data.</div></form>
+      <form onSubmit={(e) => { e.preventDefault(); void sendMessage(input); }} className="p-3 border-t border-white/10"><div className="flex items-end gap-2 rounded-xl bg-black/30 border border-white/10 p-2 focus-within:border-[#dfff3f]/30"><textarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void sendMessage(input); } }} placeholder="{t('Ask about quantum computing...')}" rows={2} className="flex-1 resize-none bg-transparent outline-none text-sm text-zinc-200 placeholder:text-zinc-700 px-1.5 py-1" disabled={isLoading} aria-label="Message the QubitLab guide" /><button type="submit" disabled={isLoading || !input.trim()} className="w-9 h-9 rounded-lg template-button flex items-center justify-center disabled:opacity-30" aria-label="Send message"><Send className="w-4 h-4" /></button></div><div className="text-[9px] text-zinc-700 mt-1.5 px-1">{t('Grounded in the QubitLab curriculum, simulator and learning data.')}</div></form>
     </section>
   </div>;
 };
