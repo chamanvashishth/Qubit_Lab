@@ -205,7 +205,7 @@ export async function POST(request: Request) {
   } catch (error) {
     if (request.signal.aborted) return json({ error: 'Request cancelled.' }, 499);
     console.error('QubitLab Gemini function error:', error);
-    const gatewayReply = await callAiGateway(recentMessages, context);
+    const gatewayReply = await callAiGateway(recentMessages, requestContext);
     if (gatewayReply) return json({ reply: gatewayReply, provider: 'vercel-ai-gateway' });
     const lastUserMessage = [...recentMessages].reverse().find((message) => message.role === 'user');
     return json({ reply: answerLocally(lastUserMessage?.content ?? ''), fallback: true }, 200);
