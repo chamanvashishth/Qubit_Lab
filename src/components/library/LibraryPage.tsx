@@ -66,42 +66,42 @@ const ResourceLink = ({ href, children }: { href: string; children: React.ReactN
 export const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => (
   <div className="space-y-10 py-7 text-zinc-200">
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><BookOpen className="w-5 h-5 text-amber-300" /><div><h2 className="text-xl font-semibold text-white">{t('Free eBooks & Learning Resources')}</h2><p className="mt-1 text-sm text-zinc-200">Beginner to advanced resources from the supplied QubitLab resource guide.</p></div></div>
+      <div className="flex items-center gap-3"><BookOpen className="w-5 h-5 text-amber-300" /><div><h2 className="text-xl font-semibold text-white">{t('Free eBooks & Learning Resources')}</h2><p className="mt-1 text-sm text-zinc-200">{t('Beginner to advanced resources from the supplied QubitLab resource guide.')}</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {ebooks.map(([title, level, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5 hover:border-[#dfff3f]/30 transition-colors"><div className="text-sm uppercase tracking-[.12em] text-zinc-200 font-medium">{level}</div><h3 className="mt-2 text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>{t('Open official resource')}</ResourceLink></div></article>)}
+        {ebooks.map(([title, level, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5 hover:border-[#dfff3f]/30 transition-colors"><div className="text-sm uppercase tracking-[.12em] text-zinc-200 font-medium">{level}</div><h3 className="mt-2 text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>{t('{t('Open official resource')}')}</ResourceLink></div></article>)}
       </div>
     </section>
 
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><UserRound className="w-5 h-5 text-sky-300" /><div><h2 className="text-xl font-semibold text-white">{t('Researchers & Direct Resources')}</h2><p className="mt-1 text-sm text-zinc-200">Professor pages, courses, notes and research hubs from the supplied guide.</p></div></div>
+      <div className="flex items-center gap-3"><UserRound className="w-5 h-5 text-sky-300" /><div><h2 className="text-xl font-semibold text-white">{t('Researchers & Direct Resources')}</h2><p className="mt-1 text-sm text-zinc-200">{t('Professor pages, courses, notes and research hubs from the supplied guide.')}</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {researchers.map(([name, institution, specialty, href, secondaryLabel, secondaryHref]) => <article key={name} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-white">{name}</h3><div className="mt-1 text-sm uppercase tracking-[.12em] text-zinc-200 font-medium">{institution}</div><p className="mt-3 text-[15px] leading-7 text-zinc-200">{specialty}</p><div className="mt-4 flex flex-wrap gap-4"><ResourceLink href={href}>Open resource</ResourceLink>{secondaryHref && <ResourceLink href={secondaryHref}>{secondaryLabel}</ResourceLink>}</div></article>)}
+        {researchers.map(([name, institution, specialty, href, secondaryLabel, secondaryHref]) => <article key={name} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-white">{name}</h3><div className="mt-1 text-sm uppercase tracking-[.12em] text-zinc-200 font-medium">{institution}</div><p className="mt-3 text-[15px] leading-7 text-zinc-200">{specialty}</p><div className="mt-4 flex flex-wrap gap-4"><ResourceLink href={href}>{t('Open resource')}</ResourceLink>{secondaryHref && <ResourceLink href={secondaryHref}>{secondaryLabel}</ResourceLink>}</div></article>)}
       </div>
     </section>
 
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><GraduationCap className="w-5 h-5 text-violet-300" /><div><h2 className="text-xl font-semibold text-white">{t('University Lecture Series')}</h2><p className="mt-1 text-sm text-zinc-200">Use these alongside the QubitLab curriculum for deeper study.</p></div></div>
+      <div className="flex items-center gap-3"><GraduationCap className="w-5 h-5 text-violet-300" /><div><h2 className="text-xl font-semibold text-white">{t('University Lecture Series')}</h2><p className="mt-1 text-sm text-zinc-200">{t('Use these alongside the QubitLab curriculum for deeper study.')}</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {lectureSeries.map(([title, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>Open lectures</ResourceLink></div></article>)}
+        {lectureSeries.map(([title, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>{t('Open lectures')}</ResourceLink></div></article>)}
       </div>
     </section>
 
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><FileText className="w-5 h-5 text-emerald-300" /><div><h2 className="text-xl font-semibold text-white">{t('Research & Reference')}</h2><p className="mt-1 text-sm text-zinc-200">Research and reference material explicitly linked in the supplied guide.</p></div></div>
+      <div className="flex items-center gap-3"><FileText className="w-5 h-5 text-emerald-300" /><div><h2 className="text-xl font-semibold text-white">{t('Research & Reference')}</h2><p className="mt-1 text-sm text-zinc-200">{t('Research and reference material explicitly linked in the supplied guide.')}</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {researchAndMedia.filter(([title]) => !title.includes('Quantum Frontiers') && !title.includes('Aaronson')).map(([title, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>Open reference</ResourceLink></div></article>)}
+        {researchAndMedia.filter(([title]) => !title.includes('Quantum Frontiers') && !title.includes('Aaronson')).map(([title, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>{t('Open reference')}</ResourceLink></div></article>)}
       </div>
     </section>
 
     <section className="rounded-2xl border border-white/10 bg-white/[.035] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><Newspaper className="w-5 h-5 text-orange-300" /><div><h2 className="text-xl font-semibold text-white">Articles, Blogs & Talks</h2><p className="mt-1 text-sm text-zinc-200">Accessible material for staying connected with the quantum-computing community.</p></div></div>
+      <div className="flex items-center gap-3"><Newspaper className="w-5 h-5 text-orange-300" /><div><h2 className="text-xl font-semibold text-white">{t('Articles, Blogs & Talks')}</h2><p className="mt-1 text-sm text-zinc-200">{t('Accessible material for staying connected with the quantum-computing community.')}</p></div></div>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {researchAndMedia.filter(([title]) => title.includes('Quantum Frontiers') || title.includes('Aaronson') || title.includes('MIT OpenCourseWare')).map(([title, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>Open resource</ResourceLink></div></article>)}
+        {researchAndMedia.filter(([title]) => title.includes('Quantum Frontiers') || title.includes('Aaronson') || title.includes('MIT OpenCourseWare')).map(([title, description, href]) => <article key={title} className="rounded-xl border border-white/10 bg-black/20 p-5"><h3 className="text-base font-semibold text-white">{title}</h3><p className="mt-2 text-[15px] leading-7 text-zinc-200">{description}</p><div className="mt-4"><ResourceLink href={href}>{t('Open resource')}</ResourceLink></div></article>)}
       </div>
     </section>
 
     <section className="rounded-2xl border border-[#dfff3f]/15 bg-[#dfff3f]/[.03] p-6 sm:p-8">
-      <div className="flex items-center gap-3"><GraduationCap className="w-5 h-5 text-[#e9ff8a]" /><div><h2 className="text-xl font-semibold text-white">Recommended QubitLab Learning Path</h2><p className="mt-1 text-sm text-zinc-200">Follow the order in the supplied resource guide.</p></div></div>
+      <div className="flex items-center gap-3"><GraduationCap className="w-5 h-5 text-[#e9ff8a]" /><div><h2 className="text-xl font-semibold text-white">{t('Recommended QubitLab Learning Path')}</h2><p className="mt-1 text-sm text-zinc-200">{t('Follow the order in the supplied resource guide.')}</p></div></div>
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {[
           ['Phase 1', 'Foundation', 'Quantum Computing for the Quantum Curious'],
