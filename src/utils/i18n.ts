@@ -143,6 +143,21 @@ const translations: Record<string, string> = {
   'Thinking through the question': 'सवाल को समझ रहा हूँ',
   'Ask about quantum computing...': 'क्वांटम कंप्यूटिंग के बारे में पूछें...',
   'Grounded in the QubitLab curriculum, simulator and learning data.': 'QubitLab के करिकुलम, सिम्युलेटर और लर्निंग डेटा पर आधारित।',
+  'QUANTUM CURRICULUM': 'क्वांटम करिकुलम',
+  'Learning Path': 'लर्निंग पाथ',
+  'Completed': 'पूरा',
+  'Mark as Done': 'पूरा हुआ चिन्हित करें',
+  'Ask AI Tutor': 'AI ट्यूटर से पूछें',
+  'Interactive Practice': 'इंटरैक्टिव अभ्यास',
+  'Interactive': 'इंटरैक्टिव',
+  'Interactive Bloch Sphere': 'इंटरैक्टिव ब्लोख स्फीयर',
+  'Explain Geometry': 'ज्यामिति समझाएँ',
+  '3D Bloch Sphere': '3D ब्लोख स्फीयर',
+  'Canonical Basis State Presets:': 'कैनोनिकल बेसिस स्टेट प्रीसेट:',
+  'Spherical Polar Angle Coordinates': 'स्फेरिकल पोलर एंगल कोऑर्डिनेट्स',
+  'Apply Unitary Rotation Gates': 'यूनिटरी रोटेशन गेट लगाएँ',
+  'Cartesian Vector Coordinates (x, y, z)': 'कार्टेशियन वेक्टर कोऑर्डिनेट्स (x, y, z)',
+  'Measurement Probabilities:': 'मेज़रमेंट प्रॉबेबिलिटीज:',
 };
 
 export const setLanguage = (language: Language) => {
