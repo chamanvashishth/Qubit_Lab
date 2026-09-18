@@ -71,6 +71,8 @@ export async function POST(request: Request) {
     return json({ reply: answerLocally(lastUserMessage?.content ?? '') });
   }
 
+  let recentMessages: ChatMessage[] = [];
+
   try {
     const body = await request.json().catch(() => ({})) as { messages?: unknown; context?: unknown };
     const rawMessages = Array.isArray(body.messages)
@@ -99,7 +101,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const recentMessages = messages.slice(-12);
+    recentMessages = messages.slice(-12);
     if (!recentMessages.length) return json({ error: 'Please send at least one valid message.' }, 400);
 
     const context = typeof body.context === 'string' ? body.context.slice(0, 4000) : '';
