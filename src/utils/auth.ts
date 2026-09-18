@@ -45,6 +45,19 @@ export const signup = async (name: string, email: string, password: string): Pro
   return mapUser(data.user);
 };
 
+export const getAccountFromBackend = async (): Promise<AuthUser | null> => {
+  const { data } = await supabase.auth.getSession();
+  const accessToken = data.session?.access_token;
+  if (!accessToken) return null;
+
+  const response = await fetch('/api/account', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!response.ok) throw new Error('Unable to fetch account from backend.');
+  const payload = await response.json() as { user?: { id: string; email?: string | null; created_at?: string; user_metadata?: Record<string, unknown> } | null };
+  return payload.user ? mapUser(payload.user) : null;
+};
+
 export const logout = async () => {
   const { error } = await supabase.auth.signOut();
   if (error) throw new Error(error.message || 'Unable to log out.');
